@@ -8,7 +8,9 @@ Centrarse en (decidir por qué):
 - BFV: SEAL
 - BGV y BFV: PALISADE
 
-Usaremos SEAL y PALISADE (son las cubiertas en http://homomorphicencryption.org/wp-content/uploads/2018/10/CCS-HE-Tutorial-Slides.pdf)
+Usaremos SEAL como "representante" de las segunda generación. 
+
+- PALISADE (son las cubiertas en http://homomorphicencryption.org/wp-content/uploads/2018/10/CCS-HE-Tutorial-Slides.pdf)
 
 ## Fully...
 
@@ -21,11 +23,11 @@ Mejor TFHE(-Chimera) (cubre dos modelos)
 ## SEAL
 
 Recommendation: Learn BFV scheme first; CKKS after that
-
+> https://arxiv.org/pdf/1906.07127.pdf
 
 ## PALISADE
 
-
+https://medium.com/privacy-preserving-natural-language-processing/homomorphic-encryption-for-beginners-a-practical-guide-part-1-b8f26d03a98a
 
 ## TFHE
 
