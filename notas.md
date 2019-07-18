@@ -43,4 +43,8 @@ Tutorial: https://tfhe.github.io/tfhe/coding.html
 
 https://www.di.ens.fr/david.pointcheval/Documents/Papers/2002_sac.pdf
 
+## cuFHE
 
+Es como TFHE pero con wrapper en python: 
+
+https://github.com/vernamlab/cuFHE
