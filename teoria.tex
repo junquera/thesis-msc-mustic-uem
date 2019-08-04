@@ -1,1 +1,70 @@
 \chapter{Estudio teórico}
+
+\section{Tipos}
+
+- Partially homomorphic
+
+- Somewhat
+
+- Leveled fully
+
+- Fully
+
+\section{"Primitivas"}
+
+\subsection{Lattice based encryption}
+
+\subsection{Learn With Errors}
+
+\section{Esquemas por generación}
+
+\subsection{Pre}
+
+
+
+\subsection{Primera generación}
+
+
+
+\subsection{Segunda generación}
+
+- BGV
+
+https://eprint.iacr.org/2011/277
+
+- BFV
+
+https://eprint.iacr.org/2012/144
+
+\if false
+The BFV scheme cannot perform arbitrary computations on encrypted data.
+    Instead, each ciphertext has a specific quantity called the `invariant noise
+    budget' -- or `noise budget' for short -- measured in bits. The noise budget
+    in a freshly encrypted ciphertext (initial noise budget) is determined by
+    the encryption parameters. Homomorphic operations consume the noise budget
+    at a rate also determined by the encryption parameters. In BFV the two basic
+    operations allowed on encrypted data are additions and multiplications, of
+    which additions can generally be thought of as being nearly free in terms of
+    noise budget consumption compared to multiplications.
+\fi
+
+% A paper by Costache and Smart [CS16]gives some initial comparisons between BGV, BFV
+
+- CKKS
+
+No está descrito en el estándar, pero sí se implementa en SEAL.
+
+https://link.springer.com/chapter/10.1007%2F978-3-319-70694-8_15
+
+- TéCnIcA BoOtsTrApPiNg
+
+% https://link.springer.com/chapter/10.1007/978-3-642-30057-8_1
+
+% TODO ¿¿¿¿¿¿¿¿NADIE USA LATTICES???????????
+
+\subsection{Tercera generación}
+
+- GSW
+
+\section{Aplicaciones}
+
