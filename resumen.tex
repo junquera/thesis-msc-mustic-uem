@@ -1,1 +1,27 @@
 \chapter*{Resumen}
+
+
+La criptografía homomórfica es... El consorcio "homomorphic encryption" ha ido desarrollando un estándar a lo largo de los años atendiendo a los avances en las distintas tecnologías que componen la criptografía homomórfica, y prestando un interés especial en las implementaciones necesarias para ponerla en práctica. Así, se han ido sucediendo las tres generaciones de criptografía homomórfica. 
+
+La primera generación ...
+
+En la segunda se asientan los modelos SHE que permiten el cálculo de variables acotadas. Estos cálculos ya son fully homomorphic (suma y multi), pero a medida que se opera con las variables va aumentando un nivel de error que hace que sea imposible seguir calculando y obtener resultados válidos. A esta generación pertenecen los esquemas BGV, BFV y CKKS. Estos dos últimos están implementados en la librería SEAL.
+
+La tercera y última generación ya es considerada FHE, pues permite, gracias al esquema GSW, realizar infinitas operaciones sin perder precisión. Para el desarrollo de este tercer estándar usaremos TFHE.
+
+Se está desarrollando el cuarto encuentro de estandarización.
+
+# Modelo
+
+Para nuestro trabajo utilizaremos las librerías SEAL (como representante de la segunda generación) y THFE (como representante de la tercera). 
+
+Comenzamos con un estudio del funcionamiento de las librerías, de cuales son sus límites computacionales y pienso una operación que no sea "trivial" y a la vez sea computable por ambos. 
+
+La librería SEAL cuenta con varias operaciones aritméticas implementadas que pueden facilitarnos mucho el trabajo, así como la posibilidad de trabajar con matrices y número con coma flotante. La principal complicación con SEAL es calcular cómo se está desviando el cálculo para saber cuando parar o qué correcciones hacer. Además, las operaciones que puede hacer son relativamente limitadas (cuando se hacen, por ejemplo, productos, crece mucho el error). Si se ajustan los parámetros para realizar más operaciones o trabajar con números más grandes, se vuelve lentísima.
+
+La librería TFHE ofrece una API de operaciones lógicas a nivel de bit. Aunque permitirá hacer cálculos más complejos sin añadir error al resultado, tendremos que implementar todas las operaciones a bajo nivel mediante puertas lógicas, siempre teniendo en cuenta que en ningún momento vamos a poder controlar el flujo de ejecución y nuestros algoritmos tienen que ser capaces de realizar los cálculos sin poder evaluar las variables (están cifradas), lo que hará que nuestras operaciones sean 
+
+Por lo tanto tenemos que encontrar un cálculo que sea realizable con pocas operaciones (y limitadas, porque no permite la división) y números bajos para SEAL; y operaciones que sean implementables en un tiempo razonable con puertas lógicas para poder trabajar en TFHE. 
+
+He decicido hacer una regresión cuadrática de temperaturas de dos ciudades (esto lo haré con TFHE para poder hacer suma, resta, multiplicación y DIVISIÓN), que permitirá que un usuario en una fecha dada suba a SEAL su temperatura cifrada y averigue su localización.
+
