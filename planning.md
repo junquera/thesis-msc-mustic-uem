@@ -1,3 +1,5 @@
+- [x] Optimiza mayor, menor, igual... Y aplicar a maximo y minimo
+
 - [x] Leer ejemplos SEAL
 
 - [x] Hacer un ejemplo con SEAL
@@ -6,11 +8,15 @@
 
 - [x] Operaciones básicas con TFHE
 
-- [ ] Operaciones con coma flotante TFHE
+- [x] Operaciones con coma flotante TFHE
 
-- [ ] Operación de comprobación del punto en SEAL
+- [ ] API Rest 
 
-- [ ] Cálculo de regresión cuadrática en TFHE
+- [x] Operación de comprobación del punto en SEAL
+
+- [x] Cálculo de regresión cuadrática en TFHE
+
+- [x] Cálculo por partes con output a archivo
 
 # Teoría
 
