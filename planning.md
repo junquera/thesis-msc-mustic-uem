@@ -18,6 +18,12 @@
 
 - [x] Cálculo por partes con output a archivo
 
+- [ ] SEAL con vectores
+
+- [ ] Documentar instalación de todo (y de dependencias!)
+
+- [ ] Dibujar arquitectura del sistema
+
 # Teoría
 
 1. Leer teoría de ambos. ¿Quien usa Lattices?

@@ -6,11 +6,13 @@ En este sistema habrá tres actores: el cliente, el servidor de posicionamiento 
 
 El cliente consultará su posición con el servidor de SEAL, que previamente habrá generado en el servidor de TFHE un modelo de posicionamiento basado en las temperaturas del último año.
 
+% TODO Gráficos de curvas de regresión con ejemplos
+
 \section{TFHE}
 
 El servidor de SEAL cifrará los datos de temperatura del último año en dos ubicaciones distintas y se las envía al servidor TFHE. Este procesa los datos cifrados para calcular la regresión cuadrática (también cifrada) que servirá de modelo para determinar la ubicación del usuario. Esta curva se genera con tres parámetros (a, b y c):
 
-ax^2 + bx + c
+$ ax^2 + bx + c $
 
 Para calcularla realizará las siguientes operaciones:
 
@@ -36,7 +38,8 @@ X < 32
 
 - Eficiencia
 
+% TODO Documentar tiempos
+
 - Tamaño de los datos al multiplicar...
 
-
-% Documentar problemas
+% TODO Mostrar algunos ejemplos de codificación de números en bits
