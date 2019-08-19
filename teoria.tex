@@ -14,9 +14,11 @@
 
 \subsection{Lattice-based encryption}
 
-Los sistemas criptográficos se basan en problemas matemáticos que, si bien son resolubles, dicha resolución no es computacionalmente viable en un tiempo finito: factorización de enteros, logaritmo discreto, ordenación de conjuntos... La base de los principales sistemas de criptografía homomórfica modernos son problemas relacionados con unas estructuras algebraicas conocidas como retículos. Un retículo o red (también conocidos como lattice en inglés) es un conjuntos de elementos similar a un espacio vectorial discreto generado por la combinación de una base concreta.
+Los sistemas criptográficos se basan en problemas matemáticos que, si bien son resolubles, dicha resolución no es computacionalmente viable en un tiempo finito: factorización de enteros, logaritmo discreto, ordenación de conjuntos...
 
-Por ejemplo, a los vectores $u = (2, 0)$ y $v = (-1, 3)$ serían la base de la red generada por todas sus combinaciones $n*u + m*v$ (ver \ref{fig:lattice1}).
+La base de los principales sistemas de criptografía homomórfica modernos son problemas relacionados con unas estructuras algebraicas conocidas como retículos. Un retículo o red (también conocidos como lattice en inglés) es un conjuntos de elementos similar a un espacio vectorial discreto generado por la combinación de una base concreta.
+
+Por ejemplo, a los vectores $u = (2, 0)$ y $v = (-1, 3)$ serían la base de la red bidimensional generada por todas sus combinaciones $n*u + m*v$ (ver \ref{fig:lattice1}).
 
 \begin{figure}[h]
   \caption{Espacio vectorial generado por u y v}
@@ -24,13 +26,39 @@ Por ejemplo, a los vectores $u = (2, 0)$ y $v = (-1, 3)$ serían la base de la r
   \includegraphics[]{lattice1}
 \end{figure}
 
-En la búsqueda de soluciones criptográficas resistentes a la computación cuántica se han encontrado útiles los siguientes problemas\cite{wickr_what_2018} de retículos:
+En función de lo cerca o lejos que estén los vectores que forman la base del origen se dirá que estas bases son largas o cortas\cite{wickr_what_2018}. Por ejemplo, el espacio anterior podría formarse con el mismo vector $v$, y con otro vector $w = (1, 0)$ más corto que $u$.
+
+En la búsqueda de soluciones criptográficas resistentes a la computación cuántica se han encontrado útiles los siguientes problemas de retículos:
 
 \begin{itemize}
   \item Short Vector Problem (SVP)
+
+  Consiste en dada una base larga, buscar un vector corto lo más cercano al origen, sin ser el origen mismo (ver \ref{fig:svp}).
+
+  \begin{figure}[h]
+    \caption{Short vector problem \cite{noauthor_lattice_2019}}
+    \label{fig:svp}
+    \includegraphics[]{svp}
+  \end{figure}
+
   \item Short Basis Problem (SBP)
+
+  Dada una base larga buscar una base corta del mismo espacio.
+
   \item Closest Vector Problem (CVP)
+
+  Dada una base larga y un punto $P$ de la red, buscar el vector de la red formada por la base más cercano a $P$ (ver \ref{fig:cvp}).
+
+  \begin{figure}[h]
+    \caption{Closest vector problem \cite{noauthor_lattice_2019}}
+    \label{fig:cvp}
+    \includegraphics[]{cvp}
+  \end{figure}
+
+
 \end{itemize}
+
+Aunque estos problemas puedan parecer triviales a simple vista, su complejidad computacional aumenta exponencialmente con el aumento del número de dimensiones hasta hacerlo computacionalmente irresoluble.
 
 Llamaremos Lattice-based encryption (para ajustarnos a la bibliografía, que está en su práctica totalidad escrita en inglés) a la aplicación de este conjunto de problemas a la criptografía.
 
