@@ -14,9 +14,9 @@
 
 \subsection{Lattice-based encryption}
 
-Los sistemas criptográficos se basan en problemas matemáticos que, si bien son resolubles, dicha resolución no es computacionalmente viable en un tiempo finito: factorización de enteros, logaritmo discreto, ordenación de conjuntos...
+La seguridad de los sistemas criptográficos se basa en problemas matemáticos que, si bien pueden ser resolubles, dicha resolución no es computacionalmente viable en un tiempo razonable: factorización de enteros, logaritmo discreto, ordenación de conjuntos...
 
-La base de los principales sistemas de criptografía homomórfica modernos son problemas relacionados con unas estructuras algebraicas conocidas como retículos. Un retículo o red (también conocidos como lattice en inglés) es un conjuntos de elementos similar a un espacio vectorial discreto generado por la combinación de una base concreta.
+La base de los principales sistemas de criptografía homomórfica modernos son problemas relacionados con unas estructuras algebraicas conocidas como retículos. Un retículo o red (también conocidos como lattice en inglés) es un conjuntos de elementos similar a un espacio vectorial discreto generado por la combinación de una base vectorial concreta.
 
 Por ejemplo, a los vectores $u = (2, 0)$ y $v = (-1, 3)$ serían la base de la red bidimensional generada por todas sus combinaciones $n*u + m*v$ (ver \ref{fig:lattice1}).
 
@@ -25,6 +25,8 @@ Por ejemplo, a los vectores $u = (2, 0)$ y $v = (-1, 3)$ serían la base de la r
   \label{fig:lattice1}
   \includegraphics[]{lattice1}
 \end{figure}
+
+Es decir, el conjunto de puntos del gráfico \ref{fig:lattice1} sería un retículo, cuya base está formada por los vectores $u$ y $v$.
 
 En función de lo cerca o lejos que estén los vectores que forman la base del origen se dirá que estas bases son largas o cortas\cite{wickr_what_2018}. Por ejemplo, el espacio anterior podría formarse con el mismo vector $v$, y con otro vector $w = (1, 0)$ más corto que $u$.
 
