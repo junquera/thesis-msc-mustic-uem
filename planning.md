@@ -18,11 +18,13 @@
 
 - [x] Cálculo por partes con output a archivo
 
-- [ ] SEAL con vectores
+- [x] SEAL con vectores
 
 - [ ] Documentar instalación de todo (y de dependencias!)
 
 - [ ] Dibujar arquitectura del sistema
+
+- [ ] Refactorizar librerías
 
 # Teoría
 

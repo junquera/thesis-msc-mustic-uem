@@ -1,14 +1,31 @@
-\chapter{Prueba de concepto}
+\chapter{Solución propuesta}
 
-Para analizar las librerías he elaborado un sistema de posicionamiento anónimo en función de la temperatura y el mes del año. 
+Para analizar las librerías he elaborado un sistema de posicionamiento anónimo en función de la temperatura y el mes del año.
 
 En este sistema habrá tres actores: el cliente, el servidor de posicionamiento (programado con SEAL) y un tercer servidor (programado con TFHE) que generará el modelo para calcular la posición.
 
 El cliente consultará su posición con el servidor de SEAL, que previamente habrá generado en el servidor de TFHE un modelo de posicionamiento basado en las temperaturas del último año.
 
+% TODO NO debe ser publico el descifrado porque es vulnerable a CCA
+
+\section{Funcionamiento}
+
 % TODO Gráficos de curvas de regresión con ejemplos
 
-\section{TFHE}
+\subsection{Generación del modelo}
+
+1. El cliente genera un par de claves
+
+2. Cifra n pares de datos (en nuestro ejemplo el par sería (mes, temperatura)).
+
+3. Sube los datos cifrados y su clave pública. El número de datos que se puede subir está limitado por el crecimiento del tamaño (en bits) de dichos datos al exponenciarlos para calcular la curva de regresión. Trabajaremos con los datos de 12 meses porque, como comentaremos más adelante, aunque el orden máximo al que llegaríamos con estos datos es de 46 bits tendremos otras limitaciones a la hora de procesar los datos.
+
+4. EL servidor procesa los datos
+
+
+\section{Implementación}
+
+\subsection{TFHE}
 
 El servidor de SEAL cifrará los datos de temperatura del último año en dos ubicaciones distintas y se las envía al servidor TFHE. Este procesa los datos cifrados para calcular la regresión cuadrática (también cifrada) que servirá de modelo para determinar la ubicación del usuario. Esta curva se genera con tres parámetros (a, b y c):
 
@@ -22,7 +39,7 @@ TFHE sólo ofrece operadores lógicos, así que tenemos que escribir la operacio
 
 $ OPERACIONES DE FUNCTIONS.h $
 
-\subsection{Tamaño máximo de los datos}
+\subsubsection{Tamaño máximo de los datos}
 
 log(X, 2)*max_exponente <= (64 bits de entero - 10 bits de decimal - 1 bit de signo) = 53 bits
 
@@ -30,7 +47,7 @@ log(X, 2)*max_exponente <= (64 bits de entero - 10 bits de decimal - 1 bit de si
 
 X < 32
 
-\subsection{Problemas encontrados}
+\subsubsection{Problemas encontrados}
 
 - Signo
 
@@ -43,3 +60,7 @@ X < 32
 - Tamaño de los datos al multiplicar...
 
 % TODO Mostrar algunos ejemplos de codificación de números en bits
+l = sum(1, n)
+nb_bits > 1 + math.log(n, 2) + 10
+
+\subsection{SEAL}

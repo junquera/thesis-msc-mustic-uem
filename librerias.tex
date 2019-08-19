@@ -1,5 +1,7 @@
 \chapter{Librerías}
 
+Hay varias implementaciones de criptografía homomórfica, y varias soluciones por cada una de las generaciones.
+
 \begin{itemize}
     \item HELib
     \item Microsoft SEAL
@@ -27,22 +29,22 @@ SEAL es:
 
 - La clave es determinar qué operación se quiere hacer:
     - Codificarla
-    
+
     - Elegir correctamente los parámetros que permitan que se haga
 
 - SEAL ofrece encoders para la información:
 
     - IntegerEncoder
-    
+
     Descompone el número en una sucesión de exponenciaciones.
-    
+
     - BatchEncoder
-    
+
     Crea matrices
-    
+
     - CCKSEncoder
-    
-    Crea matrices (In CKKS the number of slots is poly\_modulus\_degree / 2 and each slot encodes one real or complex number.) Para operar con reales, se pasan a enteros (multiplicando por $10^x$) perdiendo precisión y aumentando el tamaño. 
+
+    Crea matrices (In CKKS the number of slots is poly\_modulus\_degree / 2 and each slot encodes one real or complex number.) Para operar con reales, se pasan a enteros (multiplicando por $10^x$) perdiendo precisión y aumentando el tamaño.
 
 
 En ambos modelos las matrices se pueden rotar haciendo uso de unas claves especiales llamadas Galois Keys (ejemplo 5 de SEAL).
@@ -82,14 +84,14 @@ Realinearization:
     a significant computational cost itself. It is only possible to relinearize
     size 3 ciphertexts down to size 2, so often the user would want to relinearize
     after each multiplication to keep the ciphertext sizes at 2.
-    
+
     Relinearization requires special `relinearization keys', which can be thought
     of as a kind of public key. Relinearization keys can easily be created with
     the KeyGenerator.
-    
+
     % TODO Volver a leer 1_bfv_basic para entender size 3, size 2...
     % El tamaño tras operar M con N es M+N-1
-\fi 
+\fi
 
 \if false
 
@@ -99,9 +101,9 @@ Levels: Permite ir reduciendo los coeff\_modulus para reducir el tamaño del tex
 
 \subsubsection{CKKS}
 
-En este esquema podremos trabajar con número decimales, pero hay que estar ajustando constantemente los parámetros para que no se desborde el tamaño y se mantenga la integridad de lo calculado. 
+En este esquema podremos trabajar con número decimales, pero hay que estar ajustando constantemente los parámetros para que no se desborde el tamaño y se mantenga la integridad de lo calculado.
 
-Se elige una escala inicial menor que los coeff\_modulus para que permita operar con los valores correctamente (por ejemplo, si el tamaño del coeff\_mod es 60 bits se elige una escala de 40 bits para tener 20 de margen). 
+Se elige una escala inicial menor que los coeff\_modulus para que permita operar con los valores correctamente (por ejemplo, si el tamaño del coeff\_mod es 60 bits se elige una escala de 40 bits para tener 20 de margen).
 
 Lo suyo es elegir los coeff\_modulus para que el primero y el último sean más grandes (el primero para tener más precisión al quitar la escala y volver a poner en decimal, el último para poder hacer una escala cómodamente), y el resto normales (para que no sean muy pesadas las operaciones. Cuando se hace una multiplicación el tamaño del texto inicial S se convierte en $S^2$, por lo que hay que reescalarlo. Si se reescala al coeff\_modulus (de tamaño M) correspondiente en la cadena, se tiene un texto $S^2/M$ que, si se han elegido bien los parámetros, será muy parecido a S.
 
@@ -112,6 +114,10 @@ Especialmente destinado a trabajar con vectores (como en el modo BatchEncoder).
 % Performance TESTS
 
 \subsection{TFHE}
+
+\subsubsection{Instalación}
+
+https://tfhe.github.io/tfhe/installation.html
 
 EN su presentación (http://lab.algonics.net/slides/index-ccs.html) dicen: "If Spiderman can swing on his rope long enough to launch a new rope he can fly!"
 

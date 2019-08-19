@@ -1,7 +1,9 @@
 \chapter*{Resumen}
 
 
-La criptografía homomórfica es... El consorcio "homomorphic encryption" ha ido desarrollando un estándar a lo largo de los años atendiendo a los avances en las distintas tecnologías que componen la criptografía homomórfica, y prestando un interés especial en las implementaciones necesarias para ponerla en práctica. Así, se han ido sucediendo las tres generaciones de criptografía homomórfica. 
+Se conoce como criptografía homomórfica al conjunto de técnicas criptográficas destinadas a permitir operar con datos cifrados y que dichas operaciones
+
+El consorcio "Homomorphic Encryption Standardization"\cite{noauthor_homomorphic_nodate-1} ha ido desarrollando un estándar a lo largo de los años atendiendo a los avances en las distintas tecnologías que componen la criptografía homomórfica, y prestando un interés especial en las implementaciones necesarias para ponerla en práctica. Así, se han ido sucediendo las tres generaciones de criptografía homomórfica. 
 
 La primera generación ...
 
@@ -13,15 +15,15 @@ Se está desarrollando el cuarto encuentro de estandarización.
 
 # Modelo
 
-Para nuestro trabajo utilizaremos las librerías SEAL (como representante de la segunda generación) y THFE (como representante de la tercera). 
+Para nuestro trabajo utilizaremos las librerías SEAL (como representante de la segunda generación) y THFE (como representante de la tercera).
 
-Comenzamos con un estudio del funcionamiento de las librerías, de cuales son sus límites computacionales y pienso una operación que no sea "trivial" y a la vez sea computable por ambos. 
+Comenzamos con un estudio del funcionamiento de las librerías, de cuales son sus límites computacionales y pienso una operación que no sea "trivial" y a la vez sea computable por ambos.
 
 La librería SEAL cuenta con varias operaciones aritméticas implementadas que pueden facilitarnos mucho el trabajo, así como la posibilidad de trabajar con matrices y número con coma flotante. La principal complicación con SEAL es calcular cómo se está desviando el cálculo para saber cuando parar o qué correcciones hacer. Además, las operaciones que puede hacer son relativamente limitadas (cuando se hacen, por ejemplo, productos, crece mucho el error). Si se ajustan los parámetros para realizar más operaciones o trabajar con números más grandes, se vuelve lentísima.
 
-La librería TFHE ofrece una API de operaciones lógicas a nivel de bit. Aunque permitirá hacer cálculos más complejos sin añadir error al resultado, tendremos que implementar todas las operaciones a bajo nivel mediante puertas lógicas, siempre teniendo en cuenta que en ningún momento vamos a poder controlar el flujo de ejecución y nuestros algoritmos tienen que ser capaces de realizar los cálculos sin poder evaluar las variables (están cifradas), lo que hará que nuestras operaciones sean 
+La librería TFHE ofrece una API de operaciones lógicas a nivel de bit. Aunque permitirá hacer cálculos más complejos sin añadir error al resultado, tendremos que implementar todas las operaciones a bajo nivel mediante puertas lógicas, siempre teniendo en cuenta que en ningún momento vamos a poder controlar el flujo de ejecución y nuestros algoritmos tienen que ser capaces de realizar los cálculos sin poder evaluar las variables (están cifradas), lo que hará que nuestras operaciones sean
 
-Por lo tanto tenemos que encontrar un cálculo que sea realizable con pocas operaciones y números bajos para SEAL; y operaciones que sean implementables en un tiempo razonable con puertas lógicas para poder trabajar en TFHE. 
+Por lo tanto tenemos que encontrar un cálculo que sea realizable con pocas operaciones y números bajos para SEAL; y operaciones que sean implementables en un tiempo razonable con puertas lógicas para poder trabajar en TFHE.
 
 Además, la operación que se realice con SEAL no puede contener más que sumas, restas y multiplicaciones (no existe la división).
 
