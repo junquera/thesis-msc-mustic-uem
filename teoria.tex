@@ -64,11 +64,52 @@ Aunque estos problemas puedan parecer triviales a simple vista, su complejidad c
 
 Llamaremos Lattice-based encryption (para ajustarnos a la bibliografía, que está en su práctica totalidad escrita en inglés) a la aplicación de este conjunto de problemas a la criptografía.
 
-En cuanto a nuestro caso, el problema del Aprendizaje con Errores (Learn With Errors en adelante) aplicado a retículos será el núcleo de la criptografía homomórfica.
+En cuanto a nuestro caso, el problema del aprendizaje con errores aplicado a retículos será el núcleo de la criptografía homomórfica.
 
-\subsection{Learn With Errors}
+\subsection{Learn With Errors (LWE)}
+
+El problema del aprendizaje con errores plantea la dificultad de determinar los componentes de una función en base a sus resultados cuando estos contienen errores\cite{apon_intro_nodate}. Dada una base modular $q$, n vectores $ai$ <- [Z^(m) sub q], un vector s<- [Z^(n) sub q] y $n$ vectores $[ei <- X^(m)]$ tomados de una distribución de error (distribución de Gauss\cite{noauthor_generalized_2019}) X sobre [Z]:
+
+$ bi = (ai x s + ei) mod q $, con $i € (1, m)$
+
+\begin{figure}[h]
+  \caption{LWE \cite{halevi_homomorphic_2017}}
+  \label{fig:lwe}
+  \includegraphics[]{lwe}
+\end{figure}
+
+Conociendo $m$ pares $(ai,bi)$ no se puede determinar el valor $s$.
+
+En su estudio, Regev\cite{regev_learning_2010} formula un sistema de clave pública utilizando este problema:
+
+\begin{\begin{enumerate}
+  \item Generación de clave Pública
+
+  Se emite como clave pública una colección de valores ($ai$, $bi$).
+
+  \item Cifrado
+
+  Para cada bit $x$ a cifrar se elige una de las parejas y se realiza la siguiente operación:
+
+  ($c1$, $c2$) = ($suma(ai[j])$, $suma(bi[j]) + x * q/2$) para $j€(1, m)$
+
+  \item Descifrado
+
+  El resultado realmente no es determinista, es decir, no devuelve realmente el valor cifrado. Para determinar el valor calcularíamos:
+
+  $c2$ - $c1*s$ =
+  $ b + x*(q/2) - a*v*s $ =
+  $ v*a*s + e + x*(q/2) - a*v*s$ =
+  $ e + x*(q/2) \approx x * (q/2) $
+
+  Si se ha introducido $s$ correctamente, y siendo $e$ despreciable en comparación con $ q/2 $, obtendríamos como resultado $ x * (q/2) $, por lo que sabremos que $ x = 1$ si el resultado es cercano a $ q/2 $ y  $ x = 0 $ si el resultado es cercano a $ 0 $.
+
+\end{enumerate}
+
+En el apéndice \ref{apendix:test_lwe.py} puede verse un ejemplo de implementación unidimensional del algoritmo.
 
 https://semidoc.github.io/zijlstra-lwe
+https://medium.com/asecuritysite-when-bob-met-alice/public-key-encryption-with-learning-with-errors-lwe-1aa6dd1df4e
 
 \section{Generaciones}
 
