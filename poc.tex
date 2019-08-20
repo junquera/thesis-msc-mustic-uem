@@ -6,9 +6,11 @@ En este sistema habrá tres actores: el cliente, el servidor de posicionamiento 
 
 El cliente consultará su posición con el servidor de SEAL, que previamente habrá generado en el servidor de TFHE un modelo de posicionamiento basado en las temperaturas del último año.
 
+Se han elegido tanto el sistema de ejemplo como las tecnologías específicas para cada uno de los actores en función de las capacidades y limitaciones de cada tecnología. Como resultado del proyecto se ha creado, además del análisis y el código propio del proyecto, una librería de operaciones matemáticas implementadas en TFHE con puertas lógicas, que es innovadora en tanto en cuanto no existe ningún código público que permita trabajar con TFHE a este nivel.
+
 % TODO NO debe ser publico el descifrado porque es vulnerable a CCA
 
-\section{Funcionamiento}
+\section{Funcionamiento del sistema}
 
 % TODO Gráficos de curvas de regresión con ejemplos
 
@@ -22,45 +24,34 @@ El cliente consultará su posición con el servidor de SEAL, que previamente hab
 
 4. EL servidor procesa los datos
 
+\subsection{Obtención de la posición}
 
-\section{Implementación}
 
-\subsection{TFHE}
+\section{Implementación con TFHE}
 
-El servidor de SEAL cifrará los datos de temperatura del último año en dos ubicaciones distintas y se las envía al servidor TFHE. Este procesa los datos cifrados para calcular la regresión cuadrática (también cifrada) que servirá de modelo para determinar la ubicación del usuario. Esta curva se genera con tres parámetros (a, b y c):
+Para generar la curva de regresión que utilizará el servidor de SEAL para ubicar al usuario, dicho servidor cifrará los datos de temperatura del último año en dos ubicaciones distintas y se las enviará al servidor TFHE. Este procesa los datos cifrados y calcula la regresión cuadrática codificada en tres parámetros $a, b, c$ que devolverá cifrados al servidor de SEAL.
+
+$ DIAGRAMA PARA SUBIR DATOS DE SEAL A TFHE$
+
+\subsection{Curva de regresión}
+
+Esta curva está definida por tres parámetros (a, b y c):
 
 $ ax^2 + bx + c $
 
-Para calcularla realizará las siguientes operaciones:
+Para calcularla estos parámetros, es necesario realizar las siguientes operaciones con los datos de temperatura:
 
 $ OPERACIONES PARA a, b y c $
 
-TFHE sólo ofrece operadores lógicos, así que tenemos que escribir la operaciones aritméticas necesarias:
+TFHE sólo ofrece operadores lógicos, así que tenemos que escribir la operaciones aritméticas necesarias: suma, resta, multiplicación y división. Además tendremos que dar la posibilidad de trabajar con números reales, por lo que tendremos que determinar la codificación más apropiada.
+
+\subsection{tfhe-math}
 
 $ OPERACIONES DE FUNCTIONS.h $
 
-\subsubsection{Tamaño máximo de los datos}
+He hecho las siguientes operaciones aritméticas:
 
-log(X, 2)*max_exponente <= (64 bits de entero - 10 bits de decimal - 1 bit de signo) = 53 bits
+- Suma
 
-4 < max_exponente < 10
 
-X < 32
-
-\subsubsection{Problemas encontrados}
-
-- Signo
-
-- Floats
-
-- Eficiencia
-
-% TODO Documentar tiempos
-
-- Tamaño de los datos al multiplicar...
-
-% TODO Mostrar algunos ejemplos de codificación de números en bits
-l = sum(1, n)
-nb_bits > 1 + math.log(n, 2) + 10
-
-\subsection{SEAL}
+\section{Implementación con SEAL}

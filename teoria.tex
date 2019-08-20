@@ -1,5 +1,14 @@
 \chapter{Estudio teórico}
 
+En base a los encuentros del estándar ...
+
+La primera generación ...
+
+En la segunda se asientan los modelos SHE que permiten el cálculo de variables acotadas. Estos cálculos ya son fully homomorphic (suma y multi), pero a medida que se opera con las variables va aumentando un nivel de error que hace que sea imposible seguir calculando y obtener resultados válidos. A esta generación pertenecen los esquemas BGV, BFV y CKKS. Estos dos últimos están implementados en la librería SEAL.
+
+La tercera y última generación ya es considerada FHE, pues permite, gracias al esquema GSW, realizar infinitas operaciones sin perder precisión. Para el desarrollo de este tercer estándar usaremos TFHE.
+
+
 \section{Tipos}
 
 - Partially homomorphic
@@ -10,13 +19,15 @@
 
 - Fully
 
-\section{"Primitivas"}
-
-\subsection{Lattice-based encryption}
+\section{Primitivas matemáticas}
 
 La seguridad de los sistemas criptográficos se basa en problemas matemáticos que, si bien pueden ser resolubles, dicha resolución no es computacionalmente viable en un tiempo razonable: factorización de enteros, logaritmo discreto, ordenación de conjuntos...
 
-La base de los principales sistemas de criptografía homomórfica modernos son problemas relacionados con unas estructuras algebraicas conocidas como retículos. Un retículo o red (también conocidos como lattice en inglés) es un conjuntos de elementos similar a un espacio vectorial discreto generado por la combinación de una base vectorial concreta.
+La base de los principales sistemas de criptografía homomórfica modernos son problemas relacionados con unas estructuras algebraicas conocidas como retículos. 
+
+\subsection{Lattice-based encryption}
+
+Un retículo o red (también conocidos como lattice en inglés) es un conjuntos de elementos similar a un espacio vectorial discreto generado por la combinación de una base vectorial concreta.
 
 Por ejemplo, a los vectores $u = (2, 0)$ y $v = (-1, 3)$ serían la base de la red bidimensional generada por todas sus combinaciones $n*u + m*v$ (ver \ref{fig:lattice1}).
 
@@ -68,39 +79,52 @@ En cuanto a nuestro caso, el problema del aprendizaje con errores aplicado a ret
 
 \subsection{Learn With Errors (LWE)}
 
-El problema del aprendizaje con errores plantea la dificultad de determinar los componentes de una función en base a sus resultados cuando estos contienen errores\cite{apon_intro_nodate}. Dada una base modular $q$, n vectores $ai$ <- [Z^(m) sub q], un vector s<- [Z^(n) sub q] y $n$ vectores $[ei <- X^(m)]$ tomados de una distribución de error (distribución de Gauss\cite{noauthor_generalized_2019}) X sobre [Z]:
+El problema del aprendizaje con errores plantea la dificultad de determinar los componentes de una función en base a sus resultados cuando estos contienen errores\cite{apon_intro_nodate}. 
 
-$ bi = (ai x s + ei) mod q $, con $i € (1, m)$
+Dada una base modular $q$, n vectores $a_i \leftarrow \mathbbb{Z}^m_q$, un vector $s \leftarrow \mathbbb{Z}^n_q$ y $n$ vectores $ e_i \leftarrow \chi{}^m $ tomados de una distribución de error (distribución de Gauss\cite{noauthor_generalized_2019}) \chi{} \subset{} \mathbbb{Z}:
 
-\begin{figure}[h]
-  \caption{LWE \cite{halevi_homomorphic_2017}}
-  \label{fig:lwe}
-  \includegraphics[]{lwe}
-\end{figure}
+\begin{gather}
+    \label{form:gen_lwe}
+    b_i = (a_i \times s + e_i) mod q
+\end{gather}
 
-Conociendo $m$ pares $(ai,bi)$ no se puede determinar el valor $s$, y no se pueden diferenciar dichos pares de una distribución aleatoria\cite{t._zijlstra_learning_nodate}.
+Conociendo $m$ pares $(a_i, b_i)$ no se puede determinar el valor $s$, y no se pueden diferenciar dichos pares de una distribución aleatoria\cite{t._zijlstra_learning_nodate}.
+
+\subsubsection{Uso en criptografía}
 
 En su estudio, Regev\cite{regev_learning_2010} formula un sistema de clave pública utilizando este problema:
 
-\begin{\begin{enumerate}
+\begin{enumerate}
   \item Generación de clave Pública
 
-  Se emite como clave pública una colección de valores ($ai$, $bi$).
+  Se emite como clave pública una colección de valores $(ai, bi)$ generada como hemos visto en \ref{form:gen_lwe}. El conjunto de vectores $a_i$ se interpretará en algunas implementaciones como una matriz $A \leftarrow \mathbbb{Z}_q^{m \times n}$.
 
+    \begin{figure}[h]
+      \caption{LWE \cite{halevi_homomorphic_2017}}
+      \label{fig:lwe}
+      \includegraphics[width=\textwidth]{lwe}
+    \end{figure}
+    
   \item Cifrado
 
   Para cada bit $x$ a cifrar se elige una de las parejas y se realiza la siguiente operación:
 
-  ($c1$, $c2$) = ($suma(ai[j])$, $suma(bi[j]) + x * q/2$) para $j€(1, m)$
+    \begin{gather*}
+        \label{form:cifrado_lwe} 
+        (c1, c2) = (\sum_{j=1}^{m} a_i_j, \sum_{j=1}^{m} b_i_j + x * (q/2)) 
+    \end{gather*}
 
   \item Descifrado
 
   El resultado realmente no es determinista, es decir, no devuelve realmente el valor cifrado. Para determinar el valor calcularíamos:
 
-  $c2$ - $c1*s$ =
-  $ b + x*(q/2) - a*v*s $ =
-  $ v*a*s + e + x*(q/2) - a*v*s$ =
-  $ e + x*(q/2) \approx x * (q/2) $
+    \begin{gather*}
+        \label{form:descifrado_lwe} 
+        x \approx c_2 - (c_1*s) \\
+        b + x*(q/2) - a*s \\
+        a*s + e + x*(q/2) - a*s \\
+        e + x*(q/2) \approx x * (q/2)
+    \end{gather*}
 
   Si se ha introducido $s$ correctamente, y siendo $e$ despreciable en comparación con $ q/2 $, obtendríamos como resultado $ x * (q/2) $, por lo que sabremos que $ x = 1$ si el resultado es cercano a $ q/2 $ y  $ x = 0 $ si el resultado es cercano a $ 0 $.
 
@@ -112,10 +136,13 @@ En el apéndice \ref{apendix:test_lwe.py} puede verse un ejemplo de implementaci
 
 \subsection{Pre}
 
+- RSA
 
+- Boneh–Goh–Nissim cryptosystem (unlimited number of addition operations but at most one multiplication)
 
 \subsection{Primera generación}
 
+- Fully homomorphic encryption using ideal lattices
 
 
 \subsection{Segunda generación}
@@ -148,6 +175,8 @@ No está descrito en el estándar, pero sí se implementa en SEAL.
 
 https://link.springer.com/chapter/10.1007%2F978-3-319-70694-8_15
 
+- Realinearización y límites
+
 - TéCnIcA BoOtsTrApPiNg
 
 % https://link.springer.com/chapter/10.1007/978-3-642-30057-8_1
@@ -159,7 +188,3 @@ https://link.springer.com/chapter/10.1007%2F978-3-319-70694-8_15
 
 
 - TFHE
-
-
-
-\section{Aplicaciones}

@@ -1,5 +1,7 @@
 \chapter{Implementaciones}
 
+\section{Librerías}
+
 Hay varias implementaciones de criptografía homomórfica, y varias soluciones por cada una de las generaciones.
 
 \begin{itemize}
@@ -13,7 +15,7 @@ Hay varias implementaciones de criptografía homomórfica, y varias soluciones p
     \item cuHE
 \end{itemize}{}
 
-\subsection{SEAL}
+\section{SEAL}
 
 SEAL es:
 
@@ -32,6 +34,8 @@ SEAL es:
 
     - Elegir correctamente los parámetros que permitan que se haga
 
+\subsection{Encoders}
+
 - SEAL ofrece encoders para la información:
 
     - IntegerEncoder
@@ -47,9 +51,13 @@ SEAL es:
     Crea matrices (In CKKS the number of slots is poly\_modulus\_degree / 2 and each slot encodes one real or complex number.) Para operar con reales, se pasan a enteros (multiplicando por $10^x$) perdiendo precisión y aumentando el tamaño.
 
 
-En ambos modelos las matrices se pueden rotar haciendo uso de unas claves especiales llamadas Galois Keys (ejemplo 5 de SEAL).
+    En ambos modelos las matrices se pueden rotar haciendo uso de unas claves especiales llamadas Galois Keys (ejemplo 5 de SEAL).
 
-\subsubsection{Usando BFV}
+\subsection{Trabajo con vectores}
+
+...
+
+\subsection{BFV}
 
 Usando BFV el texto tiene un parámetro llamado "noise budget" que indica el nivel de ruido que se ha generado en el texto cifrado (atención: budget es "fichas" que se pueden gastar generando ruido). Este nivel de ruido aumenta a medida que se opera (en realidad, va disminuyendo hasta 0), y cuando llega a 0 indica que, si se sigue operando, no se podrá recuperar el texto.
 
@@ -99,7 +107,7 @@ Levels: Permite ir reduciendo los coeff\_modulus para reducir el tamaño del tex
 
 \fi
 
-\subsubsection{CKKS}
+\subsection{CKKS}
 
 En este esquema podremos trabajar con número decimales, pero hay que estar ajustando constantemente los parámetros para que no se desborde el tamaño y se mantenga la integridad de lo calculado.
 
@@ -111,13 +119,13 @@ Además la operación de suma requiere que los sumandos estén en la misma escal
 
 Especialmente destinado a trabajar con vectores (como en el modo BatchEncoder).
 
-% Performance TESTS
+\subsection{API}
 
-\subsection{TFHE}
 
-\subsubsection{Instalación}
 
-https://tfhe.github.io/tfhe/installation.html
+\section{TFHE}
+
+Instalación: https://tfhe.github.io/tfhe/installation.html
 
 EN su presentación (http://lab.algonics.net/slides/index-ccs.html) dicen: "If Spiderman can swing on his rope long enough to launch a new rope he can fly!"
 
@@ -125,12 +133,7 @@ En TFHE se trabaja directamente con puertas lógicas. No hay ningún parámetro 
 
 Cuando se cifra un texto se genera un array de bits del texto cifrado.
 
-He hecho:
+\subsection{API}
 
-- Suma
+Operaciones incluidas en TFHE.
 
-- Multiplicación
-
-Al ser una ejecución "especulativa", en la multiplicación también es fácil que se puedan perder valores...
-
-En multiplicación como circuito lógico, tarda +- 1 segundo por bit.
