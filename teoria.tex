@@ -78,7 +78,7 @@ $ bi = (ai x s + ei) mod q $, con $i € (1, m)$
   \includegraphics[]{lwe}
 \end{figure}
 
-Conociendo $m$ pares $(ai,bi)$ no se puede determinar el valor $s$.
+Conociendo $m$ pares $(ai,bi)$ no se puede determinar el valor $s$, y no se pueden diferenciar dichos pares de una distribución aleatoria\cite{t._zijlstra_learning_nodate}.
 
 En su estudio, Regev\cite{regev_learning_2010} formula un sistema de clave pública utilizando este problema:
 
@@ -106,10 +106,7 @@ En su estudio, Regev\cite{regev_learning_2010} formula un sistema de clave públ
 
 \end{enumerate}
 
-En el apéndice \ref{apendix:test_lwe.py} puede verse un ejemplo de implementación unidimensional del algoritmo.
-
-https://semidoc.github.io/zijlstra-lwe
-https://medium.com/asecuritysite-when-bob-met-alice/public-key-encryption-with-learning-with-errors-lwe-1aa6dd1df4e
+En el apéndice \ref{apendix:test_lwe.py} puede verse un ejemplo de implementación del algoritmo, y el resultado de su ejecución.
 
 \section{Generaciones}
 
