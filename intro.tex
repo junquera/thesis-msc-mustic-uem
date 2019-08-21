@@ -1,0 +1,67 @@
+\chapter{Introducción}
+\label{chap:intro}
+
+Para todo $ A,B \in \chi{} $, una operación $ \bigoplus $, y una función $f$; si se cumple $ f(A) \bigoplus f(B) = f(A \bigoplus B)$, $ f $ es una función homomórfica con respecto a $ \bigoplus $ en $ \chi{} $. Cuando una función criptográfica cumple esta condición con alguna operación se dice que es maleable (\cite{dolev_non-malleable_1991}). 
+
+Aunque es una propiedad que podría no ser deseable en muchos ámbitos (por ejemplo, en un escenario en el que además de confidencialidad se requiera integridad, permitiría a un atacante modificar los datos), si cumple ciertas condiciones podría tener numerosas aplicaciones. Así se crea el campo de estudio de la criptografía homomórfica.
+
+Se conoce como criptografía homomórfica al conjunto de técnicas criptográficas destinadas a permitir operar con datos cifrados y que dichas operaciones se materialicen correctamente sobre los datos al descifrarlos. En función (principalmente) de las operaciones con las que se cumple esta premisa, o el sistema utilizado para procesar los datos antes y después de operar... Aunque pueda haber muchas variantes de cada una de estas propiedades, la comunidad científica ha establecido criterios y notaciones para su estudio. 
+
+\section{Estandarización}
+
+El consorcio "Homomorphic Encryption Standardization" (\cite{noauthor_homomorphic_nodate-1}) ha ido desarrollando un estándar a lo largo de los años atendiendo a los avances en las distintas tecnologías que componen la criptografía homomórfica, y prestando un interés especial en las implementaciones necesarias para ponerla en práctica. Así, se han ido sucediendo las tres generaciones de criptografía homomórfica.
+
+Se está desarrollando el cuarto encuentro de estandarización.
+
+\subsection{Seguridad}
+
+En el documento \cite{chase_security_2017} ...
+
+- Estudio de las bases seguras de cada tecnología
+
+- Estudio de los ataques conocidos
+
+- Estudio de los parámetros de seguridad recomendados para el escenario actual y un escenario "post-quantum" \cite{citar}
+
+\subsection{API}
+
+\cite{brenner_standard_2017}
+
+(1) a ​storage model​ to identify whatneeds to be included to both serialize and deserialize keys, ciphertexts, plaintexts, encryptionparameters, and scheme/implementation dependent data, and to support homomorphiccomputations; (2) an ​assembly language​ -like representation of homomorphic encryptionprograms, consisting of low-level library calls. These two topics will form the core of thehomomorphic encryption standard.
+
+- SecKeygen
+
+- PubKeygen
+
+- SecEncrypt
+
+- Encrypt
+
+- Decrypt
+
+- Eval
+
+
+Algunos esquemas meten realinearización, rotación...
+
+\subsection{Aplicaciones}
+
+\cite{archer_applications_2017}
+
+- Médicas
+
+- Computación distribuida
+
+- Sistemas de control
+
+APLICACIONES PRÁCTICAS: Medicina, computación distribuida de forma segura...
+
+\section{Objetivo del trabajo}
+
+El objetivo de este trabajo es evaluar si es viable o no utilizar las tecnologías existentes en sistemas y procesos reales. Estudiaremos qué implementaciones hay, en qué consisten, y cuales serán las más idóneas (las más avanzadas, que puedan servir de muestra para inferir la viabilidad de las demás) atendiendo a:
+
+\begin{itemize}
+    \item La facilidad de uso: A fin de cuentas la documentación existente y la mayor o menor facilidad de uso se traduce en horas de salario de trabajadores altamente cualificados.
+    \item Las capacidades de la tecnología: O qué problemas pueden resolverse con ella
+    \item La eficiencia de la solución: Estudiar los tiempos de ejecución de las operaciones
+\end{itemize}
