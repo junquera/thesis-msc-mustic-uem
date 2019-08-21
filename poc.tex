@@ -1,30 +1,23 @@
 \chapter{Solución propuesta}
 \label{chap:poc}
 
-\if false
+Para nuestro trabajo utilizaremos las librerías SEAL (como representante de la segunda generación) y THFE (como representante de la tercera). Comenzaremos con un estudio del funcionamiento de las librerías, de cuales son sus límites computacionales y pienso una operación que no sea "trivial" y a la vez sea computable por ambos.
 
-Para nuestro trabajo utilizaremos las librerías SEAL (como representante de la segunda generación) y THFE (como representante de la tercera).
+La librería SEAL cuenta con pocas operaciones aritméticas implementadas, pero ofrece la posibilidad de trabajar con matrices y números decimales. La principal complicación con SEAL es determinar cómo se está desviando el cálculo para saber cuándo parar o qué correcciones hacer. Además, las operaciones que puede hacer son relativamente limitadas (cuando se hacen, por ejemplo productos, crece mucho el error). Además, el algoritmo que se implemente en SEAL no puede contener más que sumas, restas y multiplicaciones (no existe la división).
 
-Para ello comenzaremos con un estudio del funcionamiento de las librerías, de cuales son sus límites computacionales y pienso una operación que no sea "trivial" y a la vez sea computable por ambos.
-
-La librería SEAL cuenta con varias operaciones aritméticas implementadas que pueden facilitarnos mucho el trabajo, así como la posibilidad de trabajar con matrices y número con coma flotante. La principal complicación con SEAL es calcular cómo se está desviando el cálculo para saber cuando parar o qué correcciones hacer. Además, las operaciones que puede hacer son relativamente limitadas (cuando se hacen, por ejemplo, productos, crece mucho el error). Si se ajustan los parámetros para realizar más operaciones o trabajar con números más grandes, se vuelve lentísima.
-
-La librería TFHE ofrece una API de operaciones lógicas a nivel de bit. Aunque permitirá hacer cálculos más complejos sin añadir error al resultado, tendremos que implementar todas las operaciones a bajo nivel mediante puertas lógicas, siempre teniendo en cuenta que en ningún momento vamos a poder controlar el flujo de ejecución y nuestros algoritmos tienen que ser capaces de realizar los cálculos sin poder evaluar las variables (están cifradas), lo que hará que nuestras operaciones sean
+La librería TFHE ofrece una API de operaciones lógicas a nivel de bit. Aunque permitirá hacer cálculos más complejos sin añadir error al resultado, tendremos que implementar todas las operaciones a bajo nivel mediante puertas lógicas, siempre teniendo en cuenta que en ningún momento vamos a poder controlar el flujo de ejecución y nuestros algoritmos tienen que ser capaces de realizar los cálculos sin poder evaluar las variables (están cifradas).
 
 Por lo tanto tenemos que encontrar un cálculo que sea realizable con pocas operaciones y números bajos para SEAL; y operaciones que sean implementables en un tiempo razonable con puertas lógicas para poder trabajar en TFHE.
 
-Además, la operación que se realice con SEAL no puede contener más que sumas, restas y multiplicaciones (no existe la división).
+Se han elegido tanto el sistema de ejemplo como las tecnologías específicas para cada uno de los actores en función de las capacidades y limitaciones de cada tecnología. Como resultado del proyecto se ha creado, además del análisis y el propio código del proyecto, una librería de operaciones matemáticas implementadas en TFHE (\cite{junquera_tfhe_2019}) con puertas lógicas, que es innovadora en tanto en cuanto no existe ningún código público que permita trabajar con TFHE a este nivel.
 
-He decicido hacer una regresión cuadrática de temperaturas de dos ciudades (esto lo haré con TFHE para poder hacer suma, resta, multiplicación y DIVISIÓN), que permitirá que un usuario en una fecha dada suba a SEAL su temperatura cifrada y averigue su localización.
+\section{Funcionamiento del sistema}
 
-Generaremos "el modelo" (la curva de regresión f(x)) con TFHE, porque para ello necesitaremos realizar operaciones muy costosas (elevando hasta la 4) y necesitamos dividir para hacer la media. Evaluaremos los datos introducidos por el usuario en SEAL (distancia entre f("x introducido por el usuario") y "y introducida por el usuario").
-\fi
+Para analizar las librerías implementaremos un sistema de posicionamiento anónimo en función de la temperatura y el mes del año. La base para determinar la posición serán dos curvas de regresión cuadrática de temperaturas de dos ciudades (generada con TFHE), que permitirá que un usuario suba a SEAL la fecha y la temperatura cifradas y averigüe su localización.
 
-Para analizar las librerías he elaborado un sistema de posicionamiento anónimo en función de la temperatura y el mes del año.
+En este sistema habrá tres actores: el cliente, el servidor de posicionamiento (programado con SEAL) y un tercer servidor (programado con TFHE) que generará el modelo para calcular la posición. El cliente consultará su posición con el servidor de SEAL, que previamente habrá generado en el servidor de TFHE un modelo de posicionamiento basado en las temperaturas del último año en varias ubicaciones (ver \ref{fig:sistema_completo}).
 
-En este sistema habrá tres actores: el cliente, el servidor de posicionamiento (programado con SEAL) y un tercer servidor (programado con TFHE) que generará el modelo para calcular la posición.
-
-El cliente consultará su posición con el servidor de SEAL, que previamente habrá generado en el servidor de TFHE un modelo de posicionamiento basado en las temperaturas del último año en varias ubicaciones (ver \ref{fig:sistema_completo}).
+Generaremos dicho modelo (la curva de regresión $f(x)$) con TFHE porque para ello necesitaremos realizar operaciones aritméticas que no nos ofrece SEAL. De esta forma, podremos realizar la evaluación de los datos introducidos por el usuario con SEAL (distancia entre el valor de temperatura $y$ especificado por el usuario, y $f(x)$ con $x$ el mes del año) utilizando sus operaciones más básicas, y aprovechando su sistema de vectores para evaluar todas las curvas al mismo tiempo.
 
 \begin{figure}[h]
     \caption{Flujo de los datos cifrados\footnote{Diagrama generado con Piktochart \url{https://piktochart.com}}}
@@ -32,37 +25,56 @@ El cliente consultará su posición con el servidor de SEAL, que previamente hab
     \includegraphics[width=\linewidth]{sistema_completo}
 \end{figure}
 
-Se han elegido tanto el sistema de ejemplo como las tecnologías específicas para cada uno de los actores en función de las capacidades y limitaciones de cada tecnología. Como resultado del proyecto se ha creado, además del análisis y el propio código del proyecto, una librería de operaciones matemáticas implementadas en TFHE (\cite{junquera_tfhe_2019}) con puertas lógicas, que es innovadora en tanto en cuanto no existe ningún código público que permita trabajar con TFHE a este nivel.
-
-\section{Funcionamiento del sistema}
-
-% TODO Gráficos de curvas de regresión con ejemplos
-
 \subsection{Generación del modelo}
 
 Para generar el modelo el cliente (en este caso, el servidor de posicionamiento con SEAL) y el servidor (el servidor con TFHE) seguirían el siguiente procedimiento:
 
-1. El cliente genera un par de claves.
+\begin{enumerate}
+    \item El cliente genera un par de claves (pública y privada).
 
-2. Cifra n pares de datos (en nuestro ejemplo el par sería (mes, temperatura)).
+    \item Cifra $n$ pares de datos (en nuestro ejemplo el par sería $(mes, temperatura)$).
 
-3. Sube los datos cifrados y su clave pública. El número de datos que se puede subir está limitado por el crecimiento del tamaño (en bits) de dichos datos al exponenciarlos para calcular la curva de regresión. Trabajaremos con los datos de 12 meses porque, como comentaremos más adelante\ref{chap:resultados}, aunque el orden máximo al que llegaríamos con estos datos es de 46 bits tendremos otras limitaciones a la hora de procesar los datos.
+    \item Sube los datos cifrados y su clave pública. El número de datos que se puede subir está limitado por el crecimiento del tamaño (en bits) de dichos datos al exponenciarlos para calcular la curva de regresión. Trabajaremos con los datos de 12 meses porque, como comentaremos más adelante\ref{chap:resultados}, aunque el orden máximo al que llegaríamos con estos datos es de 46 bits tendremos otras limitaciones a la hora de procesar los datos.
 
-4. El servidor procesa los datos y devuelve cifrados los parámetros de la curva
+    \item El servidor procesa los datos y devuelve cifrados los parámetros de la curva
 
-5. El cliente los descifra y los almacena asociados a una posición geográfica
+    \item El cliente los descifra y los almacena asociados a una posición geográfica
+\end{enumerate}
 
 Finalmente, con los parámetros recibidos, el cliente obtendría una curva similar a \ref{fig:reg2_cg}.
 
 \begin{figure}[h]
     \caption{Curva de Regresión Cuadrática con temperaturas de Cabo de Gata}
     \label{fig:reg2_cg}
-    \includegraphics[]{reg2_cg}
+    \includegraphics[width=\linewidth]{reg2_cg}
 \end{figure}
 
 \subsection{Obtención de la posición}
 
+Teniendo el servidor de SEAL ya generados los modelos de la temperatura de cada ubicación (en este caso, sólo los 2 de Cabo de Gata y Finisterre) el cliente (ahora ya sí, el usuario final) consultará su ubicación:
 
+\begin{enumerate}
+    \item El cliente genera tres claves: pública, privada y clave de realinearización.
+
+    \item El cliente cifra (con su clave pública) la temperatura y el mes del año para el que quiere hacer la consulta, generando los valores $y$ e $x$ respectivamente.
+
+    \item Sube ambos valores al servidor, junto con la clave de realinearización (en nuestro ejemplo, no se necesitará subir la pública).
+    
+    \item El servidor calculará la diferencia (resta) entre el punto $y$ y $f(x)$ para cada curva
+    
+    \item El servidor devuelve una lista con los valores calculados y la ubicación a la que corresponde cada valor
+    
+    \item El cliente descifra los valores con su clave privada, obteniendo la distancia entre la temperatura introducida y el valor de la curva de cada una de las ubicaciones ese mes.
+    
+\end{enumerate}
+
+En la figura \ref{fig:t_vs_r2} se puede ver un ejemplo del funcionamiento del sistema de posicionamiento. Los puntos introducidos corresponden a las temperaturas de varias ubicaciones, y el sistema de posicionamiento devolvería la distancia entre estos puntos y las dos curvas de regresión. De esta forma se puede obtener una estimación de la posición. En el ejemplo vemos que, la temperatura en Cabo de Gata está muy próxima a su curva en el mes de junio, y daría un resultado indeterminado en abril; que la temperatura de Madrid no casaría con ninguna de las dos curvas; o que la temperatura de Finisterre en noviembre efectivamente está mucho más cerca de la curva de Finisterre que de la de Cabo de Gata.
+
+\begin{figure}[h]
+    \caption{Temperatura vs Regresión}
+    \label{fig:t_vs_r2}
+    \includegraphics[width=\linewidth]{t_vs_r2}
+\end{figure}
 
 \section{Implementación con TFHE}
 

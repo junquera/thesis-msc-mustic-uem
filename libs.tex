@@ -56,11 +56,15 @@ SEAL es:
 
     En ambos modelos las matrices se pueden rotar haciendo uso de unas claves especiales llamadas Galois Keys (ejemplo 5 de SEAL).
 
+\subsection{Niveles de error}
+
+...
+
 \subsection{Trabajo con vectores}
 
 ...
 
-\subsection{BFV}
+\subsection{Esquema BFV}
 
 Usando BFV el texto tiene un parámetro llamado "noise budget" que indica el nivel de ruido que se ha generado en el texto cifrado (atención: budget es "fichas" que se pueden gastar generando ruido). Este nivel de ruido aumenta a medida que se opera (en realidad, va disminuyendo hasta 0), y cuando llega a 0 indica que, si se sigue operando, no se podrá recuperar el texto.
 
@@ -110,7 +114,7 @@ Levels: Permite ir reduciendo los coeff\_modulus para reducir el tamaño del tex
 
 \fi
 
-\subsection{CKKS}
+\subsection{Esquema CKKS}
 
 En este esquema podremos trabajar con número decimales, pero hay que estar ajustando constantemente los parámetros para que no se desborde el tamaño y se mantenga la integridad de lo calculado.
 
