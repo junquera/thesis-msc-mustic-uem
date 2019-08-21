@@ -59,13 +59,13 @@ Teniendo el servidor de SEAL ya generados los modelos de la temperatura de cada 
     \item El cliente cifra (con su clave pública) la temperatura y el mes del año para el que quiere hacer la consulta, generando los valores $y$ e $x$ respectivamente.
 
     \item Sube ambos valores al servidor, junto con la clave de realinearización (en nuestro ejemplo, no se necesitará subir la pública).
-    
+
     \item El servidor calculará la diferencia (resta) entre el punto $y$ y $f(x)$ para cada curva
-    
+
     \item El servidor devuelve una lista con los valores calculados y la ubicación a la que corresponde cada valor
-    
+
     \item El cliente descifra los valores con su clave privada, obteniendo la distancia entre la temperatura introducida y el valor de la curva de cada una de las ubicaciones ese mes.
-    
+
 \end{enumerate}
 
 En la figura \ref{fig:t_vs_r2} se puede ver un ejemplo del funcionamiento del sistema de posicionamiento. Los puntos introducidos corresponden a las temperaturas de varias ubicaciones, y el sistema de posicionamiento devolvería la distancia entre estos puntos y las dos curvas de regresión. De esta forma se puede obtener una estimación de la posición. En el ejemplo vemos que, la temperatura en Cabo de Gata está muy próxima a su curva en el mes de junio, y daría un resultado indeterminado en abril; que la temperatura de Madrid no casaría con ninguna de las dos curvas; o que la temperatura de Finisterre en noviembre efectivamente está mucho más cerca de la curva de Finisterre que de la de Cabo de Gata.
@@ -127,5 +127,13 @@ He hecho las siguientes operaciones aritméticas:
 
 - Suma
 
+\subsection{Modelo Cliente-Servidor}
+
 
 \section{Implementación con SEAL}
+
+\subsection{Cálculo de la posición}
+
+EL sistema CKKS ofrece la posibilidad de trabajar con varios datos a la vez codificándolos como vectores
+
+\subsection{Modelo Cliente-Servidor}

@@ -34,8 +34,36 @@ SEAL es:
     - Codificarla
 
     - Elegir correctamente los parámetros que permitan que se haga
-    
+
 - Bajo determinados usos, puede ser insegura. Por ejemplo, no se debe permitir el descifrado desde fuera \cite{peng_danger_2019} (no es CCA seguro).
+
+
+La API para operar con SEAL está codificada en los siguientes elementos:
+
+\begin{itemize}
+  \item EncryptionParameters
+  \item SEALContext
+  \item Claves
+  \begin{itemize}
+    \item SecretKey: Clave secreta para descifrar los datos
+    \item PublicKey: Clave pública para descifrar los datos
+    \item RelinKeys: CLaves públicas para realinearizar los datos y reducir el nivel de error acumulado tras operar
+    \item GaloisKeys: Claves públicas para trabajar con rotaciones en los vectores cifrados (en nuestro ejemplo no las usamos)
+  \end{itemize}
+  \item Encryptor, Decryptor: Sistemas para cifrar y descifrar los datos
+  \item Evaluator: Es el componente que realiza las operaciones sobre los datos cifrados
+  \item Encoders: Encargado de codificar los datos en función del esquema que se desee utilizar
+\end{itemize}
+
+A continuación desarrollaremos el funcionamiento de los componentes más complejos.
+
+\subsection{EncryptionParameters}
+
+
+
+\subsection{SEALContext}
+
+
 
 \subsection{Encoders}
 
@@ -126,10 +154,6 @@ Además la operación de suma requiere que los sumandos estén en la misma escal
 
 Especialmente destinado a trabajar con vectores (como en el modo BatchEncoder).
 
-\subsection{API}
-
-
-
 \section{TFHE}
 
 Instalación: https://tfhe.github.io/tfhe/installation.html
@@ -140,7 +164,37 @@ En TFHE se trabaja directamente con puertas lógicas. No hay ningún parámetro 
 
 Cuando se cifra un texto se genera un array de bits del texto cifrado.
 
+Los elementos son mucho menos complejos que en SEAL, y está codificado en unos pocos grupos de elementos:
+
+\begin{itemize}
+  \item Parámetros de cifrado (\texttt{TFheGateBootstrappingParameterSet})
+  \item Claves: Privada ( (\texttt{TFheGateBootstrappingSecretKeySet})) y pública (\texttt{TFheGateBootstrappingCloudKeySet})
+  \item Operaciones de cifrado y descifrado
+  \item Operaciones lógicas sobre texto cifrado (\texttt{LweSample})
+\end{itemize}
+
+Además, TFHE ofrece funciones para limpiar la memoria, dejando en manos del desarrollador la posibilidad de evitar fugas de información una vez no se va a utilizar un elemento.
+
 \subsection{API}
 
 Operaciones incluidas en TFHE.
 
+- bootsCONSTANT(LweSample* result, int value, const TFheGateBootstrappingCloudKeySet* bk)
+- bootsNOT(LweSample* result, const LweSample* ca, const TFheGateBootstrappingCloudKeySet* bk)
+- bootsCOPY(LweSample* result, const LweSample* ca, const TFheGateBootstrappingCloudKeySet* bk)
+
+- Puertas lógicas:
+
+  - bootsNAND
+  - bootsOR
+  - bootsAND
+  - bootsXOR
+  - bootsXNOR
+  - bootsNOR
+  - bootsANDNY
+  - bootsANDYN
+  - bootsORNY
+  - bootsORYN
+
+
+- bootsMUX
