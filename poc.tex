@@ -26,15 +26,13 @@ En este sistema habrá tres actores: el cliente, el servidor de posicionamiento 
 
 El cliente consultará su posición con el servidor de SEAL, que previamente habrá generado en el servidor de TFHE un modelo de posicionamiento basado en las temperaturas del último año en varias ubicaciones (ver \ref{fig:sistema_completo}).
 
-
 \begin{figure}[h]
-\caption{Flujo de los datos \footnote{Diagrama generado con Piktochart \url{https://piktochart.com}}}
-\label{fig:sistema_completo}
-\includegraphics[]{sistema_completo}
+    \caption{Flujo de los datos cifrados\footnote{Diagrama generado con Piktochart \url{https://piktochart.com}}}
+    \label{fig:sistema_completo}
+    \includegraphics[width=\linewidth]{sistema_completo}
 \end{figure}
 
-
-Se han elegido tanto el sistema de ejemplo como las tecnologías específicas para cada uno de los actores en función de las capacidades y limitaciones de cada tecnología. Como resultado del proyecto se ha creado, además del análisis y el propio código del proyecto, una librería de operaciones matemáticas implementadas en TFHE\cite{tfhe-math} con puertas lógicas, que es innovadora en tanto en cuanto no existe ningún código público que permita trabajar con TFHE a este nivel.
+Se han elegido tanto el sistema de ejemplo como las tecnologías específicas para cada uno de los actores en función de las capacidades y limitaciones de cada tecnología. Como resultado del proyecto se ha creado, además del análisis y el propio código del proyecto, una librería de operaciones matemáticas implementadas en TFHE (\cite{junquera_tfhe_2019}) con puertas lógicas, que es innovadora en tanto en cuanto no existe ningún código público que permita trabajar con TFHE a este nivel.
 
 \section{Funcionamiento del sistema}
 
@@ -42,13 +40,25 @@ Se han elegido tanto el sistema de ejemplo como las tecnologías específicas pa
 
 \subsection{Generación del modelo}
 
-1. El cliente (en este caso, el servidor de SEAL) genera un par de claves.
+Para generar el modelo el cliente (en este caso, el servidor de posicionamiento con SEAL) y el servidor (el servidor con TFHE) seguirían el siguiente procedimiento:
+
+1. El cliente genera un par de claves.
 
 2. Cifra n pares de datos (en nuestro ejemplo el par sería (mes, temperatura)).
 
 3. Sube los datos cifrados y su clave pública. El número de datos que se puede subir está limitado por el crecimiento del tamaño (en bits) de dichos datos al exponenciarlos para calcular la curva de regresión. Trabajaremos con los datos de 12 meses porque, como comentaremos más adelante\ref{chap:resultados}, aunque el orden máximo al que llegaríamos con estos datos es de 46 bits tendremos otras limitaciones a la hora de procesar los datos.
 
 4. El servidor procesa los datos y devuelve cifrados los parámetros de la curva
+
+5. El cliente los descifra y los almacena asociados a una posición geográfica
+
+Finalmente, con los parámetros recibidos, el cliente obtendría una curva similar a \ref{fig:reg2_cg}.
+
+\begin{figure}[h]
+    \caption{Curva de Regresión Cuadrática con temperaturas de Cabo de Gata}
+    \label{fig:reg2_cg}
+    \includegraphics[]{reg2_cg}
+\end{figure}
 
 \subsection{Obtención de la posición}
 
