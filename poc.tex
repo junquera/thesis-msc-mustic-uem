@@ -124,7 +124,7 @@ TFHE sólo ofrece operadores lógicos, así que tenemos que escribir la operacio
 
 El desarrollo de esta librería ha sido quizás la parte más costosa del trabajo, pero también la que más resultados arroja sobre la implementación de criptografía homomórfica en un entorno real. Como hemos comentado, hemos desarrollado las operaciones aritméticas necesarias para poder realizar la regresión cuadrática teniendo en cuenta que necesitábamos codificar los valores como número reales.
 
-TFHE sólo trabaja con arrays de bits cifrados, y los datos no se pueden evaluar durante la ejecución del programa, así que hemos tenido que meter algunas funciones redundantes para cubrir todos los supuestos: Por ejemplo, en la multiplicación trabajamos asumiendo que los dos factores tienen signo positivo y corregimos el resultado utilizando la puerta lógica \texttt{MUX}. Por otro lado, como hay algunos casos en los que vamos a tener la certeza del signo de los operandos (porque lo hemos gestionado ya antes), y la lógica de tratamiento del signo es muy pesada, hemos creado algunas funciones para trabajar con números sin signo, cuyo nombre hemos precedido de \texttt{u_} (de \textit{unsigned}).
+TFHE sólo trabaja con arrays de bits cifrados, y los datos no se pueden evaluar durante la ejecución del programa, así que hemos tenido que meter algunas funciones redundantes para cubrir todos los supuestos: Por ejemplo, en la multiplicación trabajamos asumiendo que los dos factores tienen signo positivo y corregimos el resultado utilizando la puerta lógica \texttt{MUX}. Por otro lado, como hay algunos casos en los que vamos a tener la certeza del signo de los operandos (porque lo hemos gestionado ya antes), y la lógica de tratamiento del signo es muy pesada, hemos creado algunas funciones para trabajar con números sin signo, cuyo nombre hemos precedido de \texttt{u\_} (de \textit{unsigned}).
 
 A la hora de trabajar con los números con coma flotante, para proteger los decimales al codificar el número como entero, les asignamos un número determinado de bits. Por defecto, cuando trabajamos con números de 64 bits, les asignamos 10 (y así podemos guardar 3 decimales). Así por ejemplo, si queremos trabajar con el número $ 3.14 $, lo multiplicamos por $ 1024 $ ($ 2^10 $, el equivalente a moverlo 10 bits hacia la izquierda) y trabajamos con $ 3215 $. Lo hacemos de esta forma (en lugar de, por ejemplo, multiplicar por 10) porque la operación de desplazamiento de bits es casi gratuita (en cuanto a tiempo de cómputo), mientras que la multiplicación y la división son muy costosas. Cuantos más bits introduzcamos, obtendremos mayor precisión, pero bajará la eficiencia.
 
@@ -136,7 +136,7 @@ Tenemos que tener precaución principalmente en dos aspectos:
 
   \begin{gather}
     a' / b' = ( a * 2^{10} ) / ( b * 2^{10} ) = (a / b) \\
-    (a / b) \notequal (a / b) * 2^{10}
+    (a / b) \neq (a / b) * 2^{10}
   \end{gather}
 
   Para que al restaurar el número no haya errores quitando las posiciones de los decimales:
@@ -149,7 +149,7 @@ Tenemos que tener precaución principalmente en dos aspectos:
 
   \begin{gather}
     a' * b' = ( a * 2^{10} ) * ( b * 2^{10} ) = a * b * 2^{20} \\
-    a * b * 2^{20} \notequal a * b * 2^{10}
+    a * b * 2^{20} \neq a * b * 2^{10}
   \end{gather}
 
   Para, además de evitar errores al restaurar el número, no se produzcan desbordamientos (si $a$ es de 4 bits, y $b$ es de 3, $ a * b $ ocupará 7 bits):
@@ -170,16 +170,16 @@ Tenemos que tener precaución principalmente en dos aspectos:
     \item Aplicamos la función \texttt{negativo} sobre el resultado, y esta vez determinamos (usando \texttt{MUX} qué devolver con el parámetro \texttt{corrector}: Si es \texttt{1} devolvemos el resultado negado, si es \texttt{0} el mismo que ha devuelvo el cálculo.
   \end{enumerate}
 
-\end{enumerate}}
+\end{enumerate}
 
 A continuación veremos cómo trabajan nuestras principales funciones:
 
 \begin{itemize}
   \item gte
-  \item is_negative
+  \item is\_negative
   \item negativo
-  \item minimum/maximum
-  \item shiftl/shiftr
+  \item minimum / maximum
+  \item shiftl / shiftr
   \item add / sub
   \item mult
   \item div
