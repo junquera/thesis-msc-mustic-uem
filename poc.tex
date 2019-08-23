@@ -126,7 +126,11 @@ El desarrollo de esta librería ha sido quizás la parte más costosa del trabaj
 
 TFHE sólo trabaja con arrays de bits cifrados, y los datos no se pueden evaluar durante la ejecución del programa, así que hemos tenido que meter algunas funciones redundantes para cubrir todos los supuestos: Por ejemplo, en la multiplicación trabajamos asumiendo que los dos factores tienen signo positivo y corregimos el resultado utilizando la puerta lógica \texttt{MUX}. Por otro lado, como hay algunos casos en los que vamos a tener la certeza del signo de los operandos (porque lo hemos gestionado ya antes), y la lógica de tratamiento del signo es muy pesada, hemos creado algunas funciones para trabajar con números sin signo, cuyo nombre hemos precedido de \texttt{u\_} (de \textit{unsigned}).
 
-A la hora de trabajar con los números con coma flotante, para proteger los decimales al codificar el número como entero, les asignamos un número determinado de bits. Por defecto, cuando trabajamos con números de 64 bits, les asignamos 10 (y así podemos guardar 3 decimales). Así por ejemplo, si queremos trabajar con el número $ 3.14 $, lo multiplicamos por $ 1024 $ ($ 2^10 $, el equivalente a moverlo 10 bits hacia la izquierda) y trabajamos con $ 3215 $. Lo hacemos de esta forma (en lugar de, por ejemplo, multiplicar por 10) porque la operación de desplazamiento de bits es casi gratuita (en cuanto a tiempo de cómputo), mientras que la multiplicación y la división son muy costosas. Cuantos más bits introduzcamos, obtendremos mayor precisión, pero bajará la eficiencia.
+A la hora de trabajar con los números con coma flotante, para proteger los decimales al codificar el número como entero, les asignamos un número determinado de bits. Por defecto, cuando trabajamos con números de 64 bits, les asignamos 10 (y así podemos guardar 3 decimales). Así por ejemplo, si queremos trabajar con el número $ 3.14 $, lo multiplicamos por $ 1024 $ ($ 2^{10} $, el equivalente a moverlo 10 bits hacia la izquierda) y trabajamos con $ 3215 $. 
+
+% TODO POner ejemplo de 3.14 * 1.4
+
+Lo hacemos de esta forma (en lugar de, por ejemplo, multiplicar por 10) porque la operación de desplazamiento de bits es casi gratuita (en cuanto a tiempo de cómputo), mientras que la multiplicación y la división son muy costosas. Cuantos más bits introduzcamos, obtendremos mayor precisión, pero bajará la eficiencia.
 
 Tenemos que tener precaución principalmente en dos aspectos:
 
@@ -155,22 +159,24 @@ Tenemos que tener precaución principalmente en dos aspectos:
   Para, además de evitar errores al restaurar el número, no se produzcan desbordamientos (si $a$ es de 4 bits, y $b$ es de 3, $ a * b $ ocupará 7 bits):
 
   \begin{gather}
-    a' * b' \rightarrow (a' * b') / 2^{10} = (a / b) * 2^{10}
+    a' * b' \rightarrow (a' * b') / 2^{10} = a * b * 2^{10}
   \end{gather}
 
   \item La gestión del signo
 
-  Para trabajar con el signo de los números se codifican en complemento a 2 \cite{complemento_a_2}. En la suma y la resta podemos operar libremente, pero a la hora de hacer la división y el producto (nuevamente) hemos tenido que implementar los algoritmos que "no entienden de signo".  Siempre que necesitamos trabajar con algoritmos sin signo, y como no podemos cambiar el flujo de ejecución en función del mismo (porque no podemos verlo), realizamos el siguiente proceso con cada operando:
+  Para trabajar con el signo de los números se codifican en complemento a 2 \cite{complemento_a_2}. En la suma y la resta podemos operar libremente, pero a la hora de hacer la división y el producto (nuevamente) hemos tenido que implementar algoritmos que "no entienden de signo".  Siempre que necesitamos trabajar con algoritmos sin signo, y como no podemos cambiar el flujo de ejecución en función del mismo (porque no podemos verlo), realizamos el siguiente proceso con cada operando:
 
   \begin{enumerate}
     \item Negamos el operando: Para ello hemos creado la función \texttt{negativo} que devuelve el negativo del número si es positivo, y el positivo si es negativo.
     \item Guardarmos (usando la puerta \texttt{MUX}) el mayor de los dos para asegurarnos de trabajar con el número en positivo
     \item Guardamos en un bit (cifrado, un bit que no vemos pero que \texttt{MUX} será capaz de interpretar) si el número es positivo (guardarmos \texttt{0}) o negativo (guardamos \texttt{1})
     \item Tras operar comparamos con la puerta \texttt{XOR} los bits que indican si los operandos eran positivos o negativos. Nos devolverá \texttt{0} sólo si ambos eran positivos o negativos, indicando que no hay que hacer ninguna corrección. Llamaremos a este bit \texttt{corrector}.
-    \item Aplicamos la función \texttt{negativo} sobre el resultado, y esta vez determinamos (usando \texttt{MUX} qué devolver con el parámetro \texttt{corrector}: Si es \texttt{1} devolvemos el resultado negado, si es \texttt{0} el mismo que ha devuelvo el cálculo.
+    \item Aplicamos la función \texttt{negativo} sobre el resultado, y esta vez determinamos (usando \texttt{MUX}) qué devolver con el parámetro \texttt{corrector}: Si es \texttt{1} devolvemos el resultado negado, si es \texttt{0} el mismo que ha devuelvo el cálculo.
   \end{enumerate}
 
 \end{enumerate}
+
+\subsubsection{Operaciones}
 
 A continuación veremos cómo trabajan nuestras principales funciones:
 
@@ -187,7 +193,7 @@ A continuación veremos cómo trabajan nuestras principales funciones:
 
   \item \verb|is_negative|
 
-  Devuelve el valor del bit más significativo de \verb|a| (que es \verb|1| si es negativo y \verb|0| si no).
+  Devuelve el valor del bit más significativo de \verb|a| (que es \verb|1| si es negativo y \verb|0| si no por la codificación en complemento a 2).
 
   \begin{lstlisting}[language=c++]
   void is_negative(LweSample* result, const LweSample* a, 
@@ -271,12 +277,6 @@ A continuación veremos cómo trabajan nuestras principales funciones:
 
 
 \end{itemize}
-
-$ OPERACIONES DE FUNCTIONS.h $
-
-He hecho las siguientes operaciones aritméticas:
-
-- Suma
 
 \subsection{Modelo Cliente-Servidor}
 
