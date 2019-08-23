@@ -179,22 +179,48 @@ Además, TFHE ofrece funciones para limpiar la memoria, dejando en manos del des
 
 Operaciones incluidas en TFHE.
 
-- bootsCONSTANT(LweSample* result, int value, const TFheGateBootstrappingCloudKeySet* bk)
-- bootsNOT(LweSample* result, const LweSample* ca, const TFheGateBootstrappingCloudKeySet* bk)
-- bootsCOPY(LweSample* result, const LweSample* ca, const TFheGateBootstrappingCloudKeySet* bk)
+\begin{itemize}
+  \item bootsCONSTANT
 
-- Puertas lógicas:
+  \begin{lstlisting}[language=c++]
+  void bootsCONSTANT(LweSample* result, int value,
+    const TFheGateBootstrappingCloudKeySet* bk);
+    \end{lstlisting}
 
-  - bootsNAND
-  - bootsOR
-  - bootsAND
-  - bootsXOR
-  - bootsXNOR
-  - bootsNOR
-  - bootsANDNY
-  - bootsANDYN
-  - bootsORNY
-  - bootsORYN
+    \item bootsNOT
 
+    \begin{lstlisting}[language=c++]
+    void bootsNOT(LweSample* result, const LweSample* ca,
+      const TFheGateBootstrappingCloudKeySet* bk);
+      \end{lstlisting}
 
-- bootsMUX
+      \item bootsCOPY
+
+      \begin{lstlisting}[language=c++]
+      bootsCOPY(LweSample* result, const LweSample* ca,
+        const TFheGateBootstrappingCloudKeySet* bk);
+        \end{lstlisting}
+
+        \item Puertas lógicas
+
+        \begin{itemize}
+          \item NAND
+
+          \item OR
+
+          \item AND
+
+          \item XOR
+
+          \item XNOR
+
+          \item NOR
+
+          \item ANDNY, ANDYN
+
+          \item ORNY, ORYN
+
+        \end{itemize}
+
+        \item bootsMUX
+\end{itemize}
