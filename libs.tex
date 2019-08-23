@@ -183,44 +183,44 @@ Operaciones incluidas en TFHE.
   \item bootsCONSTANT
 
   \begin{lstlisting}[language=c++]
-  void bootsCONSTANT(LweSample* result, int value,
-    const TFheGateBootstrappingCloudKeySet* bk);
-    \end{lstlisting}
+    void bootsCONSTANT(LweSample* result, int value,
+                      const TFheGateBootstrappingCloudKeySet* bk);
+  \end{lstlisting}
 
-    \item bootsNOT
+  \item bootsNOT
 
-    \begin{lstlisting}[language=c++]
+  \begin{lstlisting}[language=c++]
     void bootsNOT(LweSample* result, const LweSample* ca,
-      const TFheGateBootstrappingCloudKeySet* bk);
-      \end{lstlisting}
+                  const TFheGateBootstrappingCloudKeySet* bk);
+  \end{lstlisting}
 
-      \item bootsCOPY
+  \item bootsCOPY
 
-      \begin{lstlisting}[language=c++]
-      bootsCOPY(LweSample* result, const LweSample* ca,
-        const TFheGateBootstrappingCloudKeySet* bk);
-        \end{lstlisting}
+  \begin{lstlisting}[language=c++]
+    bootsCOPY(LweSample* result, const LweSample* ca,
+              const TFheGateBootstrappingCloudKeySet* bk);
+  \end{lstlisting}
 
-        \item Puertas lógicas
+  \item Puertas lógicas
 
-        \begin{itemize}
-          \item NAND
+  \begin{itemize}
+    \item NAND
 
-          \item OR
+    \item OR
 
-          \item AND
+    \item AND
 
-          \item XOR
+    \item XOR
 
-          \item XNOR
+    \item XNOR
 
-          \item NOR
+    \item NOR
 
-          \item ANDNY, ANDYN
+    \item ANDNY, ANDYN
 
-          \item ORNY, ORYN
+    \item ORNY, ORYN
 
-        \end{itemize}
+  \end{itemize}
 
-        \item bootsMUX
+  \item bootsMUX
 \end{itemize}
