@@ -175,14 +175,76 @@ Tenemos que tener precaución principalmente en dos aspectos:
 A continuación veremos cómo trabajan nuestras principales funciones:
 
 \begin{itemize}
-  \item gte
-  \item is\_negative
-  \item negativo
-  \item minimum / maximum
-  \item shiftl / shiftr
-  \item add / sub
-  \item mult
-  \item div
+  \item \texttt{gte}
+
+  Compara los \verb|nb_bits| bits de \verb|a| y \verb|b| y marcar el bit \verb|result| con el valor de la expresión lógica \verb|a >= b|.
+
+  \begin{lstlisting}[language=c++]
+  void gte(LweSample* result, const LweSample* a, const LweSample* b, const int nb_bits, const TFheGateBootstrappingCloudKeySet* bk);
+  \end{lstlisting}
+
+  \item \verb|is_negative|
+
+  Devuelve el valor del bit más significativo de \verb|a| (que es \verb|1| si es negativo y \verb|0| si no).
+
+  \begin{lstlisting}[language=c++]
+  void is_negative(LweSample* result, const LweSample* a, const int nb_bits, const TFheGateBootstrappingCloudKeySet* bk);
+  \end{lstlisting}
+
+  \item \texttt{negativo}
+
+  Realiza el cambio de valor de \verb|a| en complemento a 2: Niega todos los bits y suma 1 al resultado.
+
+  \begin{lstlisting}[language=c++]
+  void negativo(LweSample* result, const LweSample* a, const int nb_bits, const TFheGateBootstrappingCloudKeySet* bk);
+  \end{lstlisting}
+
+
+  \item \texttt{minimum} / \texttt{maximum}
+
+  ...
+
+  \begin{lstlisting}[language=c++]
+  void minimum(LweSample* result, const LweSample* a, const LweSample* b, const int nb_bits, const TFheGateBootstrappingCloudKeySet* bk);
+  void maximum(LweSample* result, const LweSample* a, const LweSample* b, const int nb_bits, const TFheGateBootstrappingCloudKeySet* bk);
+  \end{lstlisting}
+
+  \item \texttt{shiftl} / \texttt{shiftr}
+
+  ...
+
+  \begin{lstlisting}[language=c++]
+  void shiftl(LweSample* result, const LweSample* a, const int posiciones, const int nb_bits, const TFheGateBootstrappingCloudKeySet* bk);
+  void shiftr(LweSample* result, const LweSample* a, const int posiciones, const int nb_bits, const TFheGateBootstrappingCloudKeySet* bk);
+  \end{lstlisting}
+
+  \item \texttt{add} / \texttt{sub}
+
+  ...
+
+  \verb|add| suma \verb|a| y \verb|b|. \verb|sub| aplica la función \verb|negativo| sobre \verb|b| y luego suma \verb|a| y \verb|-b|.
+
+  \begin{lstlisting}[language=c++]
+  void add(LweSample* result, const LweSample* a, const LweSample* b, const int nb_bits, const TFheGateBootstrappingCloudKeySet* bk);
+  void sub(LweSample* result, const LweSample* a, const LweSample* b, const int nb_bits, const TFheGateBootstrappingCloudKeySet* bk);
+  \end{lstlisting}
+
+  \item \texttt{mult}
+
+  ...
+
+  \begin{lstlisting}[language=c++]
+  void mult_float(LweSample* result, const LweSample* a, const LweSample* b, const int float_bits, const int nb_bits, const TFheGateBootstrappingCloudKeySet* bk);
+  \end{lstlisting}
+
+  \item \texttt{div}
+
+  ...
+
+  \begin{lstlisting}[language=c++]
+  void div_float(LweSample* result, const LweSample* a, const LweSample* b, const int float_bits, const int nb_bits, const TFheGateBootstrappingCloudKeySet* bk);
+  \end{lstlisting}
+
 
 \end{itemize}
 
