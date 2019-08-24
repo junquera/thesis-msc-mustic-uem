@@ -12,17 +12,21 @@ La tercera y última generación ya es considerada FHE, pues permite, gracias al
 
 \section{Tipos}
 
-- Partially homomorphic
+Las generaciones publicadas por el estándar guardan una estrecha relación con las capacidades que tienen los esquemas para trabajar con los datos cifrados. Estas capacidades que van desde la posibilidad de aplicar algún homomorfismo a poder trabajar libremente con el texto cifrado están categorizadas en tres niveles. Para comenzar, veremos cuales son estos tres tipos:
 
-- Somewhat
+\begin{itemize}
+  \item Partially Homomorphic Encryption
+  \item Somewhat Homomorphic Encryption (SHE)
+  \item Fully Homormorphic Encryption (FHE)
+\end{itemize}
 
-- Fully
+Más adelante veremos qué esquemas concretos existen, y a qué tipo pertenecerán.
 
 \section{Primitivas matemáticas}
 
 La seguridad de los sistemas criptográficos se basa en problemas matemáticos que, si bien pueden ser resolubles, dicha resolución no es computacionalmente viable en un tiempo razonable: factorización de enteros, logaritmo discreto, ordenación de conjuntos...
 
-La base de los principales sistemas de criptografía homomórfica modernos son problemas relacionados con unas estructuras algebraicas conocidas como retículos. 
+La base de los principales sistemas de criptografía homomórfica modernos son problemas relacionados con unas estructuras algebraicas conocidas como retículos.
 
 \subsection{Lattice-based encryption}
 
@@ -78,7 +82,7 @@ En cuanto a nuestro caso, el problema del aprendizaje con errores aplicado a ret
 
 \subsection{Learn With Errors (LWE)}
 
-El problema del aprendizaje con errores plantea la dificultad de determinar los componentes de una función en base a sus resultados cuando estos contienen errores\cite{apon_intro_nodate}. 
+El problema del aprendizaje con errores plantea la dificultad de determinar los componentes de una función en base a sus resultados cuando estos contienen errores\cite{apon_intro_nodate}.
 
 Dada una base modular $q$, n vectores $a_i \leftarrow \mathbbb{Z}^m_q$, un vector $s \leftarrow \mathbbb{Z}^n_q$ y $n$ vectores $ e_i \leftarrow \chi{}^m $ tomados de una distribución de error (distribución de Gauss\cite{noauthor_generalized_2019}) \chi{} \subset{} \mathbbb{Z}:
 
@@ -103,14 +107,14 @@ En su estudio, Regev\cite{regev_learning_2010} formula un sistema de clave públ
       \label{fig:lwe}
       \includegraphics[width=\textwidth]{lwe}
     \end{figure}
-    
+
   \item Cifrado
 
   Para cada bit $x$ a cifrar se elige una de las parejas y se realiza la siguiente operación:
 
     \begin{gather*}
         \label{form:cifrado_lwe}
-        (c1, c2) = (\sum_{j=1}^{m} a_i_j, \sum_{j=1}^{m} b_i_j + x * (q/2)) 
+        (c1, c2) = (\sum_{j=1}^{m} a_i_j, \sum_{j=1}^{m} b_i_j + x * (q/2))
     \end{gather*}
 
   \item Descifrado
@@ -118,7 +122,7 @@ En su estudio, Regev\cite{regev_learning_2010} formula un sistema de clave públ
   El resultado realmente no es determinista, es decir, no devuelve realmente el valor cifrado. Para determinar el valor calcularíamos:
 
     \begin{gather*}
-        \label{form:descifrado_lwe} 
+        \label{form:descifrado_lwe}
         x \approx c_2 - (c_1*s) \\
         b + x*(q/2) - a*s \\
         a*s + e + x*(q/2) - a*s \\

@@ -9,12 +9,16 @@ Hay varias implementaciones de criptografía homomórfica, y varias soluciones p
     \item HELib
     \item Microsoft SEAL
     \item PALISADE
-    \item FHEW
     \item HeaAn
     \item LoL
     \item NFLlib
+
+    \item TFHE
+    \item FHEW
     \item cuHE
 \end{itemize}{}
+
+Para nuestro trabajo utilizaremos las librerías SEAL (como representante de la segunda generación de criptografía homomórfica) y THFE (como representante de la tercera). Para la segunda generación habría sido también una muy buena opción utilizar PALISADE, pero la documentación es mucho menor, y no incluye el esquema CKKS.
 
 \section{SEAL}
 
@@ -144,6 +148,8 @@ Levels: Permite ir reduciendo los coeff\_modulus para reducir el tamaño del tex
 
 \subsection{Esquema CKKS}
 
+% TODO BFV vs CKKS
+
 En este esquema podremos trabajar con número decimales, pero hay que estar ajustando constantemente los parámetros para que no se desborde el tamaño y se mantenga la integridad de lo calculado.
 
 Se elige una escala inicial menor que los coeff\_modulus para que permita operar con los valores correctamente (por ejemplo, si el tamaño del coeff\_mod es 60 bits se elige una escala de 40 bits para tener 20 de margen).
@@ -155,6 +161,8 @@ Además la operación de suma requiere que los sumandos estén en la misma escal
 Especialmente destinado a trabajar con vectores (como en el modo BatchEncoder).
 
 \section{TFHE}
+
+% TODO Completar
 
 Instalación: https://tfhe.github.io/tfhe/installation.html
 
@@ -177,12 +185,13 @@ Además, TFHE ofrece funciones para limpiar la memoria, dejando en manos del des
 
 \subsection{API}
 
-Operaciones incluidas en TFHE.
+A continuación haremos un repaso de las principales operaciones incluidas en la librería TFHE.
 
 \begin{itemize}
+
   \item bootsCONSTANT
-  
-  Carga una constante en 
+
+  Carga una constante en \verb|value| en la variable cifrada \verb|result|.
 
   \begin{lstlisting}[language=c++]
     void bootsCONSTANT(LweSample* result, int value,
@@ -191,20 +200,58 @@ Operaciones incluidas en TFHE.
 
   \item bootsNOT
 
+  Niega el valor de la variable \verb|ca| y lo almacena en \verb|result|.
+
   \begin{lstlisting}[language=c++]
     void bootsNOT(LweSample* result, const LweSample* ca,
                   const TFheGateBootstrappingCloudKeySet* bk);
   \end{lstlisting}
 
   % TODO Alinear y verbatim
+  % TODO Etiquetar los códigos
   \item bootsCOPY
+
+  Copia el valor de la variable \verb|ca| y lo almacena en \verb|result|. Cuando se utilizan tanto esta función como las funciones \verb|bootsCONSTANT|  y \verb|bootsNOT| se suele trabajar bit a bit iterando sobre los dos arrays. Si no se hace así, a veces pueden tener comportamientos erráticos.
 
   \begin{lstlisting}[language=c++]
     bootsCOPY(LweSample* result, const LweSample* ca,
               const TFheGateBootstrappingCloudKeySet* bk);
   \end{lstlisting}
 
+  \item bootsMUX
+
+  Es una implementación del operador ternario (\verb|a ? b : c|) esencial para poder introducir cómputos con divergencias en su flujo de ejecución aunque (como hemos comentado anteriormente) no podamos modificarlo. Asigna a \verb|result| el valor de \verb|b| si se cumple \verb|a|, si no, le asigna el valor de \verb|c|.
+
+  \begin{lstlisting}[language=c++]
+    bootsMUX(LweSample* result, const LweSample* a,
+            const LweSample* b, const LweSample* c,
+            const TFheGateBootstrappingCloudKeySet* bk);
+  \end{lstlisting}
+
+  Esta función es especialmente interesante, y es la que le da todo el valor a la librería para hacer implementaciones complejas. Por ejemplo, una función con el siguiente código:
+
+  \begin{lstlisting}[language=c++]
+    while (result < 100)
+      result = result * 2;
+  \end{lstlisting}
+
+  No podría ser implementada sin evaluar el valor de result. Sin embargo, con el operador \verb|MUX| podemos hacer lo siguiente (es pseudocódigo):
+
+  \begin{lstlisting}[language=c++]
+    /*
+     Hasta que el número más pequeño que podamos escribir con los
+     bits que hemos asignado a los decimales no sea mayor que 100
+    */
+    for (int i = 0.001; i < 100; i = i*2) {
+      gte(es_mayor, result, 100); // es_mayor =  result >= 100
+      bootsMUX(factor, es_mayor, 2, 1); // factor = es_mayor ? 2 : 1
+      multiplica(result, result, factor); // result = result * factor
+    }
+  \end{lstlisting}
+
   \item Puertas lógicas
+
+  También implementa las siguientes puertas lógicas booleanas. La utilizaremos como base para hacer el resto de operaciones, como por ejemplo la suma (la función de suma es igual que un circuito sumador).
 
   \begin{itemize}
     \item NAND
@@ -225,5 +272,8 @@ Operaciones incluidas en TFHE.
 
   \end{itemize}
 
-  \item bootsMUX
 \end{itemize}
+
+\subsection{Evolución de TFHE}
+
+En su desarrollo se plantea la implementación de un modo conocido como Chimera ...
