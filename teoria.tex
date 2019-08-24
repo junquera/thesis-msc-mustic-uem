@@ -1,14 +1,7 @@
 \chapter{Estudio teórico}
 \label{chap:teoria}
 
-En base a los encuentros del estándar ...
-
-La primera generación ...
-
-En la segunda se asientan los modelos SHE que permiten el cálculo de variables acotadas. Estos cálculos ya son fully homomorphic (suma y multi), pero a medida que se opera con las variables va aumentando un nivel de error que hace que sea imposible seguir calculando y obtener resultados válidos. A esta generación pertenecen los esquemas BGV, BFV y CKKS. Estos dos últimos están implementados en la librería SEAL.
-
-La tercera y última generación ya es considerada FHE, pues permite, gracias al esquema GSW, realizar infinitas operaciones sin perder precisión. Para el desarrollo de este tercer estándar usaremos TFHE.
-
+Para la computación de criptografía homomórfica necesitaremos comprender las bases teóricas matemáticas y los distintos niveles de homomorfismo, además de las herramientas de notación y computación definidas por el estándar...
 
 \section{Tipos}
 
@@ -88,7 +81,7 @@ Dada una base modular $q$, n vectores $a_i \leftarrow \mathbbb{Z}^m_q$, un vecto
 
 \begin{gather}
     \label{form:gen_lwe}
-    b_i = (a_i \times s + e_i) mod q
+    b_i = (a_i \times s + e_i) \Mod{q}
 \end{gather}
 
 Conociendo $m$ pares $(a_i, b_i)$ no se puede determinar el valor $s$, y no se pueden diferenciar dichos pares de una distribución aleatoria\cite{t._zijlstra_learning_nodate}.
@@ -137,57 +130,106 @@ En el apéndice \ref{apendix:test_lwe.py} puede verse un ejemplo de implementaci
 
 \section{Generaciones}
 
-\subsection{Pre}
+En base a los encuentros del estándar ...
 
-- RSA
+La primera generación ...
 
-- Boneh–Goh–Nissim cryptosystem (unlimited number of addition operations but at most one multiplication)
+En la segunda se asientan los modelos SHE que permiten el cálculo de variables acotadas. Estos cálculos ya son fully homomorphic (suma y multi), pero a medida que se opera con las variables va aumentando un nivel de error que hace que sea imposible seguir calculando y obtener resultados válidos. A esta generación pertenecen los esquemas BGV, BFV y CKKS. Estos dos últimos están implementados en la librería SEAL.
+
+La tercera y última generación ya es considerada FHE, pues permite, gracias al esquema GSW, realizar infinitas operaciones sin perder precisión. Para el desarrollo de este tercer estándar usaremos TFHE.
+
+\subsection{Pre-HE}
+
+Dentro de la categoría de esquemas previos a la criptografía homomórfica se encuentran aquellos que, o bien tienen propiedades homomórficas de forma casual, o bien no cumplen las condiciones necesarias para que se puedan utilizar en ningún sistema. Hablaremos de RSA por lo intuitivo que es para comprender la criptografía homomórfica, y del sistema desarrollado por Boneh, Goh y Nissim por ser uno de los primeros orientados correctamente a la computación con criptografía homomórfica.
+
+\begin{itemize}
+
+    \item RSA
+    
+    Las propiedades matemáticas de RSA lo convierten en un esquema con homomorfismo en el producto. Para cifrar y descifrar, en RSA se exponencia el elemento al que se le desea aplicar la operación. Siendo $e$ la clave de cifrado y $d$ la clave de descifrado, la aplicación de RSA (puro) sobre el mensaje $m$ sería tal que:
+    
+    \begin{gather*}
+        c = m^e \Mod{n} \\
+        m = c^d \Mod{n}
+    \end{gather*}
+    
+    Esto hace que, si multiplicamos dos mensajes cifrados:
+    
+    \begin{gather*}
+        c_1 = m_1^e \Mod{n}, c_2 = m_2^e \Mod{n} \\
+        c_1 * c_2 = m_1^e * m_2^e \Mod{n} = (m_1*m_2)^e \Mod{n} 
+    \end{gather*}
+    
+    Podamos obtener el producto de los dos elementos al descifrar:
+    
+    \begin{gather*}
+        (m_1^e * m_2^e)^d \Mod{n} \\
+        ((m_1*m_2)^e)^d \Mod{n} \\
+        m_1 * m_2
+    \end{gather*}
+    
+    \item Criptosistema de Boneh–Goh–Nissim 
+    
+    Unlimited number of addition operations but at most one multiplication. 
+    
+    https://crypto.stanford.edu/~dabo/pubs/papers/2dnf.pdf
+    
+\end{itemize}
 
 \subsection{Primera generación}
 
-- Fully homomorphic encryption using ideal lattices
-
+\begin{itemize}
+    \item Fully homomorphic encryption using ideal lattices
+    
+    https://www.cs.cmu.edu/~odonnell/hits09/gentry-homomorphic-encryption.pdf
+\end{itemize}
 
 \subsection{Segunda generación}
 
-- BGV
+\begin{itemize}
+    \item BGV
+    
+    https://eprint.iacr.org/2011/277
 
-https://eprint.iacr.org/2011/277
+    \item BFV
+    
+    https://eprint.iacr.org/2012/144
 
-- BFV
+    \if false
+    The BFV scheme cannot perform arbitrary computations on encrypted data.
+        Instead, each ciphertext has a specific quantity called the `invariant noise
+        budget' -- or `noise budget' for short -- measured in bits. The noise budget
+        in a freshly encrypted ciphertext (initial noise budget) is determined by
+        the encryption parameters. Homomorphic operations consume the noise budget
+        at a rate also determined by the encryption parameters. In BFV the two basic
+        operations allowed on encrypted data are additions and multiplications, of
+        which additions can generally be thought of as being nearly free in terms of
+        noise budget consumption compared to multiplications.
+    \fi
+    
+    % TODO A paper by Costache and Smart [CS16]gives some initial comparisons between BGV, BFV
 
-https://eprint.iacr.org/2012/144
+    \item CKKS
+    
+    No está descrito en el estándar, pero sí se implementa en SEAL.
 
-\if false
-The BFV scheme cannot perform arbitrary computations on encrypted data.
-    Instead, each ciphertext has a specific quantity called the `invariant noise
-    budget' -- or `noise budget' for short -- measured in bits. The noise budget
-    in a freshly encrypted ciphertext (initial noise budget) is determined by
-    the encryption parameters. Homomorphic operations consume the noise budget
-    at a rate also determined by the encryption parameters. In BFV the two basic
-    operations allowed on encrypted data are additions and multiplications, of
-    which additions can generally be thought of as being nearly free in terms of
-    noise budget consumption compared to multiplications.
-\fi
+    https://link.springer.com/chapter/10.1007%2F978-3-319-70694-8_15
+    
+\end{itemize}
 
-% A paper by Costache and Smart [CS16]gives some initial comparisons between BGV, BFV
+Además aparecen una técnica interesante:
 
-- CKKS
-
-No está descrito en el estándar, pero sí se implementa en SEAL.
-
-https://link.springer.com/chapter/10.1007%2F978-3-319-70694-8_15
-
-- Realinearización y límites
-
-- TéCnIcA BoOtsTrApPiNg
-
-% https://link.springer.com/chapter/10.1007/978-3-642-30057-8_1
+\begin{itemize}
+    \item Bootstraping
+    % https://link.springer.com/chapter/10.1007/978-3-642-30057-8_1
+\end{itemize}
 
 \subsection{Tercera generación}
 
 - GSW
 
-
+https://eprint.iacr.org/2013/340
 
 - TFHE
+
+https://eprint.iacr.org/2016/870.pdf

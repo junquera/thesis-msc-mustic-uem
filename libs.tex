@@ -6,16 +6,22 @@
 Hay varias implementaciones de criptografía homomórfica, y varias soluciones por cada una de las generaciones.
 
 \begin{itemize}
-    \item HELib
-    \item Microsoft SEAL
-    \item PALISADE
-    \item HeaAn
-    \item LoL
-    \item NFLlib
+    \item Segunda generación
+    \begin{itemize}
+        \item HELib
+        \item Microsoft SEAL
+        \item PALISADE
+        \item HeaAn
+        \item LoL
+        \item NFLlib
+    \end{itemize}
+    \item Tercera generación
+    \begin{itemize}
+        \item TFHE
+        \item FHEW
+        \item cuHE
+    \end{itemize}
 
-    \item TFHE
-    \item FHEW
-    \item cuHE
 \end{itemize}{}
 
 Para nuestro trabajo utilizaremos las librerías SEAL (como representante de la segunda generación de criptografía homomórfica) y THFE (como representante de la tercera). Para la segunda generación habría sido también una muy buena opción utilizar PALISADE, pero la documentación es mucho menor, y no incluye el esquema CKKS.
@@ -38,6 +44,8 @@ SEAL es:
     - Codificarla
 
     - Elegir correctamente los parámetros que permitan que se haga
+
+    - Cuidar los niveles de error
 
 - Bajo determinados usos, puede ser insegura. Por ejemplo, no se debe permitir el descifrado desde fuera \cite{peng_danger_2019} (no es CCA seguro).
 
@@ -63,6 +71,7 @@ A continuación desarrollaremos el funcionamiento de los componentes más comple
 
 \subsection{EncryptionParameters}
 
+Para cada esquema hay unos parámetros distintos.
 
 
 \subsection{SEALContext}
@@ -71,7 +80,7 @@ A continuación desarrollaremos el funcionamiento de los componentes más comple
 
 \subsection{Encoders}
 
-- SEAL ofrece encoders para la información:
+SEAL ofrece tres sistemas para codificar los datos con los que se va a trabajar:
 
     - IntegerEncoder
 
@@ -88,9 +97,29 @@ A continuación desarrollaremos el funcionamiento de los componentes más comple
 
     En ambos modelos las matrices se pueden rotar haciendo uso de unas claves especiales llamadas Galois Keys (ejemplo 5 de SEAL).
 
-\subsection{Niveles de error}
+Estos sistemas son denominados Encoders.
 
-...
+\subsection{Niveles de error y realinearización}
+
+
+Levels: Permite ir reduciendo los coeff\_modulus para reducir el tamaño del texto cifrado cuando ya no se van a hacer más operaciones, y que las operaciones se hagan rápido.
+
+Realinearization:
+
+`Relinearization' is an operation that reduces the size of a ciphertext after
+multiplication back to the initial size, 2. Thus, relinearizing one or both
+input ciphertexts before the next multiplication can have a huge positive
+impact on both noise growth and performance, even though relinearization has
+a significant computational cost itself. It is only possible to relinearize
+size 3 ciphertexts down to size 2, so often the user would want to relinearize
+after each multiplication to keep the ciphertext sizes at 2.
+
+Relinearization requires special `relinearization keys', which can be thought
+of as a kind of public key. Relinearization keys can easily be created with
+the KeyGenerator.
+
+% TODO Volver a leer 1_bfv_basic para entender size 3, size 2...
+% El tamaño tras operar M con N es M+N-1
 
 \subsection{Trabajo con vectores}
 
@@ -121,31 +150,6 @@ The noise budget in a freshly encrypted ciphertext is $~ log2(coeff_modulus/plai
 
 % Hay que convertir a Strings todos los números con los que se quiere operar
 
-\if false
-Realinearization:
-
-`Relinearization' is an operation that reduces the size of a ciphertext after
-    multiplication back to the initial size, 2. Thus, relinearizing one or both
-    input ciphertexts before the next multiplication can have a huge positive
-    impact on both noise growth and performance, even though relinearization has
-    a significant computational cost itself. It is only possible to relinearize
-    size 3 ciphertexts down to size 2, so often the user would want to relinearize
-    after each multiplication to keep the ciphertext sizes at 2.
-
-    Relinearization requires special `relinearization keys', which can be thought
-    of as a kind of public key. Relinearization keys can easily be created with
-    the KeyGenerator.
-
-    % TODO Volver a leer 1_bfv_basic para entender size 3, size 2...
-    % El tamaño tras operar M con N es M+N-1
-\fi
-
-\if false
-
-Levels: Permite ir reduciendo los coeff\_modulus para reducir el tamaño del texto cifrado cuando ya no se van a hacer más operaciones, y que las operaciones se hagan rápido.
-
-\fi
-
 \subsection{Esquema CKKS}
 
 % TODO BFV vs CKKS
@@ -168,11 +172,9 @@ Instalación: https://tfhe.github.io/tfhe/installation.html
 
 EN su presentación (http://lab.algonics.net/slides/index-ccs.html) dicen: "If Spiderman can swing on his rope long enough to launch a new rope he can fly!"
 
-En TFHE se trabaja directamente con puertas lógicas. No hay ningún parámetro adicional que seleccionar, tiene una API muy limitada, pero para hacer cualquier cálculo hay que implementarlo desde el nivel más bajo.
+En TFHE se trabaja directamente con puertas lógicas. No hay ningún parámetro adicional que seleccionar (mas allá de los relacionados con generar una clave aleatoria), tiene una API simple pero muy potente, pero para hacer cualquier cálculo hay que implementarlo desde el nivel más bajo. Cuando se cifra un dato se genera un array de bits correspondiente al dato cifrado. Será este array (codificado en la clase \verb|LweSample|) sobre el que aplicaremos los algoritmos y procedimientos que diseñaremos, como si trabajásemos con el texto plano.
 
-Cuando se cifra un texto se genera un array de bits del texto cifrado.
-
-Los elementos son mucho menos complejos que en SEAL, y está codificado en unos pocos grupos de elementos:
+Los elementos que forman TFHE son mucho menos complejos que los de SEAL, con un único sistema de cifrado. Están codificados en sólo unos pocos grupos:
 
 \begin{itemize}
   \item Parámetros de cifrado (\texttt{TFheGateBootstrappingParameterSet})
@@ -185,7 +187,7 @@ Además, TFHE ofrece funciones para limpiar la memoria, dejando en manos del des
 
 \subsection{API}
 
-A continuación haremos un repaso de las principales operaciones incluidas en la librería TFHE.
+A continuación haremos un repaso de las principales operaciones sobre el texto cifrado incluidas en la librería TFHE.
 
 \begin{itemize}
 
