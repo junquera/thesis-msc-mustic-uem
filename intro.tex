@@ -13,48 +13,46 @@ El consorcio "Homomorphic Encryption Standardization" (\cite{noauthor_homomorphi
 
 El último encuentro de trabajo del grupo se produjo el 17 de Agosto en Santa Clara, en el que se trabajará principalmente en la eficiencia y la ayuda al desarrollador (usabilidad). http://homomorphicencryption.org/aug-17-2019-homomorphicencryption-org-standards-meeting/
 
+La documentación del estándar está dividida en tres \textit{white papers} y una lista de implementaciones conocidas.
+
 \subsection{Seguridad}
 
-En el documento \cite{chase_security_2017} ...
-
-- Estudio de las bases seguras de cada tecnología
-
-- Estudio de los ataques conocidos
-
-- Estudio de los parámetros de seguridad recomendados para el escenario actual y un escenario "post-quantum" \cite{citar}
-
-\subsection{API}
-
-\cite{brenner_standard_2017}
-
-(1) a ​storage model​ to identify whatneeds to be included to both serialize and deserialize keys, ciphertexts, plaintexts, encryptionparameters, and scheme/implementation dependent data, and to support homomorphiccomputations; (2) an ​assembly language​ -like representation of homomorphic encryptionprograms, consisting of low-level library calls. These two topics will form the core of thehomomorphic encryption standard.
-
-- SecKeygen
-
-- PubKeygen
-
-- SecEncrypt
-
-- Encrypt
-
-- Decrypt
-
-- Eval
-
-
-Algunos esquemas meten realinearización, rotación...
+En el documento \cite{chase_security_2017} analizan qué principios seguir para implementar esquemas de criptografía homomórfica y qué beneficios tienen estos esquemas para la seguridad de la información. También hacen un análisis de los ataques existentes a estos esquemas y qué parametros matemáticos son los ideales para hacer estos esquemas lo más resistentes posible tanto en el panorama actual como en un escenario \textit{post-quantum}.
 
 \subsection{Aplicaciones}
 
-\cite{archer_applications_2017}
+En el estudio \cite{archer_applications_2017} abordan para qué campos es útil la criptografía homomórfica. Mientras que se han estado centrando los esfuerzos en poder almacenar información en la nube de forma segura (cifrándola) se ha descuidado la seguridad de dicha información cuando sube a la nube para se procesada. La criptografía homomórfica puede ser la solución a este problema, y en campos como:
 
-- Médicas
+\begin{itemize}
+    \item La computación distribuida
+    \item La protección de datos médicos que tengan que ser procesados en equipos potentes, ajenos a la institución médica
+    \item La consulta de información de forma anónima: Por ejemplo, una consulta DNS sin revelar a qué se está accediendo
+\end{itemize}
 
-- Computación distribuida
+\subsection{API}
 
-- Sistemas de control
+Por último el consorcio de estandarización busca establecer un modelo de almacenamiento común tanto de los datos como de las claves, y una terminología (lo llaman \textit{lenguaje ensamblador}) que sirva de lenguaje común para transmitir las ideas y los elementos mínimos que debe tener cualquier sistema de criptografía homomórfica. Están definidos en el documento \cite{brenner_standard_2017}, y como veremos más adelante, encajan perfectamente con los elementos de las implementaciones. Son los siguientes:
 
-Ver: https://homomorphicencryption.org/wp-content/uploads/2019/08/juan_troncoso-pastoriza_kurt_rohloff.pdf
+\begin{itemize}
+    \item \verb|SecKeygen|, \verb|PubKeygen|
+    
+    Tiene que haber un método de generación de clave privada (o secreta) y pública.
+    
+    \item \verb|SecEncrypt|, \verb|PubEncrypt|
+    
+    Define la posibilidad de que haya además de un sistema de cifrado público (usando la clave pública) que en determinados esquemas se pueda cifrar la información directamente con la clave privada.
+    
+    \item \verb|Decrypt|
+    
+    Tiene que haber un sistema para restaurar la información desde un texto cifrado.
+    
+    \item \verb|Eval|
+    
+    La llamada \verb|Eval| será el paraguas que recoja todas las operaciones homomórficas que se puedan realizar sobre el texto cifrado para que luego se materialicen en el descifrado.
+    
+\end{itemize}
+
+Algunos esquemas introducirán otras herramientas enfocadas a procesar los datos, pero estarían en niveles superiores de la arquitectura, y son exclusivas de cada implementación.
 
 \section{Objetivo del trabajo}
 

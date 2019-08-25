@@ -9,8 +9,17 @@ Las generaciones publicadas por el estándar guardan una estrecha relación con 
 
 \begin{itemize}
   \item Partially Homomorphic Encryption
+  
+  Existe algún homomorfismo dentro del esquema de cifrado, pero este no es explotable para realizar cómputos arbitrarios con la información. Por ejemplo, el producto en RSA (ver \ref{form:rsa_product})
+  
   \item Somewhat Homomorphic Encryption (SHE)
+  
+  Se pueden realizar operaciones arbitrarias, pero el sistema hace que a medida que se procesa la información aumenta el nivel de error del resultado (como veremos, los esquemas de cifrado son semi-probabilísticos), hasta destruir la información. Hay técnicas para aumentar este umbral de error, pero sigue teniendo límites.
+  
   \item Fully Homormorphic Encryption (FHE)
+  
+  Los sistemas FHE son los más codiciados dentro del campo, porque permiten realizar cualquier cómputo con la información cifrada sin que aumente el nivel de error y se vuelva irrecuperable. Es cierto que actualmente estos esquemas actualmente son menos eficientes que los anteriores, pero como dicen en 
+  
 \end{itemize}
 
 Más adelante veremos qué esquemas concretos existen, y a qué tipo pertenecerán.
@@ -163,6 +172,7 @@ Dentro de la categoría de esquemas previos a la criptografía homomórfica se e
     Podamos obtener el producto de los dos elementos al descifrar:
     
     \begin{gather*}
+        \label{form:rsa_product}
         (m_1^e * m_2^e)^d \Mod{n} \\
         ((m_1*m_2)^e)^d \Mod{n} \\
         m_1 * m_2
