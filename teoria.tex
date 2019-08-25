@@ -18,11 +18,10 @@ Las generaciones publicadas por el estándar guardan una estrecha relación con 
   
   \item Fully Homormorphic Encryption (FHE)
   
-  Los sistemas FHE son los más codiciados dentro del campo, porque permiten realizar cualquier cómputo con la información cifrada sin que aumente el nivel de error y se vuelva irrecuperable. Es cierto que actualmente estos esquemas actualmente son menos eficientes que los anteriores, pero como dicen en 
+  Los sistemas FHE son los más codiciados dentro del campo, porque permiten realizar cualquier cómputo con la información cifrada sin que aumente el nivel de error y se vuelva irrecuperable. Es cierto que actualmente estos esquemas actualmente son menos eficientes que los anteriores, pero como dicen en TFHE (\cite{noauthor_tfhe:_nodate}): "Si Spiderman puede balancearse sobre su cuerda el tiempo suficiente para lanzar una nueva cuerda, ¡puede volar!"
   
 \end{itemize}
 
-Más adelante veremos qué esquemas concretos existen, y a qué tipo pertenecerán.
 
 \section{Primitivas matemáticas}
 
@@ -178,20 +177,24 @@ Dentro de la categoría de esquemas previos a la criptografía homomórfica se e
         m_1 * m_2
     \end{gather*}
     
-    \item Criptosistema de Boneh–Goh–Nissim 
+    \item Criptosistema de Boneh–Goh–Nissim (\cite{hutchison_evaluating_2005})
     
-    Unlimited number of addition operations but at most one multiplication. 
-    
-    https://crypto.stanford.edu/~dabo/pubs/papers/2dnf.pdf
+    Permite evaluar circuitos lógicos en forma normal disyuntiva (reducido a puertas lógicas \verb|or|, \verb|and| y \verb|not|) sobre texto cifrado. Se traduce en la capacidad de evaluar polinomios de segundo grado. Aunque en comparación con los esquemas actuales este parezca "de juguete", es un gran aporte a la hora de impulsar la investigación en criptografía homomórfica. 
     
 \end{itemize}
 
 \subsection{Primera generación}
 
 \begin{itemize}
+
     \item Fully homomorphic encryption using ideal lattices
     
-    https://www.cs.cmu.edu/~odonnell/hits09/gentry-homomorphic-encryption.pdf
+    La técnica de \textit{bootstrapping} de Gentry (\cite{gentry_fully_2009}) revoluciona la criptografía homomórfica. Estipula que para crear un esquema de cifrado que permita la evaluación arbitraria de circuitos lógicos símplemente hace falta un esquema de cifrado que pueda realizar la operación de descifrado sin realmente descifrar el texto. Esto se consigue mediante algo parecido a mezclar el texto cifrado (en el que se produce ruido tras hacer una operación) con una versión cifrada de la clave secreta para que se elimine el ruido. 
+    
+    Por ejemplo, cuando se evalúa usando la técnica de \textit{bootstrapping} la operación $ c_a + c_b$ con $c_a, c_b$ textos cifrados, $e(x)$ función de cifrado y  $d(x)$ función de descifrado, el resultado es $e( e_{-1}(c_a + c_b) )$. En la operación de descifrado intermedia se elimina el ruido, y el propio esquema hace que no permita al evaluador de la operación revelar la clave secreta. (\cite{noauthor_homomorphic_nodate-3}).
+    
+    El principal problema de la operación de \textit{bootstrapping} es que consume mucho tiempo. En la segunda generación el principal esfuerzo es crear esquemas más rápidos.
+        
 \end{itemize}
 
 \subsection{Segunda generación}
@@ -227,13 +230,6 @@ Dentro de la categoría de esquemas previos a la criptografía homomórfica se e
     
 \end{itemize}
 
-Además aparecen una técnica interesante:
-
-\begin{itemize}
-    \item Bootstraping
-    % https://link.springer.com/chapter/10.1007/978-3-642-30057-8_1
-\end{itemize}
-
 \subsection{Tercera generación}
 
 - GSW
@@ -242,4 +238,4 @@ https://eprint.iacr.org/2013/340
 
 - TFHE
 
-https://eprint.iacr.org/2016/870.pdf
+Basado en una aproximación a LWE conocida como TLWE (Thorus Learn With Errors) en la que los parámetros de LWE se definen sobre un el espacio de un toro \cite{cheon_faster_2016} [https://eprint.iacr.org/2016/870.pdf]

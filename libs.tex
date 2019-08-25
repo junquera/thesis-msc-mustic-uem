@@ -170,11 +170,13 @@ Especialmente destinado a trabajar con vectores (como en el modo BatchEncoder).
 
 Instalación: https://tfhe.github.io/tfhe/installation.html
 
-EN su presentación (http://lab.algonics.net/slides/index-ccs.html) dicen: "If Spiderman can swing on his rope long enough to launch a new rope he can fly!"
+En TFHE se trabaja directamente con puertas lógicas. No hay ningún parámetro adicional que seleccionar (mas allá de los relacionados con generar una clave aleatoria), tiene una API simple pero muy potente, pero para hacer cualquier cálculo hay que implementarlo desde el nivel más bajo. Cuando se cifra un dato se genera un array de bits correspondiente al dato cifrado. Será este array (codificado en la clase \verb|LweSample|) sobre el que aplicaremos los algoritmos y procedimientos que diseñaremos, como si trabajásemos con el texto plano. 
 
-En TFHE se trabaja directamente con puertas lógicas. No hay ningún parámetro adicional que seleccionar (mas allá de los relacionados con generar una clave aleatoria), tiene una API simple pero muy potente, pero para hacer cualquier cálculo hay que implementarlo desde el nivel más bajo. Cuando se cifra un dato se genera un array de bits correspondiente al dato cifrado. Será este array (codificado en la clase \verb|LweSample|) sobre el que aplicaremos los algoritmos y procedimientos que diseñaremos, como si trabajásemos con el texto plano.
+Los elementos que forman TFHE son mucho menos complejos que los de SEAL, con un único sistema de cifrado (http://lab.algonics.net/slides_ac16/index-asiacrypt.html).
 
-Los elementos que forman TFHE son mucho menos complejos que los de SEAL, con un único sistema de cifrado. Están codificados en sólo unos pocos grupos:
+CONTAR: Sólo definir el parámetro $\lambda$ (ver http://lab.algonics.net/slides_ac16/index-asiacrypt.html#/7)
+
+Están codificados en sólo unos pocos grupos:
 
 \begin{itemize}
   \item Parámetros de cifrado (\texttt{TFheGateBootstrappingParameterSet})
