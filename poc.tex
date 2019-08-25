@@ -116,7 +116,7 @@ Obtendríamos un sistema lineal de ecuaciones solucionable mediante eliminación
     \end{cases}
 \end{gather*}
 
-Además de la propia implementación con TFHE, se ha desarrollado un código de ejemplo en python mucho más legible \ref{appendix:regresion_cuadratica.py}.
+Además de la propia implementación con TFHE (codificada en el apéndice \ref{appendix:reg2.cpp}), se ha desarrollado un código de ejemplo en python mucho más legible \ref{appendix:regresion_cuadratica.py}.
 
 TFHE sólo ofrece operadores lógicos, así que tenemos que escribir la operaciones aritméticas necesarias: suma, resta, multiplicación y división. Además tendremos que dar la posibilidad de trabajar con números reales, por lo que tendremos que determinar la codificación más apropiada. Para todo ello se ha desarrollado la librería \texttt{tfhe-math}
 
@@ -139,6 +139,7 @@ Tenemos que tener precaución principalmente en dos aspectos:
   \item En el producto y en la división también se multiplican y dividen los desplazamientos. Por ejemplo si trabajamos con dos números ($a$ y $b$) a los que les hemos aplicado el desplazamiento de 10 bits ($ a' = a * 2^{10}, b' = b * 2^{10} $). Hay que restaurar la escala antes de la división:
 
   \begin{gather}
+    \label{form:float_bits_product}
     a' / b' = ( a * 2^{10} ) / ( b * 2^{10} ) = (a / b) \\
     (a / b) \neq (a / b) * 2^{10}
   \end{gather}
@@ -214,7 +215,7 @@ A continuación veremos cómo trabajan nuestras principales funciones:
 
   \item \texttt{minimum} / \texttt{maximum}
 
-  ...
+  Guarda en \verb|result| el valor mínimo o máximo entre \verb|a| y \verb|b|.
 
   \begin{lstlisting}[language=c++]
   void minimum(LweSample* result, const LweSample* a,
@@ -227,7 +228,7 @@ A continuación veremos cómo trabajan nuestras principales funciones:
 
   \item \texttt{shiftl} / \texttt{shiftr}
 
-  ...
+  Almacena en \verb|result| el valor de \verb|a| desplazado (hacia la izquierda o la derecha) el número de veces especificado en \verb|posiciones|. Es equivalente a multiplicar (mover a la izquierda) o dividir (mover a la derecha) entre dos. La operación sin signo (con \verb|u_|) es casi instantánea, y el coste de la implementación normal es casi exclusivamente el de la gestión del signo.
 
   \begin{lstlisting}[language=c++]
   void shiftl(LweSample* result, const LweSample* a,
@@ -239,8 +240,6 @@ A continuación veremos cómo trabajan nuestras principales funciones:
   \end{lstlisting}
 
   \item \texttt{add} / \texttt{sub}
-
-  ...
 
   \verb|add| suma \verb|a| y \verb|b|. \verb|sub| aplica la función \verb|negativo| sobre \verb|b| y luego suma \verb|a| y \verb|-b|.
 
@@ -255,7 +254,7 @@ A continuación veremos cómo trabajan nuestras principales funciones:
 
   \item \texttt{mult}
 
-  ...
+  Operación de multiplicación (ver \ref{fig:mult_float}). A diferencia de las anteriores, esta operación y \verb|div_float| tienen en cuenta los bits asignados a los decimales mediante el protocolo comentado anteriormente (ver \ref{form:float_bits_product}).
 
   \begin{lstlisting}[language=c++]
   void mult_float(LweSample* result,
@@ -264,9 +263,57 @@ A continuación veremos cómo trabajan nuestras principales funciones:
                   const TFheGateBootstrappingCloudKeySet* bk);
   \end{lstlisting}
 
+  \begin{figure}[h]
+    \caption{Algoritmo de multiplicación}
+    \label{fig:mult_float}
+    \includegraphics[width=\textwidth]{mult_float}
+  \end{figure}
+
+  %
+  % void mult(a, b){
+  %
+  %   // Multiplica opA * opB
+  %   for(int i = 0; i < (nb_bits/2); i++) {
+  %
+  %     for(int j = 0; j < (nb_bits/2) + 1; j++)
+  %       bootsAND(&aux[j+i] , &a[i], &b[j], bk);
+  %
+  %     add(result, aux, result, nb_bits, bk);
+  %
+  %   }
+  % }
+  %
+  %
+  % void div(dividendo, b){
+  %
+  %   u_shiftl(divisor, b, nb_bits - 1, 2*nb_bits, bk);
+  %
+  %
+  %
+  %   for(int i = 0; i < nb_bits; i++) {
+  %     // gt = dividendo >= divisor
+  %     gte(gt, dividendo, divisor, 2*nb_bits, bk);
+  %
+  %     bootsCOPY(&cociente[nb_bits-i-1], &gt[0], bk);
+  %
+  %     // resto = gt? sub(dividendo, divisor) : resto
+  %     sub(div_aux, dividendo, divisor, 2*nb_bits, bk);
+  %     // divisor = shiftr(divisor, 1)
+  %     u_shiftr(div_aux2, divisor, 1, 2*nb_bits, bk);
+  %     for(int j = 0; j < 2*nb_bits; j++){
+  %       bootsMUX(&resto[j], &gt[0], &div_aux[j], &dividendo[j], bk);
+  %       // dividendo = gt ? resto : dividendo
+  %       bootsMUX(&dividendo[j], &gt[0], &resto[j], &dividendo[j], bk);
+  %       bootsCOPY(&divisor[j], &div_aux2[j], bk);
+  %     }
+  %   }
+  %
+  % }
+  %
+
   \item \texttt{div}
 
-  ...
+  Operación de división (ver \ref{fig:div_float}).
 
   \begin{lstlisting}[language=c++]
   void div_float(LweSample* result,
@@ -275,10 +322,17 @@ A continuación veremos cómo trabajan nuestras principales funciones:
                   const TFheGateBootstrappingCloudKeySet* bk);
   \end{lstlisting}
 
+  \begin{figure}[h]
+    \caption{Algoritmo de división}
+    \label{fig:div_float}
+    \includegraphics[width=\textwidth]{div_float}
+  \end{figure}
+
 
 \end{itemize}
 
 \subsection{Modelo Cliente-Servidor}
+
 
 
 \section{Implementación con SEAL}

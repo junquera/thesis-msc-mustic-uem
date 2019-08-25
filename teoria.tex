@@ -187,7 +187,7 @@ Dentro de la categoría de esquemas previos a la criptografía homomórfica se e
 
 \begin{itemize}
 
-    \item Fully homomorphic encryption using ideal lattices
+    \item Bootstrapping: Fully homomorphic encryption using ideal lattices
 
     La técnica de \textit{bootstrapping} de Gentry (\cite{gentry_fully_2009}) revoluciona la criptografía homomórfica. Estipula que para crear un esquema de cifrado que permita la evaluación arbitraria de circuitos lógicos símplemente hace falta un esquema de cifrado que pueda realizar la operación de descifrado sin realmente descifrar el texto. Esto se consigue mediante algo parecido a mezclar el texto cifrado (en el que se produce ruido tras hacer una operación) con una versión cifrada de la clave secreta para que se elimine el ruido.
 
@@ -200,11 +200,37 @@ Dentro de la categoría de esquemas previos a la criptografía homomórfica se e
 \subsection{Segunda generación}
 
 \begin{itemize}
+
     \item BGV
 
+    We present a radically new approach to fully homomorphic encryption (FHE) that dramatically improves performance and bases security on weaker assumptions. A central conceptual contribution in our work is a new way of constructing leveled fully homomorphic encryption schemes (capable of evaluating arbitrary polynomial-size circuits), {\em without Gentry's bootstrapping procedure}.
+
+    Specifically, we offer a choice of FHE schemes based on the learning with error (LWE) or ring-LWE (RLWE) problems that have 2\secparam
+
+    security against known attacks. For RLWE, we have:
+
+    1. A leveled FHE scheme that can evaluate L
+    -level arithmetic circuits with O~(\secparam⋅L3) per-gate computation -- i.e., computation {\em quasi-linear} in the security parameter. Security is based on RLWE for an approximation factor exponential in L
+
+    . This construction does not use the bootstrapping procedure.
+
+    2. A leveled FHE scheme that uses bootstrapping {\em as an optimization}, where the per-gate computation (which includes the bootstrapping procedure) is O~(\secparam2)
+    , {\em independent of L
+
+    }. Security is based on the hardness of RLWE for {\em quasi-polynomial} factors (as opposed to the sub-exponential factors needed in previous schemes).
+
+    We obtain similar results for LWE, but with worse performance. We introduce a number of further optimizations to our schemes. As an example, for circuits of large width -- e.g., where a constant fraction of levels have width at least \secparam
+    -- we can reduce the per-gate computation of the bootstrapped version to O~(\secparam), independent of L, by {\em batching the bootstrapping operation}. Previous FHE schemes all required Ω~(\secparam3.5)
+
+    computation per gate.
+
+    At the core of our construction is a much more effective approach for managing the noise level of lattice-based ciphertexts as homomorphic operations are performed, using some new techniques recently introduced by Brakerski and Vaikuntanathan (FOCS 2011).
+    
     https://eprint.iacr.org/2011/277
 
     \item BFV
+
+    In this paper we port Brakerski's fully homomorphic scheme based on the Learning With Errors (LWE) problem to the ring-LWE setting. We introduce two optimised versions of relinearisation that not only result in a smaller relinearisation key, but also faster computations. We provide a detailed, but simple analysis of the various homomorphic operations, such as multiplication, relinearisation and bootstrapping, and derive tight worst case bounds on the noise caused by these operations. The analysis of the bootstrapping step is greatly simplified by using a modulus switching trick. Finally, we derive concrete parameters for which the scheme provides a given level of security and becomes fully homomorphic.
 
     https://eprint.iacr.org/2012/144
 
@@ -226,16 +252,38 @@ Dentro de la categoría de esquemas previos a la criptografía homomórfica se e
 
     No está descrito en el estándar, pero sí se implementa en SEAL.
 
+    We suggest a method to construct a homomorphic encryption scheme for approximate arithmetic. It supports an approximate addition and multiplication of encrypted messages, together with a new rescaling procedure for managing the magnitude of plaintext. This procedure truncates a ciphertext into a smaller modulus, which leads to rounding of plaintext. The main idea is to add a noise following significant figures which contain a main message. This noise is originally added to the plaintext for security, but considered to be a part of error occurring during approximate computations that is reduced along with plaintext by rescaling. As a result, our decryption structure outputs an approximate value of plaintext with a predetermined precision.
+
+    We also propose a new batching technique for a RLWE-based construction. A plaintext polynomial is an element of a cyclotomic ring of characteristic zero and it is mapped to a message vector of complex numbers via complex canonical embedding map, which is an isometric ring homomorphism. This transformation does not blow up the size of errors, therefore enables us to preserve the precision of plaintext after encoding. In our construction, the bit size of ciphertext modulus grows linearly with the depth of the circuit being evaluated due to rescaling procedure, while all the previous works either require an exponentially large size of modulus or expensive computations such as bootstrapping or bit extraction. One important feature of our method is that the precision loss during evaluation is bounded by the depth of a circuit and it exceeds at most one more bit compared to unencrypted approximate arithmetic such as floating-point operations. In addition to the basic approximate circuits, we show that our scheme can be applied to the efficient evaluation of transcendental functions such as multiplicative inverse, exponential function, logistic function and discrete Fourier transform.
+
     https://link.springer.com/chapter/10.1007%2F978-3-319-70694-8_15
 
 \end{itemize}
 
 \subsection{Tercera generación}
 
-- GSW
+\begin{itemize}
 
-https://eprint.iacr.org/2013/340
+  \item GSW
 
-- TFHE
+  We describe a comparatively simple fully homomorphic encryption (FHE) scheme based on the learning with errors (LWE) problem. In previous LWE-based FHE schemes, multiplication is a complicated and expensive step involving "relinearization". In this work, we propose a new technique for building FHE schemes that we call the "approximate eigenvector" method. In our scheme, for the most part, homomorphic addition and multiplication are just matrix addition and multiplication. This makes our scheme both asymptotically faster and (we believe) easier to understand.
 
-Basado en una aproximación a LWE conocida como TLWE (Thorus Learn With Errors) en la que los parámetros de LWE se definen sobre un el espacio de un toro \cite{cheon_faster_2016} [https://eprint.iacr.org/2016/870.pdf]
+  In previous schemes, the homomorphic evaluator needs to obtain the user's "evaluation key", which consists of a chain of encrypted secret keys. Our scheme has no evaluation key. The evaluator can do homomorphic operations without knowing the user's public key at all, except for some basic parameters. This fact helps us construct the first identity-based FHE scheme. Using similar techniques, we show how to compile a recent attribute-based encryption scheme for circuits by Gorbunov et al. into an attribute-based FHE scheme that permits data encrypted under the same index to be processed homomorphically.
+
+  https://eprint.iacr.org/2013/340
+
+  \item TFHE
+
+  Basado en una aproximación a LWE conocida como TLWE (Thorus Learn With Errors) en la que los parámetros de LWE se definen sobre un el espacio de un toro \cite{cheon_faster_2016}
+
+  In this paper, we revisit fully homomorphic encryption (FHE) based on GSW and its ring variants. We notice that the internal product of GSW can be replaced by a simpler external product between a GSW and an LWE ciphertext.
+
+  We show that the bootstrapping scheme FHEW of Ducas and Micciancio (Eurocrypt 2015) can be expressed only in terms of this external product. As a result, we obtain a speed up from less than 1 second to less than 0.1 seconds. We also reduce the 1GB bootstrapping key size to 24MB, preserving the same security levels, and we improve the noise propagation overhead by replacing exact decomposition algorithms with approximate ones.
+
+  Moreover, our external product allows to explain the unique asymmetry in the noise propagation of GSW samples and makes it possible to evaluate deterministic automata homomorphically as in (ePrint 2014/283) in an efficient way with a noise overhead only linear in the length of the tested word.
+
+  Finally, we provide an alternative practical analysis of LWE based scheme, which directly relates the security parameter to the error rate of LWE and the entropy of the LWE secret key.
+
+  https://eprint.iacr.org/2016/870
+
+\end{itemize}

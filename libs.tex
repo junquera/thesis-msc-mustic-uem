@@ -49,7 +49,6 @@ SEAL es:
 
 - Bajo determinados usos, puede ser insegura. Por ejemplo, no se debe permitir el descifrado desde fuera \cite{peng_danger_2019} (no es CCA seguro).
 
-
 La API para operar con SEAL está codificada en los siguientes elementos:
 
 \begin{itemize}
@@ -73,26 +72,34 @@ A continuación desarrollaremos el funcionamiento de los componentes más comple
 
 Para cada esquema hay unos parámetros distintos.
 
-
 \subsection{SEALContext}
 
+When a SEALContext is created from a given EncryptionParameters instance,
+Microsoft SEAL automatically creates a so-called `modulus switching chain',
+which is a chain of other encryption parameters derived from the original set.
 
+Each set of parameters in the chain involves unique pre-computations performed
+when the SEALContext is created, and stored in a SEALContext::ContextData
+object. The chain is basically a linked list of SEALContext::ContextData
+objects, and can easily be accessed through the SEALContext at any time. Each
+node can be identified by the parms_id of its specific encryption parameters
+(poly_modulus_degree remains the same but coeff_modulus varies).
 
 \subsection{Encoders}
 
 SEAL ofrece tres sistemas para codificar los datos con los que se va a trabajar:
 
-    - IntegerEncoder
+    - IntegerEncoder (BFV)
 
     Descompone el número en una sucesión de exponenciaciones.
 
-    - BatchEncoder
+    - BatchEncoder (BFV)
 
     Crea matrices
 
     - CCKSEncoder
 
-    Crea matrices (In CKKS the number of slots is poly\_modulus\_degree / 2 and each slot encodes one real or complex number.) Para operar con reales, se pasan a enteros (multiplicando por $10^x$) perdiendo precisión y aumentando el tamaño.
+    Crea matrices (In CKKS the number of slots is poly\_modulus\_degree / 2 and each slot encodes one real or complex number.) Para operar con \textbn{reales}, se pasan a enteros (multiplicando por $10^x$) perdiendo precisión y aumentando el tamaño.
 
 
     En ambos modelos las matrices se pueden rotar haciendo uso de unas claves especiales llamadas Galois Keys (ejemplo 5 de SEAL).
@@ -123,46 +130,52 @@ the KeyGenerator.
 
 \subsection{Trabajo con vectores}
 
-...
+Both the BFV scheme (with BatchEncoder) as well as the CKKS scheme support native
+vectorized computations on encrypted numbers. In addition to computing slot-wise,
+it is possible to rotate the encrypted vectors cyclically.
 
-\subsection{Esquema BFV}
+\subsection{Esquemas de cifrado}
 
-Usando BFV el texto tiene un parámetro llamado "noise budget" que indica el nivel de ruido que se ha generado en el texto cifrado (atención: budget es "fichas" que se pueden gastar generando ruido). Este nivel de ruido aumenta a medida que se opera (en realidad, va disminuyendo hasta 0), y cuando llega a 0 indica que, si se sigue operando, no se podrá recuperar el texto.
+\begin{itemize}
+  
+  \item BFV
 
-% Plaintexts in the BFV scheme are polynomials of degree less than the degree of the polynomial modulus, and coefficients integers modulo the plaintext modulus.
+  Usando BFV el texto tiene un parámetro llamado "noise budget" que indica el nivel de ruido que se ha generado en el texto cifrado (atención: budget es "fichas" que se pueden gastar generando ruido). Este nivel de ruido aumenta a medida que se opera (en realidad, va disminuyendo hasta 0), y cuando llega a 0 indica que, si se sigue operando, no se podrá recuperar el texto.
 
-Hay tres parámetros principalmente:
+  % Plaintexts in the BFV scheme are polynomials of degree less than the degree of the polynomial modulus, and coefficients integers modulo the plaintext modulus.
 
-- $poly_modulus_degree$
+  Hay tres parámetros principalmente:
 
-Determina el módulo del polinomio usado en LWE. Cuanto más largo, más operaciones se pueden hacer (puede crecer más el resultado), pero es más lento.
-% REPASAR ESTO ^
+  - $poly_modulus_degree$
 
-- $coeff_modulus$
+  Determina el módulo del polinomio usado en LWE. Cuanto más largo, más operaciones se pueden hacer (puede crecer más el resultado), pero es más lento.
+  % REPASAR ESTO ^
 
-Número primos concatenados (vector de números primos) que determinan el módulo del texto cifrado. A mayor módulo, más $noise_budget$. Viene acotado superiormente por el $poly_modulus_degree$.
+  - $coeff_modulus$
 
-- $plain_modulus$
+  Número primos concatenados (vector de números primos) que determinan el módulo del texto cifrado. A mayor módulo, más $noise_budget$. Viene acotado superiormente por el $poly_modulus_degree$.
 
-Modulo del texto plano. CUanto más pequeño, más lento crece el $error_budget$: the noise budget consumption in a homomorphic multiplication is of the form $log2(plain_modulus) + (other terms)$
+  - $plain_modulus$
 
-The noise budget in a freshly encrypted ciphertext is $~ log2(coeff_modulus/plain_modulus)$  (bits)
+  Modulo del texto plano. CUanto más pequeño, más lento crece el $error_budget$: the noise budget consumption in a homomorphic multiplication is of the form $log2(plain_modulus) + (other terms)$
 
-% Hay que convertir a Strings todos los números con los que se quiere operar
+  The noise budget in a freshly encrypted ciphertext is $~ log2(coeff_modulus/plain_modulus)$  (bits)
 
-\subsection{Esquema CKKS}
+  % Hay que convertir a Strings todos los números con los que se quiere operar
 
-% TODO BFV vs CKKS
+  \item CKKS
 
-En este esquema podremos trabajar con número decimales, pero hay que estar ajustando constantemente los parámetros para que no se desborde el tamaño y se mantenga la integridad de lo calculado.
+  En este esquema podremos trabajar con número decimales, pero hay que estar ajustando constantemente los parámetros para que no se desborde el tamaño y se mantenga la integridad de lo calculado.
 
-Se elige una escala inicial menor que los coeff\_modulus para que permita operar con los valores correctamente (por ejemplo, si el tamaño del coeff\_mod es 60 bits se elige una escala de 40 bits para tener 20 de margen).
+  Se elige una escala inicial menor que los coeff\_modulus para que permita operar con los valores correctamente (por ejemplo, si el tamaño del coeff\_mod es 60 bits se elige una escala de 40 bits para tener 20 de margen).
 
-Lo suyo es elegir los coeff\_modulus para que el primero y el último sean más grandes (el primero para tener más precisión al quitar la escala y volver a poner en decimal, el último para poder hacer una escala cómodamente), y el resto normales (para que no sean muy pesadas las operaciones. Cuando se hace una multiplicación el tamaño del texto inicial S se convierte en $S^2$, por lo que hay que reescalarlo. Si se reescala al coeff\_modulus (de tamaño M) correspondiente en la cadena, se tiene un texto $S^2/M$ que, si se han elegido bien los parámetros, será muy parecido a S.
+  Lo suyo es elegir los coeff\_modulus para que el primero y el último sean más grandes (el primero para tener más precisión al quitar la escala y volver a poner en decimal, el último para poder hacer una escala cómodamente), y el resto normales (para que no sean muy pesadas las operaciones. Cuando se hace una multiplicación el tamaño del texto inicial S se convierte en $S^2$, por lo que hay que reescalarlo. Si se reescala al coeff\_modulus (de tamaño M) correspondiente en la cadena, se tiene un texto $S^2/M$ que, si se han elegido bien los parámetros, será muy parecido a S.
 
-Además la operación de suma requiere que los sumandos estén en la misma escala, lo que es un problema tras haber operado previamente con ellos (linea 253 del ejemplo 4 de SEAL)...
+  Además la operación de suma requiere que los sumandos estén en la misma escala, lo que es un problema tras haber operado previamente con ellos (linea 253 del ejemplo 4 de SEAL)...
 
-Especialmente destinado a trabajar con vectores (como en el modo BatchEncoder).
+  Especialmente destinado a trabajar con vectores (como en el modo BatchEncoder).
+
+\end{itemize}
 
 \section{TFHE}
 
@@ -170,7 +183,7 @@ Especialmente destinado a trabajar con vectores (como en el modo BatchEncoder).
 
 Instalación: https://tfhe.github.io/tfhe/installation.html
 
-En TFHE se trabaja directamente con puertas lógicas. No hay ningún parámetro adicional que seleccionar (mas allá de los relacionados con generar una clave aleatoria), tiene una API simple pero muy potente, pero para hacer cualquier cálculo hay que implementarlo desde el nivel más bajo. Cuando se cifra un dato se genera un array de bits correspondiente al dato cifrado. Será este array (codificado en la clase \verb|LweSample|) sobre el que aplicaremos los algoritmos y procedimientos que diseñaremos, como si trabajásemos con el texto plano. 
+En TFHE se trabaja directamente con puertas lógicas. No hay ningún parámetro adicional que seleccionar (mas allá de los relacionados con generar una clave aleatoria), tiene una API simple pero muy potente, pero para hacer cualquier cálculo hay que implementarlo desde el nivel más bajo. Cuando se cifra un dato se genera un array de bits correspondiente al dato cifrado. Será este array (codificado en la clase \verb|LweSample|) sobre el que aplicaremos los algoritmos y procedimientos que diseñaremos, como si trabajásemos con el texto plano.
 
 Los elementos que forman TFHE son mucho menos complejos que los de SEAL, con un único sistema de cifrado (http://lab.algonics.net/slides_ac16/index-asiacrypt.html).
 
