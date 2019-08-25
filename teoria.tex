@@ -9,17 +9,17 @@ Las generaciones publicadas por el estándar guardan una estrecha relación con 
 
 \begin{itemize}
   \item Partially Homomorphic Encryption
-  
+
   Existe algún homomorfismo dentro del esquema de cifrado, pero este no es explotable para realizar cómputos arbitrarios con la información. Por ejemplo, el producto en RSA (ver \ref{form:rsa_product})
-  
+
   \item Somewhat Homomorphic Encryption (SHE)
-  
+
   Se pueden realizar operaciones arbitrarias, pero el sistema hace que a medida que se procesa la información aumenta el nivel de error del resultado (como veremos, los esquemas de cifrado son semi-probabilísticos), hasta destruir la información. Hay técnicas para aumentar este umbral de error, pero sigue teniendo límites.
-  
+
   \item Fully Homormorphic Encryption (FHE)
-  
+
   Los sistemas FHE son los más codiciados dentro del campo, porque permiten realizar cualquier cómputo con la información cifrada sin que aumente el nivel de error y se vuelva irrecuperable. Es cierto que actualmente estos esquemas actualmente son menos eficientes que los anteriores, pero como dicen en TFHE (\cite{noauthor_tfhe:_nodate}): "Si Spiderman puede balancearse sobre su cuerda el tiempo suficiente para lanzar una nueva cuerda, ¡puede volar!"
-  
+
 \end{itemize}
 
 
@@ -134,7 +134,7 @@ En su estudio, Regev\cite{regev_learning_2010} formula un sistema de clave públ
 
 \end{enumerate}
 
-En el apéndice \ref{apendix:test_lwe.py} puede verse un ejemplo de implementación del algoritmo, y el resultado de su ejecución.
+En el apéndice \ref{appendix:test_lwe.py} puede verse un ejemplo de implementación del algoritmo, y el resultado de su ejecución.
 
 \section{Generaciones}
 
@@ -153,34 +153,34 @@ Dentro de la categoría de esquemas previos a la criptografía homomórfica se e
 \begin{itemize}
 
     \item RSA
-    
+
     Las propiedades matemáticas de RSA lo convierten en un esquema con homomorfismo en el producto. Para cifrar y descifrar, en RSA se exponencia el elemento al que se le desea aplicar la operación. Siendo $e$ la clave de cifrado y $d$ la clave de descifrado, la aplicación de RSA (puro) sobre el mensaje $m$ sería tal que:
-    
+
     \begin{gather*}
         c = m^e \Mod{n} \\
         m = c^d \Mod{n}
     \end{gather*}
-    
+
     Esto hace que, si multiplicamos dos mensajes cifrados:
-    
+
     \begin{gather*}
         c_1 = m_1^e \Mod{n}, c_2 = m_2^e \Mod{n} \\
-        c_1 * c_2 = m_1^e * m_2^e \Mod{n} = (m_1*m_2)^e \Mod{n} 
+        c_1 * c_2 = m_1^e * m_2^e \Mod{n} = (m_1*m_2)^e \Mod{n}
     \end{gather*}
-    
+
     Podamos obtener el producto de los dos elementos al descifrar:
-    
+
     \begin{gather*}
         \label{form:rsa_product}
         (m_1^e * m_2^e)^d \Mod{n} \\
         ((m_1*m_2)^e)^d \Mod{n} \\
         m_1 * m_2
     \end{gather*}
-    
+
     \item Criptosistema de Boneh–Goh–Nissim (\cite{hutchison_evaluating_2005})
-    
-    Permite evaluar circuitos lógicos en forma normal disyuntiva (reducido a puertas lógicas \verb|or|, \verb|and| y \verb|not|) sobre texto cifrado. Se traduce en la capacidad de evaluar polinomios de segundo grado. Aunque en comparación con los esquemas actuales este parezca "de juguete", es un gran aporte a la hora de impulsar la investigación en criptografía homomórfica. 
-    
+
+    Permite evaluar circuitos lógicos en forma normal disyuntiva (reducido a puertas lógicas \verb|or|, \verb|and| y \verb|not|) sobre texto cifrado. Se traduce en la capacidad de evaluar polinomios de segundo grado. Aunque en comparación con los esquemas actuales este parezca "de juguete", es un gran aporte a la hora de impulsar la investigación en criptografía homomórfica.
+
 \end{itemize}
 
 \subsection{Primera generación}
@@ -188,24 +188,24 @@ Dentro de la categoría de esquemas previos a la criptografía homomórfica se e
 \begin{itemize}
 
     \item Fully homomorphic encryption using ideal lattices
-    
-    La técnica de \textit{bootstrapping} de Gentry (\cite{gentry_fully_2009}) revoluciona la criptografía homomórfica. Estipula que para crear un esquema de cifrado que permita la evaluación arbitraria de circuitos lógicos símplemente hace falta un esquema de cifrado que pueda realizar la operación de descifrado sin realmente descifrar el texto. Esto se consigue mediante algo parecido a mezclar el texto cifrado (en el que se produce ruido tras hacer una operación) con una versión cifrada de la clave secreta para que se elimine el ruido. 
-    
+
+    La técnica de \textit{bootstrapping} de Gentry (\cite{gentry_fully_2009}) revoluciona la criptografía homomórfica. Estipula que para crear un esquema de cifrado que permita la evaluación arbitraria de circuitos lógicos símplemente hace falta un esquema de cifrado que pueda realizar la operación de descifrado sin realmente descifrar el texto. Esto se consigue mediante algo parecido a mezclar el texto cifrado (en el que se produce ruido tras hacer una operación) con una versión cifrada de la clave secreta para que se elimine el ruido.
+
     Por ejemplo, cuando se evalúa usando la técnica de \textit{bootstrapping} la operación $ c_a + c_b$ con $c_a, c_b$ textos cifrados, $e(x)$ función de cifrado y  $d(x)$ función de descifrado, el resultado es $e( e_{-1}(c_a + c_b) )$. En la operación de descifrado intermedia se elimina el ruido, y el propio esquema hace que no permita al evaluador de la operación revelar la clave secreta. (\cite{noauthor_homomorphic_nodate-3}).
-    
+
     El principal problema de la operación de \textit{bootstrapping} es que consume mucho tiempo. En la segunda generación el principal esfuerzo es crear esquemas más rápidos.
-        
+
 \end{itemize}
 
 \subsection{Segunda generación}
 
 \begin{itemize}
     \item BGV
-    
+
     https://eprint.iacr.org/2011/277
 
     \item BFV
-    
+
     https://eprint.iacr.org/2012/144
 
     \if false
@@ -219,15 +219,15 @@ Dentro de la categoría de esquemas previos a la criptografía homomórfica se e
         which additions can generally be thought of as being nearly free in terms of
         noise budget consumption compared to multiplications.
     \fi
-    
+
     % TODO A paper by Costache and Smart [CS16]gives some initial comparisons between BGV, BFV
 
     \item CKKS
-    
+
     No está descrito en el estándar, pero sí se implementa en SEAL.
 
     https://link.springer.com/chapter/10.1007%2F978-3-319-70694-8_15
-    
+
 \end{itemize}
 
 \subsection{Tercera generación}
