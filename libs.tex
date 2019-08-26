@@ -24,9 +24,10 @@ Hay varias implementaciones de criptografía homomórfica, y varias soluciones p
 
 \end{itemize}{}
 
-Para nuestro trabajo utilizaremos las librerías SEAL (como representante de la segunda generación de criptografía homomórfica) y THFE (como representante de la tercera). Para la segunda generación habría sido también una muy buena opción utilizar PALISADE, pero la documentación es mucho menor, y no incluye el esquema CKKS.
+Para nuestro trabajo utilizaremos las librerías Microsoft SEAL (como representante de la segunda generación de criptografía homomórfica) y THFE (como representante de la tercera). Para la segunda generación habría sido también una muy buena opción utilizar PALISADE, pero la documentación es mucho menor, y no incluye el esquema CKKS.
 
-\section{SEAL}
+\section{Microsoft SEAL}
+\label{tag:msfseal}
 
 SEAL es:
 
@@ -256,13 +257,17 @@ A continuación haremos un repaso de las principales operaciones sobre el texto 
 
   \begin{lstlisting}[language=c++]
     /*
-     Hasta que el número más pequeño que podamos escribir con los
-     bits que hemos asignado a los decimales no sea mayor que 100
+     Hasta que el menor valor que podamos 
+     escribir con los bits que hemos asignado a 
+     los decimales (10 bits) no sea mayor que 100
     */
     for (int i = 0.001; i < 100; i = i*2) {
-      gte(es_mayor, result, 100); // es_mayor =  result >= 100
-      bootsMUX(factor, es_mayor, 2, 1); // factor = es_mayor ? 2 : 1
-      multiplica(result, result, factor); // result = result * factor
+      // es_mayor =  result >= 100
+      gte(es_mayor, result, 100); 
+      // factor = es_mayor ? 2 : 1
+      bootsMUX(factor, es_mayor, 2, 1); 
+      // result = result * factor
+      multiplica(result, result, factor); 
     }
   \end{lstlisting}
 
@@ -293,4 +298,4 @@ A continuación haremos un repaso de las principales operaciones sobre el texto 
 
 \subsection{Evolución de TFHE}
 
-En su desarrollo se plantea la implementación de un modo conocido como Chimera ...
+En su desarrollo se plantea la implementación de un modo conocido como Chimera \cite{tfhe-chimera} en el que se puedan mover los datos entre el esquema de TFHE y esquemas más eficientes como BFV, CKKS; y viceversa, sin tener que descifrarlos. Por ejemplo, esto puede ser útil para trabajar con muchas puertas lógicas y hacer alguna operación aritmética rápida entre medias.

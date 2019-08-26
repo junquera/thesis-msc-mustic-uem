@@ -203,37 +203,17 @@ Dentro de la categoría de esquemas previos a la criptografía homomórfica se e
 
     \item BGV
 
-    We present a radically new approach to fully homomorphic encryption (FHE) that dramatically improves performance and bases security on weaker assumptions. A central conceptual contribution in our work is a new way of constructing leveled fully homomorphic encryption schemes (capable of evaluating arbitrary polynomial-size circuits), {\em without Gentry's bootstrapping procedure}.
-
-    Specifically, we offer a choice of FHE schemes based on the learning with error (LWE) or ring-LWE (RLWE) problems that have 2\secparam
-
-    security against known attacks. For RLWE, we have:
-
-    1. A leveled FHE scheme that can evaluate L
-    -level arithmetic circuits with O~(\secparam⋅L3) per-gate computation -- i.e., computation {\em quasi-linear} in the security parameter. Security is based on RLWE for an approximation factor exponential in L
-
-    . This construction does not use the bootstrapping procedure.
-
-    2. A leveled FHE scheme that uses bootstrapping {\em as an optimization}, where the per-gate computation (which includes the bootstrapping procedure) is O~(\secparam2)
-    , {\em independent of L
-
-    }. Security is based on the hardness of RLWE for {\em quasi-polynomial} factors (as opposed to the sub-exponential factors needed in previous schemes).
-
-    We obtain similar results for LWE, but with worse performance. We introduce a number of further optimizations to our schemes. As an example, for circuits of large width -- e.g., where a constant fraction of levels have width at least \secparam
-    -- we can reduce the per-gate computation of the bootstrapped version to O~(\secparam), independent of L, by {\em batching the bootstrapping operation}. Previous FHE schemes all required Ω~(\secparam3.5)
-
-    computation per gate.
-
-    At the core of our construction is a much more effective approach for managing the noise level of lattice-based ciphertexts as homomorphic operations are performed, using some new techniques recently introduced by Brakerski and Vaikuntanathan (FOCS 2011).
+    Esquema de cifrado (enunciado como FHE, pero finalmente categorizado como SHE) basado en LWE que permite evitar el costoso método de bootstrapping mediante la introducción del concepto de "leveled homomorphic encryption": permite hacer esquemas más eficientes (no se va eliminando el error mediante boostrapping), pero el número de cómputos que se puede hacer sobre el texto cifrado está acotado hasta un punto en el que, el error acumulado, hace irrecuperable el mensaje.
+    
+    % https://crypto.stackexchange.com/questions/15794/difference-between-leveled-fhe-and-normal-fhe-scheme
     
     https://eprint.iacr.org/2011/277
 
     \item BFV
 
-    In this paper we port Brakerski's fully homomorphic scheme based on the Learning With Errors (LWE) problem to the ring-LWE setting. We introduce two optimised versions of relinearisation that not only result in a smaller relinearisation key, but also faster computations. We provide a detailed, but simple analysis of the various homomorphic operations, such as multiplication, relinearisation and bootstrapping, and derive tight worst case bounds on the noise caused by these operations. The analysis of the bootstrapping step is greatly simplified by using a modulus switching trick. Finally, we derive concrete parameters for which the scheme provides a given level of security and becomes fully homomorphic.
-
-    https://eprint.iacr.org/2012/144
-
+    Es una implementación optimizada de BGV sobre RLWE (ring-LWE, sistema de LWE sobre elementos de un anillo algebraico, \cite{anillo}) que mejora la eficiencia del esquema y aumenta la cota de cómputo (el número de operaciones que se pueden realizar hasta que el error del cifrado lo vuelva inconsistente) de una técnica conocida como realinearización.
+    
+    % TODO Escribir más de realinearización
     \if false
     The BFV scheme cannot perform arbitrary computations on encrypted data.
         Instead, each ciphertext has a specific quantity called the `invariant noise
@@ -246,16 +226,19 @@ Dentro de la categoría de esquemas previos a la criptografía homomórfica se e
         noise budget consumption compared to multiplications.
     \fi
 
+    https://eprint.iacr.org/2012/144
+
     % TODO A paper by Costache and Smart [CS16]gives some initial comparisons between BGV, BFV
 
     \item CKKS
 
-    No está descrito en el estándar, pero sí se implementa en SEAL.
-
-    We suggest a method to construct a homomorphic encryption scheme for approximate arithmetic. It supports an approximate addition and multiplication of encrypted messages, together with a new rescaling procedure for managing the magnitude of plaintext. This procedure truncates a ciphertext into a smaller modulus, which leads to rounding of plaintext. The main idea is to add a noise following significant figures which contain a main message. This noise is originally added to the plaintext for security, but considered to be a part of error occurring during approximate computations that is reduced along with plaintext by rescaling. As a result, our decryption structure outputs an approximate value of plaintext with a predetermined precision.
-
-    We also propose a new batching technique for a RLWE-based construction. A plaintext polynomial is an element of a cyclotomic ring of characteristic zero and it is mapped to a message vector of complex numbers via complex canonical embedding map, which is an isometric ring homomorphism. This transformation does not blow up the size of errors, therefore enables us to preserve the precision of plaintext after encoding. In our construction, the bit size of ciphertext modulus grows linearly with the depth of the circuit being evaluated due to rescaling procedure, while all the previous works either require an exponentially large size of modulus or expensive computations such as bootstrapping or bit extraction. One important feature of our method is that the precision loss during evaluation is bounded by the depth of a circuit and it exceeds at most one more bit compared to unencrypted approximate arithmetic such as floating-point operations. In addition to the basic approximate circuits, we show that our scheme can be applied to the efficient evaluation of transcendental functions such as multiplicative inverse, exponential function, logistic function and discrete Fourier transform.
-
+    No está descrito en el estándar, pero sí se plantea su implementación y está implementado en la librería Microsoft SEAL (ver \ref{tag:msfseal}). Su funcionamiento consiste en introducir una función de reescalado del texto cifrado a medida que se va trabajando con él. El reescalado trunca el mensaje cifrado (operación equivalente a dividir para reducir su magnitud) eliminando progresivamente el error cada vez que se opera. De esta forma se pueden realizar operaciones aritméticas con número reales (pertenecientes a \mathbbb{R}) e ir eliminando el error (se reduce cuando se trunca el mensaje) a medida que se va operando.
+    
+    Introduce además una técnica de codificación de los datos que nos permitirá trabajar con ellos como vectores, permitiendo aplicar técnicas SIMD (Single Instruction Multiple Data, \cite{SIMD}) para paralelizar determinadas tareas.
+    
+    % TODO Ver https://medium.com/privacy-preserving-natural-language-processing/homomorphic-encryption-for-beginners-a-practical-guide-part-1-b8f26d03a98a
+    % TODO SIMD: https://es.wikipedia.org/wiki/SIMD
+    
     https://link.springer.com/chapter/10.1007%2F978-3-319-70694-8_15
 
 \end{itemize}
