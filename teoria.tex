@@ -4,6 +4,7 @@
 Para la computación de criptografía homomórfica necesitaremos comprender las bases teóricas matemáticas y los distintos niveles de homomorfismo, además de las herramientas de notación y computación definidas por el estándar...
 
 \section{Tipos}
+\label{tag:tipos}
 
 Las generaciones publicadas por el estándar guardan una estrecha relación con las capacidades que tienen los esquemas para trabajar con los datos cifrados. Estas capacidades que van desde la posibilidad de aplicar algún homomorfismo a poder trabajar libremente con el texto cifrado están categorizadas en tres niveles. Para comenzar, veremos cuales son estos tres tipos:
 
@@ -138,13 +139,10 @@ En el apéndice \ref{appendix:test_lwe.py} puede verse un ejemplo de implementac
 
 \section{Generaciones}
 
-En base a los encuentros del estándar ...
+Las distintas generaciones de esquemas de criptografía homomórfica se han ido cerrando en base a los encuentros de estandarización. Además de la propia estandarización, estos encuentros (concretamente, de la segunda generación en adelante) han servido para crear los grupos de trabajo que han hecho germinar los avances de la siguiente. Aunque la única categorización realmente aplicable a los esquemas es la que hemos visto al principio de este capítulo (\ref{tag:tipos}), es interesante ver las distintas fases para conocer la evolución, pues normalmente la diferencia entre unas y otras ha sido símplemente el desarrollo en profundidad de una idea; o el mecanismo de una ha surgido mediante la implementación de una idea radicalmente opuesta a la base teórica de la anterior.
 
-La primera generación ...
 
-En la segunda se asientan los modelos SHE que permiten el cálculo de variables acotadas. Estos cálculos ya son fully homomorphic (suma y multi), pero a medida que se opera con las variables va aumentando un nivel de error que hace que sea imposible seguir calculando y obtener resultados válidos. A esta generación pertenecen los esquemas BGV, BFV y CKKS. Estos dos últimos están implementados en la librería SEAL.
-
-La tercera y última generación ya es considerada FHE, pues permite, gracias al esquema GSW, realizar infinitas operaciones sin perder precisión. Para el desarrollo de este tercer estándar usaremos TFHE.
+Además las tecnologías de, por ejemplo, la segunda generación, no han sido sustituidas por las de la tercera, si no que este salto generacional indica la existencia de un modelo más maduro hacia la consecución del verdadero objetivo: sistemas FHE eficientes. Siguiendo con el ejemplo, los esquemas de la segunda generación se siguen utilizando para cálculos acotados que requieren cierta eficiencia. Este es el motivo de que, como veremos más adelante, hayamos elegido una tecnología de cada una de estas generaciones para desarrollar nuestra implementación.
 
 \subsection{Pre-HE}
 
@@ -203,16 +201,16 @@ Dentro de la categoría de esquemas previos a la criptografía homomórfica se e
 
     \item BGV
 
-    Esquema de cifrado (enunciado como FHE, pero finalmente categorizado como SHE) basado en LWE que permite evitar el costoso método de bootstrapping mediante la introducción del concepto de "leveled homomorphic encryption": permite hacer esquemas más eficientes (no se va eliminando el error mediante boostrapping), pero el número de cómputos que se puede hacer sobre el texto cifrado está acotado hasta un punto en el que, el error acumulado, hace irrecuperable el mensaje.
-    
+    Esquema de cifrado (enunciado como FHE, pero finalmente categorizado como SHE) basado en LWE que permite evitar el costoso método de bootstrapping mediante la introducción del concepto de "leveled homomorphic encryption": permite hacer esquemas más eficientes (no se va eliminando el error mediante boostrapping), pero el número de cómputos que se puede hacer sobre el texto cifrado está acotado hasta un punto en el que, el error acumulado (el error "despreciable" al que hacíamos referencia en \ref{form:descifrado_lwe}), hace irrecuperable el mensaje.
+
     % https://crypto.stackexchange.com/questions/15794/difference-between-leveled-fhe-and-normal-fhe-scheme
-    
+
     https://eprint.iacr.org/2011/277
 
     \item BFV
 
     Es una implementación optimizada de BGV sobre RLWE (ring-LWE, sistema de LWE sobre elementos de un anillo algebraico, \cite{anillo}) que mejora la eficiencia del esquema y aumenta la cota de cómputo (el número de operaciones que se pueden realizar hasta que el error del cifrado lo vuelva inconsistente) de una técnica conocida como realinearización.
-    
+
     % TODO Escribir más de realinearización
     \if false
     The BFV scheme cannot perform arbitrary computations on encrypted data.
@@ -233,12 +231,12 @@ Dentro de la categoría de esquemas previos a la criptografía homomórfica se e
     \item CKKS
 
     No está descrito en el estándar, pero sí se plantea su implementación y está implementado en la librería Microsoft SEAL (ver \ref{tag:msfseal}). Su funcionamiento consiste en introducir una función de reescalado del texto cifrado a medida que se va trabajando con él. El reescalado trunca el mensaje cifrado (operación equivalente a dividir para reducir su magnitud) eliminando progresivamente el error cada vez que se opera. De esta forma se pueden realizar operaciones aritméticas con número reales (pertenecientes a \mathbbb{R}) e ir eliminando el error (se reduce cuando se trunca el mensaje) a medida que se va operando.
-    
+
     Introduce además una técnica de codificación de los datos que nos permitirá trabajar con ellos como vectores, permitiendo aplicar técnicas SIMD (Single Instruction Multiple Data, \cite{SIMD}) para paralelizar determinadas tareas.
-    
+
     % TODO Ver https://medium.com/privacy-preserving-natural-language-processing/homomorphic-encryption-for-beginners-a-practical-guide-part-1-b8f26d03a98a
     % TODO SIMD: https://es.wikipedia.org/wiki/SIMD
-    
+
     https://link.springer.com/chapter/10.1007%2F978-3-319-70694-8_15
 
 \end{itemize}
