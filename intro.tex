@@ -1,15 +1,15 @@
 \chapter{Introducción}
 \label{chap:intro}
 
-Para todo $ A,B \in \chi{} $, una operación $ \bigoplus $, y una función $f$; si se cumple $ f(A) \bigoplus f(B) = f(A \bigoplus B)$, $ f $ es una función homomórfica con respecto a $ \bigoplus $ en $ \chi{} $. Cuando una función criptográfica cumple esta condición con alguna operación se dice que es maleable (\cite{dolev_non-malleable_1991}). 
+Para todo $ A,B \in \chi{} $, una operación $ \bigoplus $, y una función $f$; si se cumple $ f(A) \bigoplus f(B) = f(A \bigoplus B)$, $ f $ es una función homomórfica con respecto a $ \bigoplus $ en $ \chi{} $. Cuando una función criptográfica cumple esta condición con alguna operación se dice que es maleable (\cite{dolev_non-malleable_1991}).
 
 Aunque es una propiedad que podría no ser deseable en muchos ámbitos (por ejemplo, en un escenario en el que además de confidencialidad se requiera integridad, permitiría a un atacante modificar los datos), si cumple ciertas condiciones podría tener numerosas aplicaciones. Así se crea el campo de estudio de la criptografía homomórfica.
 
-Se conoce como criptografía homomórfica al conjunto de técnicas criptográficas destinadas a permitir operar con datos cifrados y que dichas operaciones se materialicen correctamente sobre los datos al descifrarlos. En función (principalmente) de las operaciones con las que se cumple esta premisa, o el sistema utilizado para procesar los datos antes y después de operar... Aunque pueda haber muchas variantes de cada una de estas propiedades, la comunidad científica ha establecido criterios y notaciones para su estudio. 
+Se conoce como criptografía homomórfica al conjunto de técnicas criptográficas destinadas a permitir operar con datos cifrados y que dichas operaciones se materialicen correctamente sobre los datos al descifrarlos. En función (principalmente) de las operaciones con las que se cumple esta premisa, o el sistema utilizado para procesar los datos antes y después de operar... Aunque pueda haber muchas variantes de cada una de estas propiedades, la comunidad científica ha establecido criterios y notaciones para su estudio.
 
 \section{Estandarización}
 
-El consorcio "Homomorphic Encryption Standardization" (\cite{noauthor_homomorphic_nodate-1}) ha ido desarrollando un estándar a lo largo de los años atendiendo a los avances en las distintas tecnologías que componen la criptografía homomórfica, y prestando un interés especial en las implementaciones necesarias para ponerla en práctica. Así, se han ido sucediendo las tres generaciones de criptografía homomórfica.
+El consorcio "Homomorphic Encryption Standardization" (\cite{albrecht_homomorphic_2018}) ha ido desarrollando un estándar a lo largo de los años atendiendo a los avances en las distintas tecnologías que componen la criptografía homomórfica, y prestando un interés especial en las implementaciones necesarias para ponerla en práctica. Así, se han ido sucediendo las tres generaciones de criptografía homomórfica.
 
 El último encuentro de trabajo del grupo se produjo el 17 de Agosto en Santa Clara, en el que se trabajará principalmente en la eficiencia y la ayuda al desarrollador (usabilidad). http://homomorphicencryption.org/aug-17-2019-homomorphicencryption-org-standards-meeting/
 
@@ -35,21 +35,21 @@ Por último el consorcio de estandarización busca establecer un modelo de almac
 
 \begin{itemize}
     \item \verb|SecKeygen|, \verb|PubKeygen|
-    
+
     Tiene que haber un método de generación de clave privada (o secreta) y pública.
-    
+
     \item \verb|SecEncrypt|, \verb|PubEncrypt|
-    
+
     Define la posibilidad de que haya además de un sistema de cifrado público (usando la clave pública) que en determinados esquemas se pueda cifrar la información directamente con la clave privada.
-    
+
     \item \verb|Decrypt|
-    
+
     Tiene que haber un sistema para restaurar la información desde un texto cifrado.
-    
+
     \item \verb|Eval|
-    
+
     La llamada \verb|Eval| será el paraguas que recoja todas las operaciones homomórficas que se puedan realizar sobre el texto cifrado para que luego se materialicen en el descifrado.
-    
+
 \end{itemize}
 
 Algunos esquemas introducirán otras herramientas enfocadas a procesar los datos, pero estarían en niveles superiores de la arquitectura, y son exclusivas de cada implementación.
