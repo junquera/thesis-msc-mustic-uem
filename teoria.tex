@@ -187,7 +187,7 @@ Dentro de la categoría de esquemas previos a la criptografía homomórfica se e
 
     \item Bootstrapping: Fully homomorphic encryption using ideal lattices
 
-    La técnica de \textit{bootstrapping} de Gentry (\cite{gentry_fully_2009}) revoluciona la criptografía homomórfica. Estipula que para crear un esquema de cifrado que permita la evaluación arbitraria de circuitos lógicos símplemente hace falta un esquema de cifrado que pueda realizar la operación de descifrado sin realmente descifrar el texto. Esto se consigue mediante algo parecido a mezclar el texto cifrado (en el que se produce ruido tras hacer una operación) con una versión cifrada de la clave secreta para que se elimine el ruido.
+    La técnica de \textit{bootstrapping} de Gentry (\cite{gentry_fully_2009}) revoluciona la criptografía homomórfica. Estipula que para crear un esquema de cifrado que permita la evaluación arbitraria de circuitos lógicos símplemente hace falta un esquema de cifrado que pueda realizar la operación de descifrado sin realmente descifrar el texto. Esto se consigue mediante algo parecido a mezclar el texto cifrado (en el que se produce ruido tras hacer una operación) con una versión cifrada de la clave secreta (conocida como clave de evaluación) para que se elimine el ruido.
 
     Por ejemplo, cuando se evalúa usando la técnica de \textit{bootstrapping} la operación $ c_a + c_b$ con $c_a, c_b$ textos cifrados, $e(x)$ función de cifrado y  $d(x)$ función de descifrado, el resultado es $e(d(c_a + c_b) )$. En la operación de descifrado intermedia se elimina el ruido, y el propio esquema hace que el evaluador de la operación no pueda revelar la clave secreta. (\cite{noauthor_homomorphic_nodate-3}).
 
@@ -230,12 +230,9 @@ Dentro de la categoría de esquemas previos a la criptografía homomórfica se e
 
     \item CKKS
 
-    No está descrito en el estándar, pero sí se plantea su implementación y está implementado en la librería Microsoft SEAL (ver \ref{tag:msfseal}). Su funcionamiento consiste en introducir una función de reescalado del texto cifrado a medida que se va trabajando con él. El reescalado trunca el mensaje cifrado (operación equivalente a dividir para reducir su magnitud) eliminando progresivamente el error cada vez que se opera. De esta forma se pueden realizar operaciones aritméticas con número reales (pertenecientes a \mathbbb{R}) e ir eliminando el error (se reduce cuando se trunca el mensaje) a medida que se va operando.
+    No está descrito en el estándar, pero sí se plantea su implementación y se extiende su uso en varias librerías. Su funcionamiento consiste en introducir una función de reescalado del texto cifrado a medida que se va trabajando con él. El reescalado trunca el mensaje cifrado (operación equivalente a dividir para reducir su magnitud) eliminando progresivamente el error cada vez que se opera. De esta forma se pueden realizar operaciones aritméticas con número reales (pertenecientes a \mathbbb{R}) e ir eliminando el error (se reduce cuando se trunca el mensaje) a medida que se va operando.
 
-    Introduce además una técnica de codificación de los datos que nos permitirá trabajar con ellos como vectores, permitiendo aplicar técnicas SIMD (Single Instruction Multiple Data, \cite{SIMD}) para paralelizar determinadas tareas.
-
-    % TODO Ver https://medium.com/privacy-preserving-natural-language-processing/homomorphic-encryption-for-beginners-a-practical-guide-part-1-b8f26d03a98a
-    % TODO SIMD: https://es.wikipedia.org/wiki/SIMD
+    Introduce además una técnica de codificación de los datos que nos permitirá trabajar con ellos como vectores, permitiendo aplicar técnicas SIMD (Single Instruction Multiple Data, \cite{SIMD}) para paralelizar determinadas tareas, técnica que utilizaremos en nuestra implementación con Microsoft SEAL (\ref{tag:msfseal}).
 
     https://link.springer.com/chapter/10.1007%2F978-3-319-70694-8_15
 
@@ -247,23 +244,17 @@ Dentro de la categoría de esquemas previos a la criptografía homomórfica se e
 
   \item GSW
 
-  We describe a comparatively simple fully homomorphic encryption (FHE) scheme based on the learning with errors (LWE) problem. In previous LWE-based FHE schemes, multiplication is a complicated and expensive step involving "relinearization". In this work, we propose a new technique for building FHE schemes that we call the "approximate eigenvector" method. In our scheme, for the most part, homomorphic addition and multiplication are just matrix addition and multiplication. This makes our scheme both asymptotically faster and (we believe) easier to understand.
-
-  In previous schemes, the homomorphic evaluator needs to obtain the user's "evaluation key", which consists of a chain of encrypted secret keys. Our scheme has no evaluation key. The evaluator can do homomorphic operations without knowing the user's public key at all, except for some basic parameters. This fact helps us construct the first identity-based FHE scheme. Using similar techniques, we show how to compile a recent attribute-based encryption scheme for circuits by Gorbunov et al. into an attribute-based FHE scheme that permits data encrypted under the same index to be processed homomorphically.
+  El principal esquema de la tercera generación ya es considerado realmente FHE, pues permite la evaluación de todas las operaciones necesarias para poder realizar cualquier cómputo, todas las veces que hagan falta (sin cotas). En este nuevo esquema se implementa el problema LWE sobre matrices, tratando la clave como una matriz cuyo auto-vector es, aproximadamente (por el pequeño error del problema LWE), su autovector. En este esquema desaparece la necesidad de utilizar la clave de evaluación para operar (hace opcional la operación de boostrapping), pudiendo trabajar directamente con el dato cifrado.
 
   https://eprint.iacr.org/2013/340
 
   \item TFHE
 
-  Basado en una aproximación a LWE conocida como TLWE (Thorus Learn With Errors) en la que los parámetros de LWE se definen sobre un el espacio de un toro \cite{cheon_faster_2016}
+  El éxito de GSW como equema FHE reside en que todos los parámetros son extremadamente pequeños comparados con $q$ (la base modular), y la implementación de mecanismos para que el error acumulado crezca muy lento. De esta forma, no es necesaria la operación de bootstrapping en la mayoría de los casos (que hasta el momento, tardaba alrededor de 6 minutos por operación (\cite{FHEW})), y siempre puede aplicarse cuando el cálculo vaya a crecer mucho. El esquema FHEW logra un hito reduciendo el tiempo de bootstrapping hasta 1 segundo por operación, pero no es el último paso
 
-  In this paper, we revisit fully homomorphic encryption (FHE) based on GSW and its ring variants. We notice that the internal product of GSW can be replaced by a simpler external product between a GSW and an LWE ciphertext.
+  Basado en una aproximación a LWE conocida como TLWE (Thorus Learn With Errors) en la que los parámetros de LWE se definen sobre un el espacio de un toro \cite{cheon_faster_2016}, y siguiendo la trayectoria del esquema FHEW (\cite{FHEW}), TFHE puede realizar la técnica de bootstrapping en menos de $0.1$ segundos. Esto permite su aplicación sobre GSW sin perder eficiencia. Además, reduce el tamaño de las claves hasta 16MB (en lugar del GB que ocupaban hasta el momento) manteniendo el mismo nivel de seguridad.
 
-  We show that the bootstrapping scheme FHEW of Ducas and Micciancio (Eurocrypt 2015) can be expressed only in terms of this external product. As a result, we obtain a speed up from less than 1 second to less than 0.1 seconds. We also reduce the 1GB bootstrapping key size to 24MB, preserving the same security levels, and we improve the noise propagation overhead by replacing exact decomposition algorithms with approximate ones.
-
-  Moreover, our external product allows to explain the unique asymmetry in the noise propagation of GSW samples and makes it possible to evaluate deterministic automata homomorphically as in (ePrint 2014/283) in an efficient way with a noise overhead only linear in the length of the tested word.
-
-  Finally, we provide an alternative practical analysis of LWE based scheme, which directly relates the security parameter to the error rate of LWE and the entropy of the LWE secret key.
+  Utilizaremos la librería homónima para construir parte de la implementación del trabajo.
 
   https://eprint.iacr.org/2016/870
 
