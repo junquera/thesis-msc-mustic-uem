@@ -1,9 +1,9 @@
 \chapter{Solución propuesta}
 \label{chap:poc}
 
-Como hemos comentado utilizaremos una librería de la segunda generación de criptografía homomórfica (Microsoft SEAL) y otra para la tercera (TFHE). Comenzaremos con un estudio del funcionamiento de las librerías, de cuales son sus límites computacionales y pienso una operación que no sea "trivial" y a la vez sea computable por ambos.
+Como hemos comentado utilizaremos una librería de la segunda generación de criptografía homomórfica (Microsoft SEAL) y otra para la tercera (TFHE). Comenzaremos con un estudio del funcionamiento de las librerías, de cuales son sus límites computacionales y finalmente implementaremos una operación "no trivial" que requiera la utilización de ambas tecnologías.
 
-La librería SEAL cuenta con pocas operaciones aritméticas implementadas, pero ofrece la posibilidad de trabajar con matrices y números decimales. La principal complicación con SEAL es determinar cómo se está desviando el cálculo para saber cuándo parar o qué correcciones hacer. Además, las operaciones que puede hacer son relativamente limitadas (cuando se hacen, por ejemplo productos, crece mucho el error). Además, el algoritmo que se implemente en SEAL no puede contener más que sumas, restas y multiplicaciones (no existe la división).
+La librería SEAL cuenta con pocas operaciones aritméticas implementadas, pero ofrece la posibilidad de trabajar con matrices y números decimales. La principal complicación con SEAL es determinar cómo se está desviando el cálculo para saber cuándo parar o qué correcciones hacer. Además, el número de operaciones que puede hacer son muy limitadas (cuando se hacen, por ejemplo productos, crece mucho el error). Además, el algoritmo que se implemente en SEAL no puede contener más que sumas, restas y multiplicaciones (no existe la división).
 
 La librería TFHE ofrece una API de operaciones lógicas a nivel de bit. Aunque permitirá hacer cálculos más complejos sin añadir error al resultado, tendremos que implementar todas las operaciones a bajo nivel mediante puertas lógicas, siempre teniendo en cuenta que en ningún momento vamos a poder controlar el flujo de ejecución y nuestros algoritmos tienen que ser capaces de realizar los cálculos sin poder evaluar las variables (están cifradas).
 
@@ -331,14 +331,94 @@ A continuación veremos cómo trabajan nuestras principales funciones:
 
 \end{itemize}
 
-\subsection{Modelo Cliente-Servidor}
-
-
-
 \section{Implementación con SEAL}
 
 \subsection{Cálculo de la posición}
 
-EL sistema CKKS ofrece la posibilidad de trabajar con varios datos a la vez codificándolos como vectores
+El sistema CKKS ofrece la posibilidad de trabajar con varios datos a la vez codificándolos como vectores. Hemos aprovechado esta característica para poder resolver la distancia entre el punto introducido por el usuario y las distintas curvas en una sola llamada, aplicando las operaciones necesarias en todas las curvas al mismo tiempo.
 
-\subsection{Modelo Cliente-Servidor}
+Procederíamos de la siguiente manera:
+
+\begin{enumerate}
+    \item Generamos un vector $A$ con los valores $a$ de todas las curvas, otro $B$ con los valores $b$ y otro $C$ con los valores $c$ de las curvas.
+    \item Codificamos todos estos vectores con \verb|CKKSEncoder|
+    \item Determinamos el punto $y$ correspondiente al valor $x$ introducido por el usuario. Como sólo podemos hacer una operación con cada paso, tenemos que descomponer la sustitución en varias operaciones. En cada producto, al estar utilizando el esquema CKKS, tendremos que realinearizar y reescalar nuestro resultado (reduciendo el número de operaciones restantes que podemos realizar con él), por lo que hay que intentar realizar el menor número de productos posible. Por ejemplo, si hubiese que hacer la operación $x^4$, sería preferible hacer $x_2 = x^2, x_4 = x_2^2$ que $x_4 = x * x * x * x$. 
+    
+    Además, al realizar el reescalado estamos obteniendo un número con una escala menor que el número que hemos cifrado inicialmente, por lo que cuando queramos sumar dos variables tenemos que asegurarnos de ajustarlas entre sí o saltará una excepción. Estas operaciones realmente se corresponden con eliminar valores de una cadena que gestiona \verb|SEALContext| en la que se especifican los valores parámetros de cifrado de cada fase.
+    
+    % TODO Explicar cadena de mod_switching (3_levels)
+    
+    Tras realizar este estudio, procedemos a calcular:
+    \begin{enumerate}
+        \item $p_1 = x^2$
+        \item Realinearización y reescalado de $p_1$
+        \item $p_2 = p_1 * A$
+        \item Reescalado de $p_2$
+        \item $p_3 = B*x$
+        \item Reescalado de $p_3$
+        \item $p = p_2 + p_3$
+        \item Reescalado de $C$ para poder sumarlo con $p$
+        \item $y = p + C$
+    \end{enumerate}
+    
+    \begin{gather}
+      \label{form:distancias_seal}
+        \begin{pmatrix}
+            d_1 \\
+            d_2 \\
+            ... \\
+            d_n
+        \end{pmatrix} 
+        = 
+        \begin{pmatrix}
+            y \\
+            y \\
+            ... \\
+            y
+        \end{pmatrix}
+        - (
+        \begin{pmatrix}
+            a_1 \\
+            a_2 \\
+            ... \\
+            a_n
+        \end{pmatrix}
+        *
+        \begin{pmatrix}
+            x^2 & x^2 & ... & x^2
+        \end{pmatrix}
+        +
+        \begin{pmatrix}
+            b_1 \\
+            b_2 \\
+            ... \\
+            b_n
+        \end{pmatrix}
+        *
+        \begin{pmatrix}
+            x & x & ... & x
+        \end{pmatrix}
+        +
+        \begin{pmatrix}
+            c_1 \\
+            c_2 \\
+            ... \\
+            c_n
+        \end{pmatrix}
+        )
+    \end{gather}
+
+    \item Finalmente, como nuestro $y$ es el resultado de dos reescalados, tendremos que reescalar dos veces el $y$ introducido por el usuario (al que llamaremos $y_0$) para poder operar. Tras hacerlo, devolvemos el resultado \verb|encrypted_result| igual a $y - y_0$.
+    
+\end{enumerate}
+
+Cuando el usuario descifre \verb|encrypted_result|, obtendrá un vector con las distancias entre el punto que ha introducido y todas las curvas, similar al de la figura \ref{form:distancias_seal}.
+
+
+\section{Implementaciones Cliente/Servidor}
+
+Para cada una de las tecnologías se han desarrollado dos programas que hacen las funciones de cliente y servidor. De esta forma separamos la lógica de cifrado y descifrado (perteneciente a los clientes) y la lógica de procesado de los datos cifrados (propia de los servidores).
+
+...
+
+%TODO Escribir sección
