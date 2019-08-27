@@ -135,6 +135,27 @@ Both the BFV scheme (with BatchEncoder) as well as the CKKS scheme support nativ
 vectorized computations on encrypted numbers. In addition to computing slot-wise,
 it is possible to rotate the encrypted vectors cyclically.
 
+    
+    \begin{gather}
+        \begin{pmatrix}
+            c_1 \\
+            c_2 \\
+            \vdots{} \\
+            c_n
+        \end{pmatrix} 
+        = 
+        \begin{pmatrix}
+            a & a & \hdots{} &  a
+        \end{pmatrix}
+         *
+        \begin{pmatrix}
+            \Box \\
+            \Box \\
+            \vdots{} \\
+            \Box
+        \end{pmatrix}
+    \end{gather}
+
 \subsection{Esquemas de cifrado}
 
 \begin{itemize}
@@ -168,7 +189,9 @@ it is possible to rotate the encrypted vectors cyclically.
 
   En este esquema podremos trabajar con número decimales, pero hay que estar ajustando constantemente los parámetros para que no se desborde el tamaño y se mantenga la integridad de lo calculado.
 
-  Se elige una escala inicial menor que los coeff\_modulus para que permita operar con los valores correctamente (por ejemplo, si el tamaño del coeff\_mod es 60 bits se elige una escala de 40 bits para tener 20 de margen).
+  Reescalado: cuando se reescala se hace ...
+
+  Se elige una escala inicial menor que los \verb|coeff_modulus| para que permita operar con los valores correctamente (por ejemplo, si el tamaño del \verb|coeff_mod| es 60 bits se elige una escala de 40 bits para tener 20 de margen).
 
   Lo suyo es elegir los coeff\_modulus para que el primero y el último sean más grandes (el primero para tener más precisión al quitar la escala y volver a poner en decimal, el último para poder hacer una escala cómodamente), y el resto normales (para que no sean muy pesadas las operaciones. Cuando se hace una multiplicación el tamaño del texto inicial S se convierte en $S^2$, por lo que hay que reescalarlo. Si se reescala al coeff\_modulus (de tamaño M) correspondiente en la cadena, se tiene un texto $S^2/M$ que, si se han elegido bien los parámetros, será muy parecido a S.
 

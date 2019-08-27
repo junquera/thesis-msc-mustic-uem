@@ -337,14 +337,15 @@ A continuación veremos cómo trabajan nuestras principales funciones:
 
 El sistema CKKS ofrece la posibilidad de trabajar con varios datos a la vez codificándolos como vectores. Hemos aprovechado esta característica para poder resolver la distancia entre el punto introducido por el usuario y las distintas curvas en una sola llamada, aplicando las operaciones necesarias en todas las curvas al mismo tiempo.
 
-Procederíamos de la siguiente manera:
+Procedemos de la siguiente manera:
 
 \begin{enumerate}
     \item Generamos un vector $A$ con los valores $a$ de todas las curvas, otro $B$ con los valores $b$ y otro $C$ con los valores $c$ de las curvas.
     \item Codificamos todos estos vectores con \verb|CKKSEncoder|
-    \item Determinamos el punto $y$ correspondiente al valor $x$ introducido por el usuario. Como sólo podemos hacer una operación con cada paso, tenemos que descomponer la sustitución en varias operaciones. En cada producto, al estar utilizando el esquema CKKS, tendremos que realinearizar y reescalar nuestro resultado (reduciendo el número de operaciones restantes que podemos realizar con él), por lo que hay que intentar realizar el menor número de productos posible. Por ejemplo, si hubiese que hacer la operación $x^4$, sería preferible hacer $x_2 = x^2, x_4 = x_2^2$ que $x_4 = x * x * x * x$. 
+    \item Determinamos el punto $y$ correspondiente al valor $x$ introducido por el usuario. 
+    Como sólo podemos hacer una operación en cada paso, tenemos que descomponer la sustitución en varias operaciones. En cada producto, al estar utilizando el esquema CKKS, tendremos que realinearizar y reescalar nuestro resultado. La operación de reescalado trunca el número (le quita bits, ver \ref{tag:ckks}) y modifica los parámetros de cifrado reduciendo el número de operaciones restantes que podemos realizar con él. Por lo tanto, hay que intentar realizar el menor número de productos posible. Por ejemplo, si hubiese que hacer la operación $x_4=x^4$, sería preferible hacer $x_2 = x^2, x_4 = x_2^2$ (con sólo dos productos) que $x_4 = x * x * x * x$ (con cuatro). 
     
-    Además, al realizar el reescalado estamos obteniendo un número con una escala menor que el número que hemos cifrado inicialmente, por lo que cuando queramos sumar dos variables tenemos que asegurarnos de ajustarlas entre sí o saltará una excepción. Estas operaciones realmente se corresponden con eliminar valores de una cadena que gestiona \verb|SEALContext| en la que se especifican los valores parámetros de cifrado de cada fase.
+    Además, al realizar el reescalado estamos obteniendo un número con una escala menor que el número que hemos cifrado inicialmente, por lo que cuando queramos sumar dos variables tenemos que asegurarnos de ajustarlas entre sí o saltará una excepción. Estas operaciones realmente se corresponden con eliminar valores de una cadena que gestiona \verb|SEALContext| en la que se especifican los parámetros de cifrado de cada fase.
     
     % TODO Explicar cadena de mod_switching (3_levels)
     
@@ -357,7 +358,7 @@ Procederíamos de la siguiente manera:
         \item $p_3 = B*x$
         \item Reescalado de $p_3$
         \item $p = p_2 + p_3$
-        \item Reescalado de $C$ para poder sumarlo con $p$
+        \item Doble reescalado de $C$ para poder sumarlo con $p$
         \item $y = p + C$
     \end{enumerate}
     
@@ -366,43 +367,35 @@ Procederíamos de la siguiente manera:
         \begin{pmatrix}
             d_1 \\
             d_2 \\
-            ... \\
+            \vdots{} \\
             d_n
         \end{pmatrix} 
         = 
         \begin{pmatrix}
             y \\
             y \\
-            ... \\
+            \vdots{} \\
             y
         \end{pmatrix}
-        - (
+        - (x^2 *
         \begin{pmatrix}
             a_1 \\
             a_2 \\
-            ... \\
+            \vdots{} \\
             a_n
         \end{pmatrix}
-        *
-        \begin{pmatrix}
-            x^2 & x^2 & ... & x^2
-        \end{pmatrix}
-        +
+        + x *
         \begin{pmatrix}
             b_1 \\
             b_2 \\
-            ... \\
+            \vdots{} \\
             b_n
-        \end{pmatrix}
-        *
-        \begin{pmatrix}
-            x & x & ... & x
         \end{pmatrix}
         +
         \begin{pmatrix}
             c_1 \\
             c_2 \\
-            ... \\
+            \vdots{} \\
             c_n
         \end{pmatrix}
         )
@@ -421,4 +414,4 @@ Para cada una de las tecnologías se han desarrollado dos programas que hacen la
 
 ...
 
-%TODO Escribir sección
+%TODO Escribir sección y escribir la lógica seguida en cada una de las tecnologías.
