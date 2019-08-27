@@ -48,7 +48,7 @@ SEAL es:
 
     - Cuidar los niveles de error
 
-- Bajo determinados usos, puede ser insegura. Por ejemplo, no se debe permitir el descifrado desde fuera \cite{peng_danger_2019} (no es CCA seguro).
+- Bajo determinados usos, puede ser insegura. Por ejemplo, no se debe permitir el descifrado desde fuera (no es CCA seguro (\cite{peng_danger_2019} )).
 
 La API para operar con SEAL está codificada en los siguientes elementos:
 
@@ -138,7 +138,7 @@ it is possible to rotate the encrypted vectors cyclically.
 \subsection{Esquemas de cifrado}
 
 \begin{itemize}
-  
+
   \item BFV
 
   Usando BFV el texto tiene un parámetro llamado "noise budget" que indica el nivel de ruido que se ha generado en el texto cifrado (atención: budget es "fichas" que se pueden gastar generando ruido). Este nivel de ruido aumenta a medida que se opera (en realidad, va disminuyendo hasta 0), y cuando llega a 0 indica que, si se sigue operando, no se podrá recuperar el texto.
@@ -257,17 +257,17 @@ A continuación haremos un repaso de las principales operaciones sobre el texto 
 
   \begin{lstlisting}[language=c++]
     /*
-     Hasta que el menor valor que podamos 
-     escribir con los bits que hemos asignado a 
+     Hasta que el menor valor que podamos
+     escribir con los bits que hemos asignado a
      los decimales (10 bits) no sea mayor que 100
     */
     for (int i = 0.001; i < 100; i = i*2) {
       // es_mayor =  result >= 100
-      gte(es_mayor, result, 100); 
+      gte(es_mayor, result, 100);
       // factor = es_mayor ? 2 : 1
-      bootsMUX(factor, es_mayor, 2, 1); 
+      bootsMUX(factor, es_mayor, 2, 1);
       // result = result * factor
-      multiplica(result, result, factor); 
+      multiplica(result, result, factor);
     }
   \end{lstlisting}
 
@@ -298,4 +298,4 @@ A continuación haremos un repaso de las principales operaciones sobre el texto 
 
 \subsection{Evolución de TFHE}
 
-En su desarrollo se plantea la implementación de un modo conocido como Chimera \cite{tfhe-chimera} en el que se puedan mover los datos entre el esquema de TFHE y esquemas más eficientes como BFV, CKKS; y viceversa, sin tener que descifrarlos. Por ejemplo, esto puede ser útil para trabajar con muchas puertas lógicas y hacer alguna operación aritmética rápida entre medias.
+En su desarrollo se plantea la implementación de un modo conocido como Chimera (\cite{boura_chimera:_2018}) en el que se puedan mover los datos entre el esquema de TFHE y esquemas más eficientes como BFV, CKKS; y viceversa, sin tener que descifrarlos. Por ejemplo, esto puede ser útil para trabajar con muchas puertas lógicas y hacer alguna operación aritmética rápida entre medias.

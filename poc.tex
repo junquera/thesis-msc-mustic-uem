@@ -165,7 +165,7 @@ Tenemos que tener precaución principalmente en dos aspectos:
 
   \item La gestión del signo
 
-  Para trabajar con el signo de los números se codifican en complemento a 2 \cite{wikipedia_contributors._complemento_2019}. En la suma y la resta podemos operar libremente, pero a la hora de hacer la división y el producto (nuevamente) hemos tenido que implementar algoritmos que "no entienden de signo".  Siempre que necesitamos trabajar con algoritmos sin signo, y como no podemos cambiar el flujo de ejecución en función del mismo (porque no podemos verlo), realizamos el siguiente proceso con cada operando:
+  Para trabajar con el signo de los números se codifican en complemento a 2 (\cite{wikipedia_contributors._complemento_2019}). En la suma y la resta podemos operar libremente, pero a la hora de hacer la división y el producto (nuevamente) hemos tenido que implementar algoritmos que "no entienden de signo".  Siempre que necesitamos trabajar con algoritmos sin signo, y como no podemos cambiar el flujo de ejecución en función del mismo (porque no podemos verlo), realizamos el siguiente proceso con cada operando:
 
   \begin{enumerate}
     \item Negamos el operando: Para ello hemos creado la función \texttt{negativo} que devuelve el negativo del número si es positivo, y el positivo si es negativo.
