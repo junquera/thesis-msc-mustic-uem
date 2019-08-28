@@ -1,18 +1,5 @@
 import random
 
-'''
-junquera@opa:~/Dropbox/Estudios/UEM/TFM/it3/tfm/lwe_tests$ python3 test_lwe.py
-x > 1
-c1:  [20879, 467127, 239889, 298626, 143587, 116876, 441870, 358117, 405978, 117286]
-c2:  [862895, 409484, 878468, 595170, 591475, 813510, 498679, 582178, 793386, 539857]
-Result:  [340517, 340521, 340515]
-junquera@opa:~/Dropbox/Estudios/UEM/TFM/it3/tfm/lwe_tests$ python3 test_lwe.py
-x > 0
-c1:  [245223, 483493, 619825, 4950, 167883, 200668, 6545, 414358, 572824, 560333]
-c2:  [327111, 452061, 70139, 343482, 668823, 602074, 230847, 195368, 287346, 169525]
-Result:  [0, 9, 3]
-'''
-
 Z_MAX = 1e50
 MOD = 681029
 q=MOD
@@ -38,10 +25,9 @@ bs = []
 for i in range(len(aes)):
     b = []
     for j in range(DIMENSIONS):
-        b.append((aes[i][j]*s[j]+e[j]) % MOD) # % MOD
+        b.append((aes[i][j]*s[j]+e[j]) % MOD)
     bs.append(b)
 
-# TODO Probar para array de x
 x = int(input("x > "))
 
 # Cifrar
@@ -51,7 +37,6 @@ for i in range(DIMENSIONS):
     Si v es aleatorio, queda delatada la b porque si x=0
     y v=0 a=0 y b=x*q/2. v tiene que ser 1
     '''
-    # v.append(random.randint(0, 1))
     v.append(1)
 
 reses_a = []
@@ -60,8 +45,8 @@ for i in range(len(aes)):
     res_a = []
     res_b = []
     for j in range(DIMENSIONS):
-        res_a.append((aes[i][j]*v[j])) # % MOD
-        res_b.append((bs[i][j]*v[j] + x*int(q/2))) # % MOD
+        res_a.append((aes[i][j]*v[j]))
+        res_b.append((bs[i][j]*v[j] + x*int(q/2)))
 
     reses_a.append(res_a)
     reses_b.append(res_b)
