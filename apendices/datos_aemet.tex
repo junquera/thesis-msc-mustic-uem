@@ -8,8 +8,7 @@ Para descargar los datos de las ciudades ha sido necesario obtener una API key p
 \begin{figure}[h]
   \caption{Panel de descarga de datos de AEMET}
   \label{fig:panel_aemet}
-  \centering
-  \includegraphics[\textwidth]{panel_aemet}
+  \includegraphics[width=\textwidth]{panel_aemet}
 \end{figure}
 
 Una vez descargados, hemos obtenido para cada ciudad un JSON como el siguiente:
@@ -18,6 +17,10 @@ Una vez descargados, hemos obtenido para cada ciudad un JSON como el siguiente:
 
 \section{Procesado}
 
-Para cada mes, para cada archivo, he extraído el parámetro \verb|tm_mes| (que indica la temperatura media del mes) y he generado un documento CSV para poder tratarlo mejor. Los archivos generados tendrán el siguiente formato:
+Para cada mes, para cada archivo, se extrae el parámetro \verb|tm_mes| (que indica la temperatura media del mes) y se genera un documento CSV para poder tratarlo mejor:
 
-\inputminted{csv}{apendices/datos_aemet.csv}
+\begin{lstlisting}
+ft,2012,1,10.6
+...
+cg,2018,12,14.2
+\end{lstlisting}

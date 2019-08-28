@@ -48,22 +48,27 @@ para curva B han sido: ...
 
 Con CKKS, por tamaño de la cadena:
 
-El primer y el último número de la cadena tienen que ser mayores que el número a cifrar/descifrar, y los intermedios tienen que ser lo algo más grandes  que los intermedios para asegurar la precisión, y la suma de estos dos con los intermedios tiene que ser menos que max coeff_modulus bit-length. POr lo tanto:
+El primer y el último número de la cadena tienen que ser mayores que el número a cifrar/descifrar, y los intermedios tienen que ser lo algo más grandes  que los intermedios para asegurar la precisión, y la suma de estos dos con los intermedios tiene que ser menos que  \verb|max coeff_modulus| bit-length. POr lo tanto:
 
-- Para un número de 40 bits, es necesario utilizr al menos poly_modulus_degree de 8192, y se pueden hacer 4 operaciones.
-- Para un número de 64 bits, es necesario utilizr al menos poly_modulus_degree de 16384, y se pueden hacer 7 operaciones.
-- Para un número de 64 bits, es necesario utilizr al menos poly_modulus_degree de 16384, y se pueden hacer 14 operaciones.
+\begin{itemize}
+    \item Para un número de 40 bits, es necesario utilizr al menos  \verb|poly_modulus_degree de 8192|, y se pueden hacer 4 operaciones.
+    \item Para un número de 64 bits, es necesario utilizr al menos  \verb|poly_modulus_degree de 16384|, y se pueden hacer 7 operaciones.
+    \item Para un número de 64 bits, es necesario utilizr al menos \verb|poly_modulus_degree de 16384|, y se pueden hacer 14 operaciones.
+\end{itemize}
 
+Este es el número de operaciones tras el cual el resultado es inválido.
 
-%   +----------------------------------------------------+
-%   | poly_modulus_degree | max coeff_modulus bit-length |
-%   +---------------------+------------------------------+
-%   | 1024                | 27                           |
-%   | 2048                | 54                           |
-%   | 4096                | 109                          |
-%   | 8192                | 218                          |
-%   | 16384               | 438                          |
-%   | 32768               | 881                          |
-%   +---------------------+------------------------------+
+\begin{lstlisting}
++----------------------------------------------------+
+| poly_modulus_degree | max coeff_modulus bit-length |
++---------------------+------------------------------+
+| 1024                | 27                           |
+| 2048                | 54                           |
+| 4096                | 109                          |
+| 8192                | 218                          |
+| 16384               | 438                          |
+| 32768               | 881                          |
++---------------------+------------------------------+
+\end{lstlisting}
 
 Con BFV sólo enteros, y por niveles de error:
