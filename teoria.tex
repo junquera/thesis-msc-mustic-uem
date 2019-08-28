@@ -114,10 +114,10 @@ En su estudio, Regev (\cite{regev_learning_2010}) formula un sistema de clave p√
 
   Para cada bit $x$ a cifrar se elige una de las parejas y se realiza la siguiente operaci√≥n:
 
-    \begin{gather*}
+    \begin{gather}
         \label{form:cifrado_lwe}
-        (c1, c2) = (\sum_{j=1}^{m} a_i_j, \sum_{j=1}^{m} b_i_j + x * (q/2))
-    \end{gather*}
+        (c1, c2) = (\sum_{j=1}^{m} a_{ij}, \sum_{j=1}^{m} b_{ij} + x * (q/2))
+    \end{gather}
 
   \item Descifrado
 
@@ -125,10 +125,12 @@ En su estudio, Regev (\cite{regev_learning_2010}) formula un sistema de clave p√
 
     \begin{gather}
         \label{form:descifrado_lwe}
-        x \approx c_2 - (c_1*s) \\
-        b + x*(q/2) - a*s \\
-        a*s + e + x*(q/2) - a*s \\
-        e + x*(q/2) \approx x * (q/2)
+        \begin{split}
+            x \approx c_2 - (c_1*s) \\
+            b + x*(q/2) - a*s \\
+            a*s + e + x*(q/2) - a*s \\
+            e + x*(q/2) \approx x * (q/2)
+        \end{split}
     \end{gather}
 
   Si se ha introducido $s$ correctamente, y siendo $e$ despreciable en comparaci√≥n con $ q/2 $, obtendr√≠amos como resultado $ x * (q/2) $, por lo que sabremos que $ x = 1$ si el resultado es cercano a $ q/2 $ y  $ x = 0 $ si el resultado es cercano a $ 0 $.
