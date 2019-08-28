@@ -122,6 +122,8 @@ TFHE sólo ofrece operadores lógicos, así que tenemos que escribir la operacio
 
 \subsection{tfhe-math}
 
+Código fuente en: \url{https://gitlab.com/junquera/tfhe-math}
+
 El desarrollo de esta librería ha sido quizás la parte más costosa del trabajo, pero también la que más resultados arroja sobre la implementación de criptografía homomórfica en un entorno real. Como hemos comentado, hemos desarrollado las operaciones aritméticas necesarias para poder realizar la regresión cuadrática teniendo en cuenta que necesitábamos codificar los valores como número reales.
 
 TFHE sólo trabaja con arrays de bits cifrados, y los datos no se pueden evaluar durante la ejecución del programa, así que hemos tenido que meter algunas funciones redundantes para cubrir todos los supuestos: Por ejemplo, en la multiplicación trabajamos asumiendo que los dos factores tienen signo positivo y corregimos el resultado utilizando la puerta lógica \texttt{MUX}. Por otro lado, como hay algunos casos en los que vamos a tener la certeza del signo de los operandos (porque lo hemos gestionado ya antes), y la lógica de tratamiento del signo es muy pesada, hemos creado algunas funciones para trabajar con números sin signo, cuyo nombre hemos precedido de \texttt{u\_} (de \textit{unsigned}).
@@ -254,7 +256,7 @@ A continuación veremos cómo trabajan nuestras principales funciones:
 
   \item \texttt{mult}
 
-  Operación de multiplicación (ver \ref{fig:mult_float}). A diferencia de las anteriores, esta operación y \verb|div_float| tienen en cuenta los bits asignados a los decimales mediante el protocolo comentado anteriormente (ver \ref{form:float_bits_product}).
+  Operación de multiplicación (ver figura \ref{fig:mult_float}). A diferencia de las anteriores, esta operación y \verb|div_float| tienen en cuenta los bits asignados a los decimales mediante el protocolo comentado anteriormente (ver \ref{form:float_bits_product}).
 
   \begin{lstlisting}[language=c++]
   void mult_float(LweSample* result,
@@ -283,11 +285,9 @@ A continuación veremos cómo trabajan nuestras principales funciones:
     \includegraphics[width=\textwidth]{mult_float}
   \end{figure}
 
-
-
   \item \texttt{div}
 
-  Operación de división (ver \ref{fig:div_float}). Es la operación más costosa porque requiere duplicar el tamaño (en bits) de los elementos, pero es esencial para realizar nuestro cálculo, y es el principal elemento que marca la diferencia con respecto al resto de implementaciones.
+  Operación de división (ver figura \ref{fig:div_float}). Es la operación más costosa porque requiere duplicar el tamaño (en bits) de los elementos, pero es esencial para realizar nuestro cálculo, y es el principal elemento que marca la diferencia con respecto al resto de implementaciones.
 
   \begin{lstlisting}[language=c++]
   void div_float(LweSample* result,
@@ -344,40 +344,14 @@ Procedemos de la siguiente manera:
     \item Codificamos todos estos vectores con \verb|CKKSEncoder|
 
     \item Determinamos el punto $y$ correspondiente al valor $x$ introducido por el usuario.
-    Como sólo podemos hacer una operación en cada paso, tenemos que descomponer la sustitución en varias operaciones. En cada producto, al estar utilizando el esquema CKKS, tendremos que realinearizar y reescalar nuestro resultado. La operación de reescalado trunca el número (le quita bits, ver \ref{tag:ckks}) y modifica los parámetros de cifrado reduciendo el número de operaciones restantes que podemos realizar con él. Por lo tanto, hay que intentar realizar el menor número de productos posible. Por ejemplo, si hubiese que hacer la operación $x_4=x^4$, sería preferible hacer $x_2 = x^2, x_4 = x_2^2$ (con sólo dos productos) que $x_4 = x * x * x * x$ (con cuatro).
+    Como sólo podemos hacer una operación en cada paso, tenemos que descomponer la sustitución en varias operaciones. En cada producto, al estar utilizando el esquema CKKS, tendremos que reescalar (y realinearizar, cuando los cálculos pendientes así lo requieran) nuestro resultado. La operación de reescalado trunca el número (le quita bits, ver \ref{tag:ckks}) y modifica los parámetros de cifrado reduciendo el número de operaciones restantes que podemos realizar con él. Por lo tanto, hay que intentar realizar el menor número de productos posible. Por ejemplo, si hubiese que hacer la operación $x_4=x^4$, sería preferible hacer $x_2 = x^2, x_4 = x_2^2$ (con sólo dos productos) que $x_4 = x * x * x * x$ (con cuatro).
 
     Además, al realizar el reescalado estamos obteniendo un número con una escala menor que el número que hemos cifrado inicialmente, por lo que cuando queramos sumar dos variables tenemos que asegurarnos de ajustarlas entre sí o saltará una excepción. Estas operaciones realmente se corresponden con eliminar valores de una cadena que gestiona \verb|SEALContext| en la que se especifican los parámetros de cifrado de cada fase.
-
-    % TODO Explicar cadena de mod_switching (3_levels)
-    \if false
-      When a SEALContext is created from a given EncryptionParameters instance,
-      Microsoft SEAL automatically creates a so-called `modulus switching chain',
-      which is a chain of other encryption parameters derived from the original set.
-      The parameters in the modulus switching chain are the same as the original
-      parameters with the exception that size of the coefficient modulus is
-      decreasing going down the chain. More precisely, each parameter set in the
-      chain attempts to remove the last coefficient modulus prime from the
-      previous set; this continues until the parameter set is no longer valid
-      (e.g., plain_modulus is larger than the remaining coeff_modulus). It is easy
-      to walk through the chain and access all the parameter sets. Additionally,
-      each parameter set in the chain has a `chain index' that indicates its
-      position in the chain so that the last set has index 0. We say that a set
-      of encryption parameters, or an object carrying those encryption parameters,
-      is at a higher level in the chain than another set of parameters if its the
-      chain index is bigger, i.e., it is earlier in the chain.
-
-      Each set of parameters in the chain involves unique pre-computations performed
-      when the SEALContext is created, and stored in a SEALContext::ContextData
-      object. The chain is basically a linked list of SEALContext::ContextData
-      objects, and can easily be accessed through the SEALContext at any time. Each
-      node can be identified by the parms_id of its specific encryption parameters
-      (poly_modulus_degree remains the same but coeff_modulus varies).
-    \fi
 
     Tras realizar este estudio, procedemos a calcular:
     \begin{enumerate}
         \item $p_1 = x^2$
-        \item Realinearización y reescalado de $p_1$
+        \item Realinearización y reescalado de $p_1$. Aquí realinearizamos porque este elemento es el que más productos va a tener ($ A * x^2$ conlleva tres productos, mientras que $B * x$ sólo uno).
         \item $p_2 = p_1 * A$
         \item Reescalado de $p_2$
         \item $p_3 = B*x$
@@ -432,15 +406,87 @@ Procedemos de la siguiente manera:
 
 Cuando el usuario descifre \verb|encrypted_result|, obtendrá un vector con las distancias entre el punto que ha introducido y todas las curvas, similar al de la figura \ref{form:distancias_seal}.
 
-
 \section{Implementaciones Cliente/Servidor}
 
-Para cada una de las tecnologías se han desarrollado dos programas que hacen las funciones de cliente y servidor. De esta forma separamos la lógica de cifrado y descifrado (perteneciente a los clientes) y la lógica de procesado de los datos cifrados (propia de los servidores).
+Finalmente, para cada una de las tecnologías se han desarrollado dos programas que hacen las funciones de cliente y servidor. De esta forma separamos la lógica de cifrado y descifrado (perteneciente a los clientes) y la lógica de procesado de los datos cifrados (propia de los servidores).
 
+Para ambas, se ha programado una clase cliente, y una clase servidor, como hemos comentado cada una con las funciones que le son propias por su rol en la arquitectura, y para el desarrollo del trabajo hemos creado cuatro ejecutables que, apoyándose en las clases cliente/servidor implementarán la lógica para generar la curva de regresión y evaluar en el resultado los valores. De ahora en adelante cuando hablemos de cliente y servidor nos referiremos a estos ejecutables.
+
+\begin{itemize}
+
+    \item TFHE
+    
+    Código fuente en: \url{https://gitlab.com/junquera/tfhe-cs}
+    
+    El cliente TFHE ofrece la posibilidad de:
+    
+    \begin{enumerate}
+        \item Generar datos cifrados de la temperatura en Cabo de Gata guardando los $n$ valores de las $x$ con el formato \verb|ciudad_AXn.data| y los de las $y$ como  \verb|ciudad_AYn.data|).
+        \item Generar datos cifrados de la temperatura en Finisterre siguiendo el mismo formato que anteriormente, pero con el prefijo \verb|ciudad_B|.
+        \item Analizar los resultados generados por el servidor (indicándole la ruta en la que están, busca los archivos \verb|{a,b,c}.data|
+        \item Descifrar un archivo cifrado con TFHE
+    \end{enumerate}{}
+    
+    Cuando genera los datos cifrados, además exporta al sistema de archivos las claves para poder descifrar estos archivos cuando sea necesario, y poder subir la pública al servidor para procesar los datos.
+    
+    El módulo que hace las veces de servidor con TFHE generará los parámetros $a$, $b$ y $c$ de los que llevamos hablando toda la sección en base a los archivos \verb|ciudad_...| que haya en la carpeta que se le indique. Como el proceso es muy lento, almacenará los resultados de las operaciones intermedias para recurrir a ellos si se corta la ejecución (ver \ref{fig:resultados_tfhe}), hasta generar los archivos $a.data$, $b.data$ y $c.data$.
+
+\begin{lstlisting}[caption=Archivos generados por el servidor, label=fig:resultados_tfhe]
+junquera@opa:~/UEM/TFM/results/tfhe/ciudad_A/resultados$ ls -la
+total 4240
+drwxrwxr-x 2 junquera junquera   4096 ago 27 22:29 .
+drwxrwxr-x 3 junquera junquera   4096 ago 16 10:06 ..
+-rw-rw-r-- 1 junquera junquera 129024 ago 27 20:33 a.data
+-rw-rw-r-- 1 junquera junquera 129024 ago 27 08:22 b.data
+-rw-rw-r-- 1 junquera junquera 129024 ago 25 23:22 c.data
+-rw-r--r-- 1 junquera junquera 129024 ago 16 10:06 i2.data
+-rw-rw-r-- 1 junquera junquera 129024 ago 24 07:08 i2l2.data
 ...
+-rw-rw-r-- 1 junquera junquera 129024 ago 23 20:06 ul.data
+-rw-rw-r-- 1 junquera junquera 129024 ago 16 10:06 v.data
+-rw-rw-r-- 1 junquera junquera 129024 ago 23 20:06 vl.data
+-rw-rw-r-- 1 junquera junquera 129024 ago 16 10:06 w.data
+-rw-rw-r-- 1 junquera junquera 129024 ago 23 20:06 wj.data
+\end{lstlisting}
 
-<<<<<<< HEAD
-%TODO Escribir sección
-=======
-%TODO Escribir sección y escribir la lógica seguida en cada una de las tecnologías.
->>>>>>> 8ff741cde825f11a22b1b264a58d988c29f62c0f
+    Para hacer una prueba lo más realista posible de todo el sistema, he cifrado los datos que he obtenido de AEMET (ver \ref{appendix:datos_aemet}) de las temperaturas en las dos ciudades con el cliente de TFHE, y los he subido a la nube (DigitalOcean, \url{https://www.digitalocean.com/}) para procesarlos con el código del servidor TFHE.
+    
+    Tras finalizar el cálculo, los he descargado y descifrado con el cliente TFHE, y he insertado manualmente los resultados en el código del servidor SEAL. 
+
+    \item SEAL
+    
+    Código fuente en: \url{https://gitlab.com/junquera/seal-cs}
+    
+    El servidor (\verb|server.main|) lee de la carpeta en la que se está ejecutando los archivos cifrados \verb|x.data| y \verb|y.data| generados por el cliente, y los elementos criptográficos necesarios (clave pública, clave de realinearización y parámetros de cifrado). Tras procesar estos datos con los valores de las curvas que ha calculado previamente en TFHE, genera el archivo \verb|result.data| y un archivo de texto con los nombres de las curvas (para que el cliente pueda interpretar los resultados).
+    
+    El \verb|main| del cliente (codificado en el archivo \verb|client-main.cpp|) tiene dos funcionalidades:
+    \begin{enumerate}
+        \item En la primera pide que se introduzcan dos valores (temperatura y fecha), los cifra y genera dos archivos: \verb|x.data| y \verb|y.data|.
+        
+        \item La otra funcionalidad, que se ejecuta tras la ejecución del código del servidor lee el archivo  \verb|result.data| de la carpeta en la que se ejecuta, lo descifra e imprime por pantalla el resultado combinado del vector descifrado con el archivo \verb|curve_names.data|. En \ref{fig:ejecuta_seal_cs} se puede ver la ejecución del sistema completo.
+    
+      \begin{figure}[h]
+        \caption{Ejecución completa del sistema de SEAL}
+        \label{fig:ejecuta_seal_cs}
+        \centering
+        \includegraphics[width=0.75\textwidth]{ejecuta_seal_cs}
+      \end{figure}
+    \end{enumerate}{}
+\end{itemize}
+
+\section{Evaluación de límites y rendimientos}
+
+Por último se han desarrollado varios archivos de prueba para evaluar los límites y el rendimiento de las librerías. Estas pruebas son la culminación de este estudio, y buscan aportar un enfoque cuantitativo a su funcionamiento, más allá de los cálculos que se puedan hacer con el conocimiento de las tecnologías o la visión empírica desde el punto de vista del desarrollador. Se ha evaluado:
+
+\begin{itemize}
+    \item TFHE
+    Para evaluar la eficiencia de SEAL ejecutamos todas las funciones aritméticas que hemos escrito en \verb|tfhe-math| con distintos tamaños de texto cifrado (desde 4 hasta 64 bits) calculando el tiempo que tardan en realizarse. En el capítulo de resultados (\ref{chap:resultados}) veremos la comparativa entre los resultados obtenidos y el tiempo estimado en base a la teoría.
+    \item SEAL
+    Con SEAL hemos desarrollado dos tipos de pruebas:
+    \begin{itemize}
+        \item Al igual que con TFHE, hemos evaluado el tiempo que tarda en realizar las operaciones aritméticas (en este caso, sólo suma y multiplicación) con distintos tamaños de texto cifrado.
+        \item También hemos evaluado cuáles son los límites de cómputo con distintos tamaños de texto cifrado, con y sin aplicar realinearizaciones.
+    \end{itemize}
+\end{itemize}
+
+Ya sólo queda analizar los resultados de todos nuestros experimentos.
