@@ -3,7 +3,7 @@
 
 \section{Librerías}
 
-Hay varias implementaciones de criptografía homomórfica, y varias soluciones por cada una de las generaciones.
+Hay varias implementaciones de criptografía homomórfica, y varias soluciones por cada una de las generaciones. Aunque la mayoría de las implementaciones están escritas para \verb|C/C++/C#| Recientemente han ido apareciendo algunas nuevas que buscan, principalmente, adaptar los esquemas de cifrado a otros lenguajes. Aunque esto es una nueva noticia, nosotros nos centraremos en las "clásicas" evaluadas por el consorcio de standarización:
 
 \begin{itemize}
     \item Segunda generación
@@ -21,34 +21,29 @@ Hay varias implementaciones de criptografía homomórfica, y varias soluciones p
         \item FHEW
         \item cuHE
     \end{itemize}
+\end{itemize}
 
-\end{itemize}{}
-
-Para nuestro trabajo utilizaremos las librerías Microsoft SEAL (como representante de la segunda generación de criptografía homomórfica) y THFE (como representante de la tercera). Para la segunda generación habría sido también una muy buena opción utilizar PALISADE, pero la documentación es mucho menor, y no incluye el esquema CKKS.
+Para nuestro trabajo utilizaremos las librerías Microsoft SEAL (como representante de la segunda generación de criptografía homomórfica) y THFE (como representante de la tercera). Para la segunda generación habría sido también una muy buena opción utilizar PALISADE, pero la documentación es mucho menor, y no incluye el esquema CKKS (necesario para trabajar con números reales).
 
 \section{Microsoft SEAL}
 \label{tag:msfseal}
 
-SEAL es:
+Esta librería de código abierto desarrollada por Microsoft (\textit{SEAL} de ahora en adelante) busca ofrecer una opción asequible para los desarrolladores de implementar soluciones con criptografía homomórfica.
 
-- Fácil de instalar
+Es muy fácil de instalar, no tiene dependencias externas, y está diseñada para ser construida en cualquier entorno con \verb|cmake|.
 
-- No tiene dependencias externas (más allá de '-lpthread')
+Cuenta con dos esquemas de cifrado de segunda generación (BGV y CKKS) y dentro de su código fuente se incluyen varios ejemplos que muestran cómo se opera con ella. En estos ejemplos, ordenados para conocer las distintas herramientas, muestran todo lo necesario para empezar a trabajar.
 
-- Integrable con cmake
+A la hora de implementar una idea en SEAL, hay dos aspectos clave a tener en cuenta:
 
-- Tiene varias opciones de criptografía homomórfica (BGV, {somewhat|fully}hom.encrypt)
+\begin{enumerate}
+  \item Elegir el esquema de cifrado que nos permita codificar todo correctamente
+  \item Estudiar si la operación realmente es realizable con estos esquemas (recordemos que SHE tiene una cota de cómputo)
+\end{enumerate}
 
-- Dentro de su código fuente se incluyen varios ejemplos que muestran cómo se opera con ella.
+Además, hay que ser consciente de que bajo determinados usos, puede ser insegura. Por ejemplo, no se debe permitir el descifrado desde un entorno no controlado (no es CCA seguro (\cite{peng_danger_2019})).
 
-- La clave es determinar qué operación se quiere hacer:
-    - Codificarla
-
-    - Elegir correctamente los parámetros que permitan que se haga
-
-    - Cuidar los niveles de error
-
-- Bajo determinados usos, puede ser insegura. Por ejemplo, no se debe permitir el descifrado desde fuera (no es CCA seguro (\cite{peng_danger_2019} )).
+\subsection{API}
 
 La API para operar con SEAL está codificada en los siguientes elementos:
 
@@ -67,7 +62,7 @@ La API para operar con SEAL está codificada en los siguientes elementos:
   \item Encoders: Encargado de codificar los datos en función del esquema que se desee utilizar
 \end{itemize}
 
-A continuación desarrollaremos el funcionamiento de los componentes más complejos.
+A continuación explicaremos más detalladamente el funcionamiento de los componentes más complejos.
 
 \subsection{EncryptionParameters}
 
@@ -135,15 +130,15 @@ Both the BFV scheme (with BatchEncoder) as well as the CKKS scheme support nativ
 vectorized computations on encrypted numbers. In addition to computing slot-wise,
 it is possible to rotate the encrypted vectors cyclically.
 
-    
+
     \begin{gather}
         \begin{pmatrix}
             c_1 \\
             c_2 \\
             \vdots{} \\
             c_n
-        \end{pmatrix} 
-        = 
+        \end{pmatrix}
+        =
         \begin{pmatrix}
             a & a & \hdots{} &  a
         \end{pmatrix}

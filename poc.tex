@@ -263,12 +263,6 @@ A continuación veremos cómo trabajan nuestras principales funciones:
                   const TFheGateBootstrappingCloudKeySet* bk);
   \end{lstlisting}
 
-  \begin{figure}[h]
-    \caption{Algoritmo de multiplicación}
-    \label{fig:mult_float}
-    \includegraphics[width=\textwidth]{mult_float}
-  \end{figure}
-
   %
   % void mult(a, b){
   %
@@ -283,6 +277,25 @@ A continuación veremos cómo trabajan nuestras principales funciones:
   %   }
   % }
   %
+  \begin{figure}[h]
+    \caption{Algoritmo de multiplicación}
+    \label{fig:mult_float}
+    \includegraphics[width=\textwidth]{mult_float}
+  \end{figure}
+
+
+
+  \item \texttt{div}
+
+  Operación de división (ver \ref{fig:div_float}). Es la operación más costosa porque requiere duplicar el tamaño (en bits) de los elementos, pero es esencial para realizar nuestro cálculo, y es el principal elemento que marca la diferencia con respecto al resto de implementaciones.
+
+  \begin{lstlisting}[language=c++]
+  void div_float(LweSample* result,
+                  const LweSample* a, const LweSample* b,
+                  const int float_bits, const int nb_bits,
+                  const TFheGateBootstrappingCloudKeySet* bk);
+  \end{lstlisting}
+
   %
   % void div(dividendo, b){
   %
@@ -307,21 +320,8 @@ A continuación veremos cómo trabajan nuestras principales funciones:
   %       bootsCOPY(&divisor[j], &div_aux2[j], bk);
   %     }
   %   }
-  %
   % }
   %
-
-  \item \texttt{div}
-
-  Operación de división (ver \ref{fig:div_float}).
-
-  \begin{lstlisting}[language=c++]
-  void div_float(LweSample* result,
-                  const LweSample* a, const LweSample* b,
-                  const int float_bits, const int nb_bits,
-                  const TFheGateBootstrappingCloudKeySet* bk);
-  \end{lstlisting}
-
   \begin{figure}[h]
     \caption{Algoritmo de división}
     \label{fig:div_float}
@@ -342,11 +342,12 @@ Procedemos de la siguiente manera:
 \begin{enumerate}
     \item Generamos un vector $A$ con los valores $a$ de todas las curvas, otro $B$ con los valores $b$ y otro $C$ con los valores $c$ de las curvas.
     \item Codificamos todos estos vectores con \verb|CKKSEncoder|
-    \item Determinamos el punto $y$ correspondiente al valor $x$ introducido por el usuario. 
-    Como sólo podemos hacer una operación en cada paso, tenemos que descomponer la sustitución en varias operaciones. En cada producto, al estar utilizando el esquema CKKS, tendremos que realinearizar y reescalar nuestro resultado. La operación de reescalado trunca el número (le quita bits, ver \ref{tag:ckks}) y modifica los parámetros de cifrado reduciendo el número de operaciones restantes que podemos realizar con él. Por lo tanto, hay que intentar realizar el menor número de productos posible. Por ejemplo, si hubiese que hacer la operación $x_4=x^4$, sería preferible hacer $x_2 = x^2, x_4 = x_2^2$ (con sólo dos productos) que $x_4 = x * x * x * x$ (con cuatro). 
-    
+
+    \item Determinamos el punto $y$ correspondiente al valor $x$ introducido por el usuario.
+    Como sólo podemos hacer una operación en cada paso, tenemos que descomponer la sustitución en varias operaciones. En cada producto, al estar utilizando el esquema CKKS, tendremos que realinearizar y reescalar nuestro resultado. La operación de reescalado trunca el número (le quita bits, ver \ref{tag:ckks}) y modifica los parámetros de cifrado reduciendo el número de operaciones restantes que podemos realizar con él. Por lo tanto, hay que intentar realizar el menor número de productos posible. Por ejemplo, si hubiese que hacer la operación $x_4=x^4$, sería preferible hacer $x_2 = x^2, x_4 = x_2^2$ (con sólo dos productos) que $x_4 = x * x * x * x$ (con cuatro).
+
     Además, al realizar el reescalado estamos obteniendo un número con una escala menor que el número que hemos cifrado inicialmente, por lo que cuando queramos sumar dos variables tenemos que asegurarnos de ajustarlas entre sí o saltará una excepción. Estas operaciones realmente se corresponden con eliminar valores de una cadena que gestiona \verb|SEALContext| en la que se especifican los parámetros de cifrado de cada fase.
-    
+
     % TODO Explicar cadena de mod_switching (3_levels)
     \if false
       When a SEALContext is created from a given EncryptionParameters instance,
@@ -371,7 +372,7 @@ Procedemos de la siguiente manera:
       objects, and can easily be accessed through the SEALContext at any time. Each
       node can be identified by the parms_id of its specific encryption parameters
       (poly_modulus_degree remains the same but coeff_modulus varies).
-      \fi
+    \fi
 
     Tras realizar este estudio, procedemos a calcular:
     \begin{enumerate}
@@ -438,4 +439,8 @@ Para cada una de las tecnologías se han desarrollado dos programas que hacen la
 
 ...
 
+<<<<<<< HEAD
+%TODO Escribir sección
+=======
 %TODO Escribir sección y escribir la lógica seguida en cada una de las tecnologías.
+>>>>>>> 8ff741cde825f11a22b1b264a58d988c29f62c0f
