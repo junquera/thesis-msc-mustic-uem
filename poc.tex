@@ -3,7 +3,7 @@
 
 Como hemos comentado utilizaremos una librería de la segunda generación de criptografía homomórfica (Microsoft SEAL) y otra para la tercera (TFHE). Comenzaremos con un estudio del funcionamiento de las librerías, de cuales son sus límites computacionales y finalmente implementaremos una operación "no trivial" que requiera la utilización de ambas tecnologías.
 
-La librería SEAL cuenta con pocas operaciones aritméticas implementadas, pero ofrece la posibilidad de trabajar con matrices y números decimales. La principal complicación con SEAL es determinar cómo se está desviando el cálculo para saber cuándo parar o qué correcciones hacer. Además, el número de operaciones que puede hacer son muy limitadas (cuando se hacen, por ejemplo productos, crece mucho el error). Además, el algoritmo que se implemente en SEAL no puede contener más que sumas, restas y multiplicaciones (no existe la división).
+La librería SEAL cuenta con pocas operaciones aritméticas implementadas, pero ofrece la posibilidad de trabajar con matrices y números decimales. La principal complicación con SEAL es determinar cómo se está desviando el cálculo para saber cuándo parar o qué correcciones hacer. Además, el número de operaciones que puede hacer son muy limitadas (cuando se hacen, por ejemplo productos, crece mucho el error). Por último hay que tener en cuenta que el algoritmo que se implemente en SEAL no puede contener más que sumas, restas y multiplicaciones (no existe la división).
 
 La librería TFHE ofrece una API de operaciones lógicas a nivel de bit. Aunque permitirá hacer cálculos más complejos sin añadir error al resultado, tendremos que implementar todas las operaciones a bajo nivel mediante puertas lógicas, siempre teniendo en cuenta que en ningún momento vamos a poder controlar el flujo de ejecución y nuestros algoritmos tienen que ser capaces de realizar los cálculos sin poder evaluar las variables (están cifradas).
 
@@ -81,8 +81,6 @@ En la figura \ref{fig:t_vs_r2} se puede ver un ejemplo del funcionamiento del si
 
 Para generar la curva de regresión que utilizará el servidor de SEAL para ubicar al usuario, dicho servidor cifrará los datos de temperatura del último año en dos ubicaciones distintas y se las enviará al servidor TFHE. Este procesa los datos cifrados y calcula la regresión cuadrática codificada en tres parámetros $a, b, c$ que devolverá cifrados al servidor de SEAL.
 
-$ DIAGRAMA PARA SUBIR DATOS DE SEAL A TFHE$
-
 \subsection{Curva de regresión}
 
 Esta curva $ y = f(x) $ está definida por tres parámetros ($a$, $b$ y $c$) de forma que:
@@ -116,7 +114,7 @@ Obtendríamos un sistema lineal de ecuaciones solucionable mediante eliminación
     \end{cases}
 \end{gather*}
 
-Además de la propia implementación con TFHE (codificada en el apéndice \ref{appendix:reg2.cpp}), se ha desarrollado un código de ejemplo en python mucho más legible \ref{appendix:regresion_cuadratica.py}.
+Además de la propia implementación con TFHE (codificada en el archivo \verb|reg2.cpp|), se ha desarrollado un código de ejemplo en python mucho más legible \ref{appendix:regresion_cuadratica}.
 
 TFHE sólo ofrece operadores lógicos, así que tenemos que escribir la operaciones aritméticas necesarias: suma, resta, multiplicación y división. Además tendremos que dar la posibilidad de trabajar con números reales, por lo que tendremos que determinar la codificación más apropiada. Para todo ello se ha desarrollado la librería \texttt{tfhe-math}
 
@@ -431,23 +429,27 @@ Para ambas, se ha programado una clase cliente, y una clase servidor, como hemos
     
     El módulo que hace las veces de servidor con TFHE generará los parámetros $a$, $b$ y $c$ de los que llevamos hablando toda la sección en base a los archivos \verb|ciudad_...| que haya en la carpeta que se le indique. Como el proceso es muy lento, almacenará los resultados de las operaciones intermedias para recurrir a ellos si se corta la ejecución (ver \ref{fig:resultados_tfhe}), hasta generar los archivos $a.data$, $b.data$ y $c.data$.
 
-\begin{lstlisting}[caption=Archivos generados por el servidor, label=fig:resultados_tfhe]
-junquera@opa:~/UEM/TFM/results/tfhe/ciudad_A/resultados$ ls -la
-total 4240
-drwxrwxr-x 2 junquera junquera   4096 ago 27 22:29 .
-drwxrwxr-x 3 junquera junquera   4096 ago 16 10:06 ..
--rw-rw-r-- 1 junquera junquera 129024 ago 27 20:33 a.data
--rw-rw-r-- 1 junquera junquera 129024 ago 27 08:22 b.data
--rw-rw-r-- 1 junquera junquera 129024 ago 25 23:22 c.data
--rw-r--r-- 1 junquera junquera 129024 ago 16 10:06 i2.data
--rw-rw-r-- 1 junquera junquera 129024 ago 24 07:08 i2l2.data
-...
--rw-rw-r-- 1 junquera junquera 129024 ago 23 20:06 ul.data
--rw-rw-r-- 1 junquera junquera 129024 ago 16 10:06 v.data
--rw-rw-r-- 1 junquera junquera 129024 ago 23 20:06 vl.data
--rw-rw-r-- 1 junquera junquera 129024 ago 16 10:06 w.data
--rw-rw-r-- 1 junquera junquera 129024 ago 23 20:06 wj.data
-\end{lstlisting}
+\begin{listing}[ht]
+    \caption{Archivos generados por el servidor}
+    \label{fig:resultados_tfhe}
+    \begin{minted}{console}
+    junquera@opa:~/UEM/TFM/results/tfhe/ciudad_A/resultados$ ls -la
+    total 4240
+    drwxrwxr-x 2 junquera junquera   4096 ago 27 22:29 .
+    drwxrwxr-x 3 junquera junquera   4096 ago 16 10:06 ..
+    -rw-rw-r-- 1 junquera junquera 129024 ago 27 20:33 a.data
+    -rw-rw-r-- 1 junquera junquera 129024 ago 27 08:22 b.data
+    -rw-rw-r-- 1 junquera junquera 129024 ago 25 23:22 c.data
+    -rw-r--r-- 1 junquera junquera 129024 ago 16 10:06 i2.data
+    -rw-rw-r-- 1 junquera junquera 129024 ago 24 07:08 i2l2.data
+    ...
+    -rw-rw-r-- 1 junquera junquera 129024 ago 23 20:06 ul.data
+    -rw-rw-r-- 1 junquera junquera 129024 ago 16 10:06 v.data
+    -rw-rw-r-- 1 junquera junquera 129024 ago 23 20:06 vl.data
+    -rw-rw-r-- 1 junquera junquera 129024 ago 16 10:06 w.data
+    -rw-rw-r-- 1 junquera junquera 129024 ago 23 20:06 wj.data
+    \end{minted}
+\end{listing}
 
     Para hacer una prueba lo más realista posible de todo el sistema, he cifrado los datos que he obtenido de AEMET (ver \ref{appendix:datos_aemet}) de las temperaturas en las dos ciudades con el cliente de TFHE, y los he subido a la nube (DigitalOcean, \url{https://www.digitalocean.com/}) para procesarlos con el código del servidor TFHE.
     

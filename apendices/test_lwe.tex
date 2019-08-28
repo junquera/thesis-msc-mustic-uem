@@ -1,0 +1,21 @@
+\chapter{Test LWE}
+\label{appendix:test_lwe}
+
+\section{Código en python}
+
+\inputminted{python}{apendices/test_lwe.py}
+
+\section{Ejecución}
+
+\begin{minted}{console}
+junquera@opa:~/tfm/lwe_tests$ python3 test_lwe.py 
+x > 1
+c1:  [583949, 280901, 385393, 215313, 3921, 664402, 669495, 470378, 548011, 15699]
+c2:  [597668, 851152, 692041, 618895, 590806, 410594, 694835, 830543, 381247, 582842]
+Result:  [340514, 340518, 340516]
+junquera@opa:~/tfm/lwe_tests$ python3 test_lwe.py 
+x > 0
+c1:  [482569, 656029, 171078, 505801, 228565, 444569, 45811, 394863, 509682, 357903]
+c2:  [106231, 198539, 660839, 461502, 350107, 178714, 450856, 646125, 522843, 106305]
+Result:  [8, 6, 7]
+\end{minted}

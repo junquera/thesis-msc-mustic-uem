@@ -70,16 +70,16 @@ Para cada esquema hay unos parámetros distintos.
 
 \subsection{SEALContext}
 
-When a SEALContext is created from a given EncryptionParameters instance,
-Microsoft SEAL automatically creates a so-called `modulus switching chain',
-which is a chain of other encryption parameters derived from the original set.
+% When a SEALContext is created from a given EncryptionParameters instance,
+% Microsoft SEAL automatically creates a so-called `modulus switching chain',
+% which is a chain of other encryption parameters derived from the original set.
 
-Each set of parameters in the chain involves unique pre-computations performed
-when the SEALContext is created, and stored in a SEALContext::ContextData
-object. The chain is basically a linked list of SEALContext::ContextData
-objects, and can easily be accessed through the SEALContext at any time. Each
-node can be identified by the parms_id of its specific encryption parameters
-(poly_modulus_degree remains the same but coeff_modulus varies).
+% Each set of parameters in the chain involves unique pre-computations performed
+% when the SEALContext is created, and stored in a SEALContext::ContextData
+% object. The chain is basically a linked list of SEALContext::ContextData
+% objects, and can easily be accessed through the SEALContext at any time. Each
+% node can be identified by the parms_id of its specific encryption parameters
+% (poly_modulus_degree remains the same but coeff_modulus varies).
 
 \subsection{Encoders}
 
@@ -104,31 +104,30 @@ Estos sistemas son denominados Encoders.
 
 \subsection{Niveles de error y realinearización}
 
-
 Levels: Permite ir reduciendo los coeff\_modulus para reducir el tamaño del texto cifrado cuando ya no se van a hacer más operaciones, y que las operaciones se hagan rápido.
 
-Realinearization:
+% Realinearization:
 
-`Relinearization' is an operation that reduces the size of a ciphertext after
-multiplication back to the initial size, 2. Thus, relinearizing one or both
-input ciphertexts before the next multiplication can have a huge positive
-impact on both noise growth and performance, even though relinearization has
-a significant computational cost itself. It is only possible to relinearize
-size 3 ciphertexts down to size 2, so often the user would want to relinearize
-after each multiplication to keep the ciphertext sizes at 2.
+% `Relinearization' is an operation that reduces the size of a ciphertext after
+% multiplication back to the initial size, 2. Thus, relinearizing one or both
+% input ciphertexts before the next multiplication can have a huge positive
+% impact on both noise growth and performance, even though relinearization has
+% a significant computational cost itself. It is only possible to relinearize
+% size 3 ciphertexts down to size 2, so often the user would want to relinearize
+% after each multiplication to keep the ciphertext sizes at 2.
 
-Relinearization requires special `relinearization keys', which can be thought
-of as a kind of public key. Relinearization keys can easily be created with
-the KeyGenerator.
+% Relinearization requires special `relinearization keys', which can be thought
+% of as a kind of public key. Relinearization keys can easily be created with
+% the KeyGenerator.
 
 % TODO Volver a leer 1_bfv_basic para entender size 3, size 2...
 % El tamaño tras operar M con N es M+N-1
 
 \subsection{Trabajo con vectores}
 
-Both the BFV scheme (with BatchEncoder) as well as the CKKS scheme support native
-vectorized computations on encrypted numbers. In addition to computing slot-wise,
-it is possible to rotate the encrypted vectors cyclically.
+% Both the BFV scheme (with BatchEncoder) as well as the CKKS scheme support native
+% vectorized computations on encrypted numbers. In addition to computing slot-wise,
+% it is possible to rotate the encrypted vectors cyclically.
 
 
     \begin{gather}

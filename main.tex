@@ -14,6 +14,7 @@
 
 % Para meter código
 \usepackage{listings}
+\usepackage{minted}
 
 \title{Estudio de viabilidad del uso de librerías de criptografía homomórfica en procesos reales}
 \author{Javier Junquera Sánchez}
@@ -29,8 +30,9 @@
 
 
 \tableofcontents{}
-\tableoftables{}
+% \tableoftables{}
 \tableoffigures{}
+% https://www.overleaf.com/learn/latex/Code_Highlighting_with_minted
 
 
 \input{intro}
@@ -41,9 +43,11 @@
 \input{conclusiones}
 \input{trabajos_futuros}
 
-\input{apendices}
+\appendix
+\input{apendices/test_lwe}
+\input{apendices/regresion_cuadratica}
 
-\bibliographystyle{apa}
+\bibliographystyle{apalike}
 \nocite{*}
 \bibliography{references.bib}
 % \input{bib}

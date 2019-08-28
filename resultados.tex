@@ -15,16 +15,17 @@ El primer y el último número de la cadena tienen que ser mayores que el númer
 - Para un número de 64 bits, es necesario utilizr al menos poly_modulus_degree de 16384, y se pueden hacer 7 operaciones.
 - Para un número de 64 bits, es necesario utilizr al menos poly_modulus_degree de 16384, y se pueden hacer 14 operaciones.
 
-  +----------------------------------------------------+
-  | poly_modulus_degree | max coeff_modulus bit-length |
-  +---------------------+------------------------------+
-  | 1024                | 27                           |
-  | 2048                | 54                           |
-  | 4096                | 109                          |
-  | 8192                | 218                          |
-  | 16384               | 438                          |
-  | 32768               | 881                          |
-  +---------------------+------------------------------+
+
+%   +----------------------------------------------------+
+%   | poly_modulus_degree | max coeff_modulus bit-length |
+%   +---------------------+------------------------------+
+%   | 1024                | 27                           |
+%   | 2048                | 54                           |
+%   | 4096                | 109                          |
+%   | 8192                | 218                          |
+%   | 16384               | 438                          |
+%   | 32768               | 881                          |
+%   +---------------------+------------------------------+
 
 Con BFV sólo enteros, y por niveles de error:
 
@@ -38,11 +39,11 @@ Al ser una ejecución "especulativa"...
 
 \subsection{Tamaño máximo de los datos}
 
-log(X, 2)*max_exponente <= (64 bits de entero - 10 bits de decimal - 1 bit de signo) = 53 bits
+% log(X, 2)*max_exponente <= (64 bits de entero - 10 bits de decimal - 1 bit de signo) = 53 bits
 
-4 < max_exponente < 10
+% 4 < max_exponente < 10
 
-X < 32
+% X < 32
 
 \subsection{Problemas encontrados}
 
