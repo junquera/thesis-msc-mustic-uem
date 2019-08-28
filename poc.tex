@@ -342,12 +342,36 @@ Procederíamos de la siguiente manera:
 \begin{enumerate}
     \item Generamos un vector $A$ con los valores $a$ de todas las curvas, otro $B$ con los valores $b$ y otro $C$ con los valores $c$ de las curvas.
     \item Codificamos todos estos vectores con \verb|CKKSEncoder|
-    \item Determinamos el punto $y$ correspondiente al valor $x$ introducido por el usuario. Como sólo podemos hacer una operación con cada paso, tenemos que descomponer la sustitución en varias operaciones. En cada producto, al estar utilizando el esquema CKKS, tendremos que realinearizar y reescalar nuestro resultado (reduciendo el número de operaciones restantes que podemos realizar con él), por lo que hay que intentar realizar el menor número de productos posible. Por ejemplo, si hubiese que hacer la operación $x^4$, sería preferible hacer $x_2 = x^2, x_4 = x_2^2$ que $x_4 = x * x * x * x$. 
-    
-    Además, al realizar el reescalado estamos obteniendo un número con una escala menor que el número que hemos cifrado inicialmente, por lo que cuando queramos sumar dos variables tenemos que asegurarnos de ajustarlas entre sí o saltará una excepción. Estas operaciones realmente se corresponden con eliminar valores de una cadena que gestiona \verb|SEALContext| en la que se especifican los valores parámetros de cifrado de cada fase.
-    
+    \item Determinamos el punto $y$ correspondiente al valor $x$ introducido por el usuario. Como sólo podemos hacer una operación con cada paso, tenemos que descomponer la sustitución en varias operaciones. En cada producto, al estar utilizando el esquema CKKS, tendremos que realinearizar (y reescalar cuando sea oportuno) nuestro resultado (reduciendo el número de operaciones restantes que podemos realizar con él), por lo que hay que intentar realizar el menor número de productos posible. Por ejemplo, si hubiese que hacer la operación $x^4$, sería preferible hacer $x_2 = x^2, x_4 = x_2^2$ que $x_4 = x * x * x * x$.
+
+    Además, al realizar el reescalado estamos obteniendo un número con una escala menor que el número que hemos cifrado inicialmente, por lo que cuando queramos sumar dos variables tenemos que asegurarnos de ajustarlas entre sí o saltará una excepción. Estas operaciones realmente se corresponden con eliminar valores de la cadena que gestiona \verb|SEALContext| en la que se especifican los valores parámetros de cifrado de cada fase.
+
     % TODO Explicar cadena de mod_switching (3_levels)
-    
+    \if false
+      When a SEALContext is created from a given EncryptionParameters instance,
+      Microsoft SEAL automatically creates a so-called `modulus switching chain',
+      which is a chain of other encryption parameters derived from the original set.
+      The parameters in the modulus switching chain are the same as the original
+      parameters with the exception that size of the coefficient modulus is
+      decreasing going down the chain. More precisely, each parameter set in the
+      chain attempts to remove the last coefficient modulus prime from the
+      previous set; this continues until the parameter set is no longer valid
+      (e.g., plain_modulus is larger than the remaining coeff_modulus). It is easy
+      to walk through the chain and access all the parameter sets. Additionally,
+      each parameter set in the chain has a `chain index' that indicates its
+      position in the chain so that the last set has index 0. We say that a set
+      of encryption parameters, or an object carrying those encryption parameters,
+      is at a higher level in the chain than another set of parameters if its the
+      chain index is bigger, i.e., it is earlier in the chain.
+
+      Each set of parameters in the chain involves unique pre-computations performed
+      when the SEALContext is created, and stored in a SEALContext::ContextData
+      object. The chain is basically a linked list of SEALContext::ContextData
+      objects, and can easily be accessed through the SEALContext at any time. Each
+      node can be identified by the parms_id of its specific encryption parameters
+      (poly_modulus_degree remains the same but coeff_modulus varies).
+      \fi
+
     Tras realizar este estudio, procedemos a calcular:
     \begin{enumerate}
         \item $p_1 = x^2$
@@ -360,7 +384,7 @@ Procederíamos de la siguiente manera:
         \item Reescalado de $C$ para poder sumarlo con $p$
         \item $y = p + C$
     \end{enumerate}
-    
+
     \begin{gather}
       \label{form:distancias_seal}
         \begin{pmatrix}
@@ -368,8 +392,8 @@ Procederíamos de la siguiente manera:
             d_2 \\
             ... \\
             d_n
-        \end{pmatrix} 
-        = 
+        \end{pmatrix}
+        =
         \begin{pmatrix}
             y \\
             y \\
@@ -409,7 +433,7 @@ Procederíamos de la siguiente manera:
     \end{gather}
 
     \item Finalmente, como nuestro $y$ es el resultado de dos reescalados, tendremos que reescalar dos veces el $y$ introducido por el usuario (al que llamaremos $y_0$) para poder operar. Tras hacerlo, devolvemos el resultado \verb|encrypted_result| igual a $y - y_0$.
-    
+
 \end{enumerate}
 
 Cuando el usuario descifre \verb|encrypted_result|, obtendrá un vector con las distancias entre el punto que ha introducido y todas las curvas, similar al de la figura \ref{form:distancias_seal}.
