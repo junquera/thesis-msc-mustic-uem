@@ -1,5 +1,23 @@
 \chapter{Regresión cuadrática}
 \label{appendix:regresion_cuadratica}
 
-\section{Ejemplo en python}
-\inputminted{python}{apendices/regresion_cuadratica.py}
+\section{Obtención de datos}
+
+Para descargar los datos de las ciudades ha sido necesario obtener una API key para acceder al sistema de Open Data (\url{https://opendata.aemet.es/centrodedescargas/inicio}, ver figura \ref{fig:panel_aemet}).
+
+\begin{figure}[h]
+  \caption{Panel de descarga de datos de AEMET}
+  \label{fig:panel_aemet}
+  \centering
+  \includegraphics[\textwidth]{panel_aemet}
+\end{figure}
+
+Una vez descargados, hemos obtenido para cada ciudad un JSON como el siguiente:
+
+\inputminted{json}{apendices/datos_aemet.json}
+
+\section{Procesado}
+
+Para cada mes, para cada archivo, he extraído el parámetro \verb|tm_mes| (que indica la temperatura media del mes) y he generado un documento CSV para poder tratarlo mejor. Los archivos generados tendrán el siguiente formato:
+
+\inputminted{csv}{apendices/datos_aemet.csv}
