@@ -9,6 +9,208 @@ Al ser una ejecución "especulativa"...
 
 \subsection{Tiempos de ejecución}
 
+\subsubsection{reg2}
+%
+% initVectores! 235885
+% calcCuadrados! 15687
+% calcDuplas! 35608
+% calcComplejos! 75325
+% dCalcC! 220161
+% CalcB! 264239
+% CalcA! 352023
+
+% ---
+
+% TODO Gráficos de drive
+% op,bits,time(s)
+% equal,4,0
+% is_negative,4,0
+% minimum,4,1
+% maximum,4,1
+% sum,4,1
+% negativo,4,0
+% resta,4,1
+% multiply,4,5
+% multiply_float,4,12
+% mayor_igual,4,1
+% shiftl,4,1
+% shiftr,4,1
+% u_shiftl,4,0
+% u_shiftr,4,0
+% porDiez,4,6
+% entreDiez,4,15
+% reescala-+,4,0
+% reescala+-,4,0
+% divide,4,15
+% divide_float,4,57
+% equal,8,0
+% is_negative,8,0
+% minimum,8,2
+% maximum,8,2
+% sum,8,1
+% negativo,8,1
+% resta,8,2
+% multiply,8,12
+% multiply_float,8,37
+% mayor_igual,8,0
+% shiftl,8,3
+% shiftr,8,3
+% u_shiftl,8,0
+% u_shiftr,8,0
+% porDiez,8,10
+% entreDiez,8,33
+% reescala-+,8,0
+% reescala+-,8,0
+% divide,8,57
+% divide_float,8,211
+% equal,16,1
+% is_negative,16,0
+% minimum,16,4
+% maximum,16,3
+% sum,16,2
+% negativo,16,3
+% resta,16,4
+% multiply,16,31
+% multiply_float,16,110
+% mayor_igual,16,2
+% shiftl,16,4
+% shiftr,16,6
+% u_shiftl,16,0
+% u_shiftr,16,0
+% porDiez,16,21
+% entreDiez,16,72
+% reescala-+,16,0
+% reescala+-,16,0
+% divide,16,211
+% divide_float,16,801
+% equal,32,2
+% is_negative,32,0
+% minimum,32,7
+% maximum,32,7
+% sum,32,4
+% negativo,32,4
+% resta,32,8
+% multiply,32,93
+% multiply_float,32,345
+% mayor_igual,32,2
+% shiftl,32,10
+% shiftr,32,11
+% u_shiftl,32,0
+% u_shiftr,32,0
+% porDiez,32,41
+% entreDiez,32,142
+% reescala-+,32,0
+% reescala+-,32,0
+% divide,32,812
+% divide_float,32,3108
+% equal,64,3
+% is_negative,64,0
+% minimum,64,14
+% maximum,64,15
+% sum,64,8
+% negativo,64,8
+% resta,64,16
+% multiply,64,330
+% multiply_float,64,1257
+% mayor_igual,64,4
+% shiftl,64,19
+% shiftr,64,22
+% u_shiftl,64,0
+% u_shiftr,64,0
+% porDiez,64,82
+% entreDiez,64,294
+% reescala-+,64,0
+% reescala+-,64,0
+% divide,64,3076
+% divide_float,64,11662
+
+% ---
+
+% /*
+%   multi = 5
+%   suma = 7
+%
+%   t_multi = 1257
+%   t_suma = 8
+%
+%   t_total = (t_multi*multi + t_suma*suma)*values
+%           = (6341*values)s = (105.68*values) minutos
+% */
+% void RegresionCuadratica::initVectores(const vector<LweSample*> xs, const vector<LweSample*> ys, string results_path){
+%
+%
+% /*
+%   multi = 4
+%
+%   t_multi = 1257
+%
+%   t_total = t_multi*multi = 5028s = 83.8 minutos
+% */
+% void RegresionCuadratica::calcCuadrados(string results_path)
+%
+%
+% /*
+%   multi = 9
+%
+%   t_multi = 1257
+%
+%   t_total = t_multi*multi = 11313s = 188.55m = 3.14 horas
+% */
+% void RegresionCuadratica::calcDuplas(string results_path){
+%
+%
+%
+% /*
+%   multi = 10
+%
+%   t_multi = 1257
+%
+%   t_total = t_multi*multi = 12570s = 209.5m = 3.49 horas
+% */
+% void RegresionCuadratica::calcComplejos(string results_path)
+%
+% /*
+%   suma = 16
+%   div = 4
+%
+%   t_suma = 8
+%   t_div = 11662
+%
+%   t_total = t_div*div + t_suma*suma
+%           = 46776s = 13 horas
+% */
+% void RegresionCuadratica::calcC(LweSample* c, string results_path){
+%
+%
+% /*
+%   suma = 4
+%   multi = 2
+%   div = 1
+%
+%   t_suma = 8
+%   t_multi = 1257
+%   t_div = 11662
+%
+%   t_total = t_div*div + t_multi*multi + t_suma*suma
+%           = 14208s = 3.94 horas
+% */
+% void RegresionCuadratica::calcB(LweSample* b, LweSample* c, string results_path){
+%
+%
+% /*
+%   suma = 2
+%   multi = 2
+%   div = 1
+%
+%   t_suma = 8
+%   t_multi = 1257
+%   t_div = 11662
+%
+%   t_total = t_div*div + t_multi*multi + t_suma*suma
+%           = 14192s = 3.94 horas
+% */
+% void RegresionCuadratica::calcA(LweSample* a, LweSample* b, LweSample* c, string results_path){
+
 \subsection{Tamaño máximo de los datos}
 
 % log(X, 2)*max_exponente <= (64 bits de entero - 10 bits de decimal - 1 bit de signo) = 53 bits
@@ -37,6 +239,31 @@ nb_bits > 1 + math.log(n, 2) + 10
 
 \subsection{Tiempos de ejecución}
 
+En casi todo 0
+
+% op,poly_modulus_degree_bits,t
+% slots with 8192 poly_modulus_degree: 4096
+% encode_batch,13,0
+% encode,13,0
+% encrypt_batch,13,0
+% encrypt_number,13,0
+% multiply,13,0
+% add,13,0
+% slots with 16384 poly_modulus_degree: 8192
+% encode_batch,14,0
+% encode,14,0
+% encrypt_batch,14,0
+% encrypt_number,14,0
+% multiply,14,0
+% add,14,0
+% slots with 32768 poly_modulus_degree: 16384
+% encode_batch,15,0
+% encode,15,0
+% encrypt_batch,15,0
+% encrypt_number,15,1
+% multiply,15,0
+% add,15,0
+
 \subsection{Límites de cómputo}
 
 Con CKKS, por tamaño de la cadena:
@@ -53,9 +280,18 @@ Este es el número de operaciones tras el cual el resultado es inválido.
 
 Con BFV sólo enteros, y por niveles de error:
 
+% poly_modulus_degree_bits,n
+% 13,1
+% 14,4
+% 15,9
+
 \section{Coste de la implantación}
 
 Equipo de ingenieros, estudio, pruebas...
+
+% - Estudio teórico
+% - Estudio de herramientas
+% - Mes con 6 horas al día
 
 Máquina digital ocean con cálculo (tiempo*precio).
 
