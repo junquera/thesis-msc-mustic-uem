@@ -479,15 +479,22 @@ Para ambas, se ha programado una clase cliente, y una clase servidor, como hemos
 Por último se han desarrollado varios archivos de prueba para evaluar los límites y el rendimiento de las librerías. Estas pruebas son la culminación de este estudio, y buscan aportar un enfoque cuantitativo a su funcionamiento, más allá de los cálculos que se puedan hacer con el conocimiento de las tecnologías o la visión empírica desde el punto de vista del desarrollador. Se ha evaluado:
 
 \begin{itemize}
+
     \item TFHE
-    Para evaluar la eficiencia de SEAL ejecutamos todas las funciones aritméticas que hemos escrito en \verb|tfhe-math| con distintos tamaños de texto cifrado (desde 4 hasta 64 bits) calculando el tiempo que tardan en realizarse. En el capítulo de resultados (\ref{chap:resultados}) veremos la comparativa entre los resultados obtenidos y el tiempo estimado en base a la teoría.
+    
+    Para evaluar la eficiencia de TFHE ejecutamos todas las funciones aritméticas que hemos escrito en \verb|tfhe-math| con distintos tamaños de texto cifrado (desde 4 hasta 64 bits) calculando el tiempo que tardan en realizarse. En el capítulo de resultados (\ref{chap:resultados}) veremos la comparativa entre los resultados obtenidos y el tiempo estimado en base a la teoría.
+    
     \item SEAL
+    
     Con SEAL hemos desarrollado dos tipos de pruebas:
+    
     \begin{itemize}
         \item Al igual que con TFHE, hemos evaluado el tiempo que tarda en realizar las operaciones aritméticas (en este caso, sólo suma y multiplicación) con distintos tamaños de texto cifrado.
         \item También hemos evaluado cuáles son los límites de cómputo con distintos tamaños de texto cifrado, con y sin aplicar realinearizaciones.
     \end{itemize}
+    
     Además entre los códigos de ejemplo de SEAL se encuentra un programa para evaluar la eficiencia de sus esquemas. Lo incluiremos entre nuestras pruebas.
+    
 \end{itemize}
 
 Ya sólo queda analizar los resultados de todos nuestros experimentos.
