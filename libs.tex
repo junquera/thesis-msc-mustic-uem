@@ -158,7 +158,7 @@ Los parámetros criptográficos dependerán del esquema con el que se quiere tra
 
 \end{itemize}
 
-\subsection{Niveles de error y realinearización}
+\subsection{SEALContext, niveles de error y realinearización}
 
 \verb|SEALContext| (lo que llamamos contexto, o contexto criptográfico) es la clase en la que se codifican las propiedades del texto cifrado, desde el esquema utilizado a los distintos parámetros de cifrado. La creación del \verb|SEALContext| genera una estructura similar a una cadena que guardará el estado de \verb|coeff_modulus|. De esta forma, podremos mantener la integridad al operar entre distintos textos cifrados símplemente verificando que esta cadena es igual.
 
