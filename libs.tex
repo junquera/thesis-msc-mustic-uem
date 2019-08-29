@@ -52,21 +52,79 @@ La API para operar con SEAL está codificada en los siguientes elementos:
   \item SEALContext
   \item Claves
   \begin{itemize}
-    \item SecretKey: Clave secreta para descifrar los datos
-    \item PublicKey: Clave pública para descifrar los datos
-    \item RelinKeys: CLaves públicas para realinearizar los datos y reducir el nivel de error acumulado tras operar
-    \item GaloisKeys: Claves públicas para trabajar con rotaciones en los vectores cifrados (en nuestro ejemplo no las usamos)
+    \item SecretKey
+    Clave secreta para descifrar los datos
+    \item PublicKey
+    Clave pública para descifrar los datos
+    \item RelinKeys
+    Claves públicas para realinearizar los datos y reducir el nivel de error acumulado tras operar
+    \item GaloisKeys
+    Claves públicas para trabajar con rotaciones en los vectores cifrados (en nuestro ejemplo no las usamos)
   \end{itemize}
-  \item Encryptor, Decryptor: Sistemas para cifrar y descifrar los datos
-  \item Evaluator: Es el componente que realiza las operaciones sobre los datos cifrados
-  \item Encoders: Encargado de codificar los datos en función del esquema que se desee utilizar
+  \item Encryptor, Decryptor
+  Sistemas para cifrar y descifrar los datos
+  \item Evaluator
+  Es el componente que realiza las operaciones sobre los datos cifrados
+  \item Encoders
+  Encargado de codificar los datos en función del esquema que se desee utilizar
 \end{itemize}
 
 A continuación explicaremos más detalladamente el funcionamiento de los componentes más complejos.
 
 \subsection{EncryptionParameters}
 
-Para cada esquema hay unos parámetros distintos.
+Los parámetros criptográficos dependerán del esquema con el que se quiere trabajar.
+
+\begin{itemize}
+
+  \item BFV
+
+  BFV es el esquema "básico" de SEAL. Permite trabajar con números enteros, y operar con ellos hasta que se alcanza el límite máximo de error. En BFV, este límite se podría conceptualizar como un cubo de fichas que se gastan cada vez que se opera. Hay algunas operaciones que son casi gratuitas (la suma y la resta), y la multiplicación es muy costosa. Una vez se vacía este cubo (codificado en el parámetro \verb|noise_budget|), nuestro cifrado quedará corrupto y no se puede recuperar el texto.
+
+  % Plaintexts in the BFV scheme are polynomials of degree less than the degree of the polynomial modulus, and coefficients integers modulo the plaintext modulus.
+
+  Además de \verb|noise_budget|, hay tres parámetros configurables que guardan una estrecha relación:
+
+  - \verb|poly_modulus_degree|
+
+  Determina el módulo del polinomio usado para realizar las operaciones criptográficas (recordemos que implementa LWE sobre un anillo de polinomios, ver \ref{tag:bfv}). Se expresará como una potencia de 2 que cuanto más grande sea, más operaciones permitirá hacer, pero serán más lentas.
+
+  - \verb|coeff_modulus|
+
+  Es un vector de números primos que determina el módulo del texto cifrado. A mayor módulo, mayor será el \verb|noise_budget|. Cuando decíamos que a mayor \verb|poly_modulus_degree|, podíamos hacer más operaciones, era porque el número de bits de \verb|coeff_modulus| está acotado por el de \verb|poly_modulus_degree| de la siguiente forma:
+
+  \begin{tabular}{ | c | c | }
+    \verb|poly_modulus_degree|  & Número de bits de \verb|coeff_modulus| \\
+    \hline
+    1024  & 27  \\
+    2048  & 54  \\
+    4096  & 109 \\
+    8192  & 218 \\
+    16384 & 438 \\
+    32768 & 881
+  \end{tabular}
+
+  - \verb|plain_modulus|
+
+  Modulo del texto plano. El consumo de \verb|noise_budget| se produce de forma logarítmica en base al tamaño de \verb|plain_modulus|, por lo que cuanto más pequeño es, más operaciones podremos realizar.
+
+  \item CKKS
+
+  En este esquema podremos trabajar con número decimales, pero hay que estar ajustando constantemente los parámetros para que no se desborde el tamaño y se mantenga la integridad de lo calculado.
+
+  Comparte con BGV el \verb|poly_modulus_degree| y \verb|coeff_modulus|, pero desaparece el \verb|plain_modulus|, y los valores de \verb|coeff_modulus| tienen otras implicaciones.
+
+  Reescalado: cuando se reescala se hace ...
+
+  Se elige una escala inicial menor que los \verb|coeff_modulus| para que permita operar con los valores correctamente (por ejemplo, si el tamaño del \verb|coeff_mod| es 60 bits se elige una escala de 40 bits para tener 20 de margen).
+
+  Lo suyo es elegir los coeff\_modulus para que el primero y el último sean más grandes (el primero para tener más precisión al quitar la escala y volver a poner en decimal, el último para poder hacer una escala cómodamente), y el resto normales (para que no sean muy pesadas las operaciones. Cuando se hace una multiplicación el tamaño del texto inicial S se convierte en $S^2$, por lo que hay que reescalarlo. Si se reescala al coeff\_modulus (de tamaño M) correspondiente en la cadena, se tiene un texto $S^2/M$ que, si se han elegido bien los parámetros, será muy parecido a S.
+
+  Además la operación de suma requiere que los sumandos estén en la misma escala, lo que es un problema tras haber operado previamente con ellos (linea 253 del ejemplo 4 de SEAL)...
+
+  Especialmente destinado a trabajar con vectores (como en el modo BatchEncoder).
+
+\end{itemize}
 
 \subsection{SEALContext}
 
@@ -81,6 +139,12 @@ Para cada esquema hay unos parámetros distintos.
 % node can be identified by the parms_id of its specific encryption parameters
 % (poly_modulus_degree remains the same but coeff_modulus varies).
 
+\subsection{Evaluator}
+
+Operaciones de Evaluator:
+
+...
+
 \subsection{Encoders}
 
 SEAL ofrece tres sistemas para codificar los datos con los que se va a trabajar:
@@ -91,115 +155,122 @@ SEAL ofrece tres sistemas para codificar los datos con los que se va a trabajar:
 
     - BatchEncoder (BFV)
 
-    Crea matrices
+    Crea matrices para BFV.
+
+    The total number of batching `slots' equals the poly_modulus_degree, N, and
+    these slots are organized into 2-by-(N/2) matrices that can be encrypted and
+    computed on. Each slot contains an integer modulo plain_modulus.
+
+    Matriz con dos filas.
+
+    Se introduce un vector, y si se introduce un solo valor, llena todo con el valor.
 
     - CCKSEncoder
 
-    Crea matrices (In CKKS the number of slots is poly\_modulus\_degree / 2 and each slot encodes one real or complex number.) Para operar con \textbn{reales}, se pasan a enteros (multiplicando por $10^x$) perdiendo precisión y aumentando el tamaño.
+    Crea matrices para CKKS.
 
 
-    En ambos modelos las matrices se pueden rotar haciendo uso de unas claves especiales llamadas Galois Keys (ejemplo 5 de SEAL).
-
-Estos sistemas son denominados Encoders.
+     (In CKKS the number of slots is poly\_modulus\_degree / 2 and each slot encodes one real or complex number.) Para operar con \textbn{reales}, se pasan a enteros (multiplicando por $10^x$) perdiendo precisión y aumentando el tamaño.
 
 \subsection{Niveles de error y realinearización}
 
-Levels: Permite ir reduciendo los coeff\_modulus para reducir el tamaño del texto cifrado cuando ya no se van a hacer más operaciones, y que las operaciones se hagan rápido.
+A medida que se opera, el error aumenta. La suma es casi gratuita, pero con el producto de dos elementos de tamaño M y N, teniendo el resultado tamaño M+N-1, el error aumenta considerablemente. Interpretaremos este tamaño como el grado polinómico del elemento.
 
-% Realinearization:
-
-% `Relinearization' is an operation that reduces the size of a ciphertext after
-% multiplication back to the initial size, 2. Thus, relinearizing one or both
-% input ciphertexts before the next multiplication can have a huge positive
-% impact on both noise growth and performance, even though relinearization has
-% a significant computational cost itself. It is only possible to relinearize
-% size 3 ciphertexts down to size 2, so often the user would want to relinearize
-% after each multiplication to keep the ciphertext sizes at 2.
+La realinearización es una operación que permite reducir el tamaño tras una multiplicación. Tiene un coste computacional alto en comparación con el resto de operaciones, pero permite que la operaciones posteriores sean más eficientes, y que el elemento no crezca hasta "romperse".
 
 % Relinearization requires special `relinearization keys', which can be thought
 % of as a kind of public key. Relinearization keys can easily be created with
 % the KeyGenerator.
 
-% TODO Volver a leer 1_bfv_basic para entender size 3, size 2...
-% El tamaño tras operar M con N es M+N-1
+Levels: Permite ir reduciendo los coeff\_modulus para reducir el tamaño del texto cifrado cuando ya no se van a hacer más operaciones, y que las operaciones se hagan rápido.
+
+Se corresponden con los eslabones de la cadena del SEALContext.
+
+
+%           special prime +---------+
+%                                   |
+%                                   v
+% coeff_modulus: { 50, 30, 30, 50, 50 }  +---+  Level 4 (all keys; `key level')
+%                                            |
+%                                            |
+%     coeff_modulus: { 50, 30, 30, 50 }  +---+  Level 3 (highest `data level')
+%                                            |
+%                                            |
+%         coeff_modulus: { 50, 30, 30 }  +---+  Level 2
+%                                            |
+%                                            |
+%             coeff_modulus: { 50, 30 }  +---+  Level 1
+%                                            |
+%                                            |
+%                 coeff_modulus: { 50 }  +---+  Level 0 (lowest level)
+
+
+Se puede descender, pero nunca ascender. Cuanto más abajo, más rápidos son los cálculos, pero menos cálculos se pueden hacer. En ocasiones, debido al tamaño del texto plano, descender no tendrá consecuencias en cuanto al nivel de error, por lo que se podrá hacer para tener mayor eficiencia.
+
+Mientras que en BGV esto no tiene mucha importancia (más allá de la eificiencia) en CKKS la cosa cambia. Cuando se reescala en CKKS, se está eliminando al mismo tiempo parte de esta cadena
+
+More precisely, suppose that the scale in a CKKS ciphertext is S, and the
+    last prime in the current coeff_modulus (for the ciphertext) is P. Rescaling
+    to the next level changes the scale to S/P, and removes the prime P from the
+    coeff_modulus, as usual in modulus switching. The number of primes limits
+    how many rescalings can be done, and thus limits the multiplicative depth of
+    the computation.
+
+
+Tras cada multiplicación, el valor con tamaño S multiplicado y el coeff_modulus con tamaño P: they have scale S^2 after multiplication, and S^2/P_i after rescaling.
+
+POr ello, la idea es tener el mayor número posible de valores (para poder hacer muchos productos) dejando el último más grande (realmente, el primer valor de la cadena) para no perder precisión. Si el penúltimo es por ejemplo 40, y el último 60 (como en los ejemplos) al hacer la última multiplicación el tamaño se duplicará hasta 80, por lo que al pasar a 60, solo perdemos 20 bits (en lugar de 40) si tiene el mismo tamaño.
 
 \subsection{Trabajo con vectores}
 
-% Both the BFV scheme (with BatchEncoder) as well as the CKKS scheme support native
-% vectorized computations on encrypted numbers. In addition to computing slot-wise,
-% it is possible to rotate the encrypted vectors cyclically.
+Tanto BatchEncoder como CKKSEncoder, interpretan todos los datos como vectores.
 
+\begin{gather}
+  \begin{pmatrix}
+    c_1 \\
+    c_2 \\
+    \vdots{} \\
+    c_n
+  \end{pmatrix}
+  =
+  \begin{pmatrix}
+    a & a & \hdots{} &  a
+  \end{pmatrix}
+  *
+  \begin{pmatrix}
+    \Box \\
+    \Box \\
+    \vdots{} \\
+    \Box
+  \end{pmatrix}
+\end{gather}
 
-    \begin{gather}
-        \begin{pmatrix}
-            c_1 \\
-            c_2 \\
-            \vdots{} \\
-            c_n
-        \end{pmatrix}
-        =
-        \begin{pmatrix}
-            a & a & \hdots{} &  a
-        \end{pmatrix}
-         *
-        \begin{pmatrix}
-            \Box \\
-            \Box \\
-            \vdots{} \\
-            \Box
-        \end{pmatrix}
-    \end{gather}
+Una de las cosas más interesantes de esta forma de codificar los datos, es que se pueden rotar las columnas y las filas. La rotación es cíclica, cuando se rota una posición a la izquierda, el primer valor pasa a la última posición.
 
-\subsection{Esquemas de cifrado}
+%
+%     [  0,  1,  2,  3,  0, ...,  0,  0,  0,  0,  0 ]
+%     [  4,  5,  6,  7,  0, ...,  0,  0,  0,  0,  0 ]
+%
+% Line  60 --> Encode and encrypt.
+%     + Noise budget in fresh encryption: 134 bits
+%
+% Line  78 --> Rotate rows 3 steps left.
+%     + Noise budget after rotation: 134 bits
+%     + Decrypt and decode ...... Correct.
+%
+%     [  3,  0,  0,  0,  0, ...,  0,  0,  0,  1,  2 ]
+%
+%     [  7,  0,  0,  0,  0, ...,  0,  0,  4,  5,  6 ]
+%
+% Line  92 --> Rotate columns.
+%     + Noise budget after rotation: 134 bits
+%     + Decrypt and decode ...... Correct.
+%
+%     [  7,  0,  0,  0,  0, ...,  0,  0,  4,  5,  6 ]
+%     [  3,  0,  0,  0,  0, ...,  0,  0,  0,  1,  2 ]
 
-\begin{itemize}
-
-  \item BFV
-
-  Usando BFV el texto tiene un parámetro llamado "noise budget" que indica el nivel de ruido que se ha generado en el texto cifrado (atención: budget es "fichas" que se pueden gastar generando ruido). Este nivel de ruido aumenta a medida que se opera (en realidad, va disminuyendo hasta 0), y cuando llega a 0 indica que, si se sigue operando, no se podrá recuperar el texto.
-
-  % Plaintexts in the BFV scheme are polynomials of degree less than the degree of the polynomial modulus, and coefficients integers modulo the plaintext modulus.
-
-  Hay tres parámetros principalmente:
-
-  - $poly_modulus_degree$
-
-  Determina el módulo del polinomio usado en LWE. Cuanto más largo, más operaciones se pueden hacer (puede crecer más el resultado), pero es más lento.
-  % REPASAR ESTO ^
-
-  - $coeff_modulus$
-
-  Número primos concatenados (vector de números primos) que determinan el módulo del texto cifrado. A mayor módulo, más $noise_budget$. Viene acotado superiormente por el $poly_modulus_degree$.
-
-  - $plain_modulus$
-
-  Modulo del texto plano. CUanto más pequeño, más lento crece el $error_budget$: the noise budget consumption in a homomorphic multiplication is of the form $log2(plain_modulus) + (other terms)$
-
-  The noise budget in a freshly encrypted ciphertext is $~ log2(coeff_modulus/plain_modulus)$  (bits)
-
-  % Hay que convertir a Strings todos los números con los que se quiere operar
-
-  \item CKKS
-
-  En este esquema podremos trabajar con número decimales, pero hay que estar ajustando constantemente los parámetros para que no se desborde el tamaño y se mantenga la integridad de lo calculado.
-
-  Reescalado: cuando se reescala se hace ...
-
-  Se elige una escala inicial menor que los \verb|coeff_modulus| para que permita operar con los valores correctamente (por ejemplo, si el tamaño del \verb|coeff_mod| es 60 bits se elige una escala de 40 bits para tener 20 de margen).
-
-  Lo suyo es elegir los coeff\_modulus para que el primero y el último sean más grandes (el primero para tener más precisión al quitar la escala y volver a poner en decimal, el último para poder hacer una escala cómodamente), y el resto normales (para que no sean muy pesadas las operaciones. Cuando se hace una multiplicación el tamaño del texto inicial S se convierte en $S^2$, por lo que hay que reescalarlo. Si se reescala al coeff\_modulus (de tamaño M) correspondiente en la cadena, se tiene un texto $S^2/M$ que, si se han elegido bien los parámetros, será muy parecido a S.
-
-  Además la operación de suma requiere que los sumandos estén en la misma escala, lo que es un problema tras haber operado previamente con ellos (linea 253 del ejemplo 4 de SEAL)...
-
-  Especialmente destinado a trabajar con vectores (como en el modo BatchEncoder).
-
-\end{itemize}
 
 \section{TFHE}
-
-% TODO Completar
-
-Instalación: https://tfhe.github.io/tfhe/installation.html
 
 En TFHE se trabaja directamente con puertas lógicas. No hay ningún parámetro adicional que seleccionar (mas allá de los relacionados con generar una clave aleatoria), tiene una API simple pero muy potente, pero para hacer cualquier cálculo hay que implementarlo desde el nivel más bajo. Cuando se cifra un dato se genera un array de bits correspondiente al dato cifrado. Será este array (codificado en la clase \verb|LweSample|) sobre el que aplicaremos los algoritmos y procedimientos que diseñaremos, como si trabajásemos con el texto plano.
 

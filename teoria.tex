@@ -204,31 +204,18 @@ Dentro de la categoría de esquemas previos a la criptografía homomórfica se e
     \item BGV (\cite{brakerski_leveled_2012})
 
     Esquema de cifrado (enunciado como FHE, pero finalmente categorizado como SHE) basado en LWE que permite evitar el costoso método de bootstrapping mediante la introducción del concepto de "leveled homomorphic encryption" (\cite{noauthor_homomorphic_nodate-3}): permite hacer esquemas más eficientes (no se va eliminando el error mediante boostrapping), pero el número de cómputos que se puede hacer sobre el texto cifrado está acotado hasta un punto en el que, el error acumulado (el error "despreciable" al que hacíamos referencia en la fórmula \ref{form:descifrado_lwe}), hace irrecuperable el mensaje.
-    
+
     % TODO Ver cómo referenciar fórmulas. Creo que no vale gather*
 
     \item BFV (\cite{fan_somewhat_2012})
-
+    \label{tag:bfv}
     Es una implementación optimizada de BGV sobre RLWE (ring-LWE, sistema de LWE sobre elementos de un anillo algebraico, (\cite{wikipedia_contributors._anillo_2019})) que mejora la eficiencia del esquema y aumenta la cota de cómputo (el número de operaciones que se pueden realizar hasta que el error del cifrado lo vuelva inconsistente) de una técnica conocida como realinearización.
-
-    % TODO Escribir más de realinearización
-    \if false
-    The BFV scheme cannot perform arbitrary computations on encrypted data.
-        Instead, each ciphertext has a specific quantity called the `invariant noise
-        budget' -- or `noise budget' for short -- measured in bits. The noise budget
-        in a freshly encrypted ciphertext (initial noise budget) is determined by
-        the encryption parameters. Homomorphic operations consume the noise budget
-        at a rate also determined by the encryption parameters. In BFV the two basic
-        operations allowed on encrypted data are additions and multiplications, of
-        which additions can generally be thought of as being nearly free in terms of
-        noise budget consumption compared to multiplications.
-    \fi
 
     % TODO A paper by Costache and Smart [CS16]gives some initial comparisons between BGV, BFV
 
     \item CKKS (\cite{cheon_homomorphic_2017})
     \label{tag:ckks}
-    
+
     No está descrito en el estándar, pero sí se plantea su implementación y se extiende su uso en varias librerías. Su funcionamiento consiste en introducir una función de reescalado del texto cifrado a medida que se va trabajando con él. El reescalado trunca el mensaje cifrado (operación equivalente a dividir para reducir su magnitud) eliminando progresivamente el error cada vez que se opera. De esta forma se pueden realizar operaciones aritméticas con número reales (pertenecientes a \mathbbb{R}) e ir eliminando el error (se reduce cuando se trunca el mensaje) a medida que se va operando.
 
     Introduce además una técnica de codificación de los datos que nos permitirá trabajar con ellos como vectores, permitiendo aplicar técnicas SIMD (Single Instruction Multiple Data (\cite{wikipedia_contributors._simd_2017})) para paralelizar determinadas tareas, técnica que utilizaremos en nuestra implementación con Microsoft SEAL (\ref{tag:msfseal}).
@@ -250,8 +237,8 @@ Dentro de la categoría de esquemas previos a la criptografía homomórfica se e
   Basado en una aproximación a LWE conocida como TLWE (Thorus Learn With Errors) en la que los parámetros de LWE se definen sobre el espacio de un toro, y siguiendo la trayectoria del esquema FHEW (\cite{ducas_fhew:_2014}), TFHE puede realizar la técnica de bootstrapping en menos de $0.1$ segundos. Esto permite su aplicación sobre GSW sin perder eficiencia. Además, reduce el tamaño de las claves hasta 16MB (en lugar del GB que ocupaban hasta el momento) manteniendo el mismo nivel de seguridad.
 
   Utilizaremos la librería homónima (\cite{chillotti_tfhe:_2016}) para construir parte de la implementación del trabajo.
-  
+
   % TODO La cita de la librería TFHE no es la misma que la del esquema de cifrado
-  
+
 
 \end{itemize}
