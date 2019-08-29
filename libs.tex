@@ -237,8 +237,11 @@ Tanto \verb|BatchEncoder| como \verb|CKKSEncoder|, interpretan todos los datos c
             b_{11}  & \hdots    & b_{1n} \\
             b_{21}  & \hdots    & b_{2n}
         \end{bmatrix}
-        \xrightarrow{}
-        
+        \rightarrow
+        \begin{bmatrix}
+            b_{12}  & \hdots    & b_{1n}    & b_{11} \\
+            b_{22}  & \hdots    & b_{2n}    & b_{21}
+        \end{bmatrix}
     \end{gather}
     
     \item Rotando filas
