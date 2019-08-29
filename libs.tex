@@ -81,8 +81,6 @@ Los parámetros criptográficos dependerán del esquema con el que se quiere tra
 
   BFV es el esquema "básico" de SEAL. Permite trabajar con números enteros, y operar con ellos hasta que se alcanza el límite máximo de error. En BFV, este límite se podría conceptualizar como un cubo de fichas que se gastan cada vez que se opera. Hay algunas operaciones que son casi gratuitas (la suma y la resta), y la multiplicación es muy costosa. Una vez se vacía este cubo (codificado en el parámetro \verb|noise_budget|), nuestro cifrado quedará corrupto y no se puede recuperar el texto.
 
-  % Plaintexts in the BFV scheme are polynomials of degree less than the degree of the polynomial modulus, and coefficients integers modulo the plaintext modulus.
-
   Además de \verb|noise_budget|, hay tres parámetros configurables que guardan una estrecha relación:
 
   - \verb|poly_modulus_degree|
@@ -106,7 +104,7 @@ Los parámetros criptográficos dependerán del esquema con el que se quiere tra
 
   - \verb|plain_modulus|
 
-  Modulo del texto plano. El consumo de \verb|noise_budget| se produce de forma logarítmica en base al tamaño de \verb|plain_modulus|, por lo que cuanto más pequeño es, más operaciones podremos realizar.
+  Modulo del texto plano. El consumo de \verb|noise_budget| se produce de forma logarítmica en base al tamaño de \verb|plain_modulus|, por lo que cuanto más pequeño es, más operaciones podremos realizar. También debe ser menor que \verb|poly_modulus_degree|.
 
   \item CKKS
 
