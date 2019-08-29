@@ -188,7 +188,7 @@ coeff_modulus: { 50, 30, 30, 50, 50 }  +---+  Level 4
 
 Se puede descender, pero nunca ascender. Cuanto más abajo, más rápidos son los cálculos, pero menos cálculos se pueden hacer. En ocasiones, debido al tamaño del texto plano, descender no tendrá consecuencias en cuanto al nivel de error, por lo que se podrá hacer para tener mayor eficiencia. En otros, será una condición indispensable para poder seguir operando. Es por esto que, cumpliendo los requisitos sobre el tamaño de \verb|coeff_modulus| con respecto a \verb|poly_modulus_degree|, y siguiendo las pautas que hemos comentado con respecto al primer y último elemento de la cadena, elijamos el mayor número de elementos intermedios posible.
 
-Mientras que en BGV este contexto no tiene mucha importancia (más allá de la eificiencia) en CKKS la cosa cambia. Cuando se reescala en CKKS, se está eliminando al mismo tiempo parte de esta cadena. Por lo tanto, hay que tener en cuenta que si se ha reescalado, y se ha cambiado el contexto de cifrado de un elemento, tendremos que ajustar el contexto del resto de elementos que queramos operar con él (para que estén en la misma escala y usen los mismos parámetros criptográficos), ya sea reescalando (cuando sea necesario) o haciendo al elemento "descender" en la cadena.
+Mientras que en BGV este contexto no tiene mucha importancia (más allá de la eficiencia) en CKKS la cosa cambia. Cuando se reescala en CKKS, se está eliminando al mismo tiempo parte de esta cadena. Por lo tanto, hay que tener en cuenta que si se ha reescalado, y se ha cambiado el contexto de cifrado de un elemento, tendremos que ajustar el contexto del resto de elementos que queramos operar con él (para que estén en la misma escala y usen los mismos parámetros criptográficos), ya sea reescalando (cuando sea necesario) o haciendo al elemento "descender" en la cadena.
 
 Otra forma de reducir la velocidad a la que aumenta el nivel de error sin perder profundidad computacional (capacidad para realizar más operaciones) es la realinearización. Como hemos visto anteriormente, a medida que se opera, el error aumenta. La suma es casi gratuita, pero con el producto de dos elementos de tamaño $M$ y $N$, teniendo el resultado tamaño $M+N-1$, el error aumenta considerablemente. Interpretaremos este tamaño como el grado polinómico del elemento. La realinearización es una operación que permite, utilizando unas claves especiales (claves de realinearización), reducir el tamaño tras una multiplicación, reduciendo así el consumo de \verb|noise_budget| en las siguientes operaciones. Tiene un coste computacional alto en comparación con el resto de operaciones, pero permite operar de forma más eficiente, y que el elemento no crezca hasta "romperse" (o crezca de una forma más lenta).
 
@@ -216,7 +216,7 @@ SEAL ofrece tres sistemas para codificar los datos con los que se va a trabajar:
       =
       \begin{pmatrix}
         c_1 & c_2 & c_3 & 0 & \hdots &  0 \\
-        0 & 0 & \hdots &  0
+        0 & 0 & \hdots \hdots &  0
       \end{pmatrix}
     \end{gather}
 
