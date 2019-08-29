@@ -49,24 +49,47 @@ La API para operar con SEAL está codificada en los siguientes elementos:
 
 \begin{itemize}
   \item EncryptionParameters
+  
+  Parámetros descriptivos de los elementos criptográficos
+  
   \item SEALContext
+  
+  Contexto del texto cifrado (cambia a medida que se opera)
+  
   \item Claves
+  
   \begin{itemize}
+  
     \item SecretKey
+  
     Clave secreta para descifrar los datos
+  
     \item PublicKey
+  
     Clave pública para descifrar los datos
+  
     \item RelinKeys
+  
     Claves públicas para realinearizar los datos y reducir el nivel de error acumulado tras operar
+  
     \item GaloisKeys
+  
     Claves públicas para trabajar con rotaciones en los vectores cifrados (en nuestro ejemplo no las usamos)
+  
   \end{itemize}
+  
   \item Encryptor, Decryptor
+  
   Sistemas para cifrar y descifrar los datos
+  
   \item Evaluator
+  
   Es el componente que realiza las operaciones sobre los datos cifrados
+  
   \item Encoders
+  
   Encargado de codificar los datos en función del esquema que se desee utilizar
+
 \end{itemize}
 
 A continuación explicaremos más detalladamente el funcionamiento de los componentes más complejos.
@@ -79,7 +102,9 @@ Los parámetros criptográficos dependerán del esquema con el que se quiere tra
 
   \item BFV
 
-  BFV es el esquema "básico" de SEAL. Permite trabajar con números enteros, y operar con ellos hasta que se alcanza el límite máximo de error. En BFV, este límite se podría conceptualizar como un cubo de fichas que se gastan cada vez que se opera. Hay algunas operaciones que son casi gratuitas (la suma y la resta), y la multiplicación es muy costosa. Una vez se vacía este cubo (codificado en el parámetro \verb|noise_budget|), nuestro cifrado quedará corrupto y no se puede recuperar el texto.
+  BFV es el esquema "básico" de SEAL. Permite trabajar con números enteros, y operar con ellos hasta que se alcanza el límite máximo de error. En BFV, este límite se podría conceptualizar como un cubo de fichas que se gastan cada vez que se opera. 
+  
+  Hay algunas operaciones que son casi gratuitas (la suma y la resta), y la multiplicación es muy costosa. Una vez se vacía este cubo (codificado en el parámetro \verb|noise_budget|), nuestro cifrado quedará corrupto y no se puede recuperar el texto.
 
   Además de \verb|noise_budget|, hay tres parámetros configurables que guardan una estrecha relación:
 
@@ -89,18 +114,29 @@ Los parámetros criptográficos dependerán del esquema con el que se quiere tra
 
   - \verb|coeff_modulus|
 
-  Es un vector de números primos que determina el módulo del texto cifrado. A mayor módulo, mayor será el \verb|noise_budget|. Cuando decíamos que a mayor \verb|poly_modulus_degree|, podíamos hacer más operaciones, era porque el número de bits de \verb|coeff_modulus| está acotado por el de \verb|poly_modulus_degree| de la siguiente forma:
+  Es un vector de números primos que determina el módulo del texto cifrado. A mayor módulo, mayor será el \verb|noise_budget|. Cuando decíamos que a mayor \verb|poly_modulus_degree|, podíamos hacer más operaciones, era porque el número de bits de \verb|coeff_modulus| está acotado por el de \verb|poly_modulus_degree| de la forma indicada en la figura \ref{table:poly_vs_coeff_modulus}
 
-  \begin{tabular}{ | c | c | }
-    \verb|poly_modulus_degree|  & Número de bits de \verb|coeff_modulus| \\
-    \hline
-    1024  & 27  \\
-    2048  & 54  \\
-    4096  & 109 \\
-    8192  & 218 \\
-    16384 & 438 \\
-    32768 & 881
-  \end{tabular}
+    \begin{table}
+        \centering
+        \begin{subtable}
+            \centering
+            \begin{tabular}{  c  c  }
+                \hline
+                \verb|poly_modulus_degree|  & Número de bits de \verb|coeff_modulus| \\ [0.5ex] 
+                \hline
+                \hline
+                1024  & 27  \\
+                2048  & 54  \\
+                4096  & 109 \\
+                8192  & 218 \\
+                16384 & 438 \\
+                32768 & 881 \\ [1ex]
+                \hline
+            \end{tabular}
+      \end{subtable}
+       \caption{Relación entre \textit{poly\_modulus\_degree} y y el número de bits de \textit{coeff\_modulus\_degree}}\label{table:poly_vs_coeff_modulus}
+
+    \end{table}
 
   - \verb|plain_modulus|
 
