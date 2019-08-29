@@ -227,29 +227,7 @@ SEAL ofrece tres sistemas para codificar los datos con los que se va a trabajar:
 
 \subsection{Trabajo con vectores}
 
-Tanto \verb|BatchEncoder| como \verb|CKKSEncoder|, interpretan todos los datos como vectores.
-
-\begin{gather}
-  \begin{pmatrix}
-    c_1 \\
-    c_2 \\
-    \vdots{} \\
-    c_n
-  \end{pmatrix}
-  =
-  \begin{pmatrix}
-    a & a & \hdots{} &  a
-  \end{pmatrix}
-  *
-  \begin{pmatrix}
-    \Box \\
-    \Box \\
-    \vdots{} \\
-    \Box
-  \end{pmatrix}
-\end{gather}
-
-Una de las cosas más interesantes de esta forma de codificar los datos, es que se pueden rotar las columnas y las filas. La rotación es cíclica, cuando se rota una posición a la izquierda, el primer valor pasa a la última posición.
+Tanto \verb|BatchEncoder| como \verb|CKKSEncoder|, interpretan todos los datos como vectores. Una de las cosas más interesantes de esta forma de codificar los datos, es que se pueden rotar las columnas y las filas. La rotación es cíclica, cuando se rota una posición a la izquierda, el primer valor pasa a la última posición.
 
 %
 %     [  0,  1,  2,  3,  0, ...,  0,  0,  0,  0,  0 ]
