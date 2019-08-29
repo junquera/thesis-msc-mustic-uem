@@ -24,37 +24,31 @@
 
 \begin{document}
 
-\maketitle
+  \maketitle
 
-\input{resumen}
-\input{abstract}
-\input{agradecimientos}
+  \input{resumen}
+  \input{abstract}
+  \input{agradecimientos}
 
+  \tableofcontents{}
+  \tableoftables{}
+  \tableoffigures{}
 
-\tableofcontents{}
-\tableoftables{}
-\tableoffigures{}
+  \input{intro}
+  \input{teoria}
+  \input{libs}
+  \input{poc}
+  \input{resultados}
+  \input{conclusiones}
+  \input{trabajos_futuros}
 
+  \appendix
+  \input{apendices/test_lwe}
+  \input{apendices/regresion_cuadratica}
+  \input{apendices/datos_aemet}
 
-\input{intro}
-\input{teoria}
-\input{libs}
-\input{poc}
-\input{resultados}
-\input{conclusiones}
-\input{trabajos_futuros}
-
-\appendix
-\input{apendices/test_lwe}
-\input{apendices/regresion_cuadratica}
-\input{apendices/datos_aemet}
-
-\bibliographystyle{apalike}
-\nocite{*}
-\bibliography{references.bib}
-% \input{bib}
-% \input{experimentos}
-% \input{manual_instalacion}
-% \input{manual_usuario}
+  \bibliographystyle{apalike}
+  \nocite{*}
+  \bibliography{references.bib}
 
 \end{document}
