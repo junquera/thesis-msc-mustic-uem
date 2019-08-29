@@ -3,7 +3,7 @@
 
 \section{Librerías}
 
-Hay varias implementaciones de criptografía homomórfica, y varias soluciones por cada una de las generaciones. Aunque la mayoría de las implementaciones están escritas para \verb|C/C++/C#| Recientemente han ido apareciendo algunas nuevas que buscan, principalmente, adaptar los esquemas de cifrado a otros lenguajes. Aunque esto es una nueva noticia, nosotros nos centraremos en las "clásicas" evaluadas por el consorcio de standarización:
+Hay varias implementaciones de criptografía homomórfica, y varias soluciones por cada una de las generaciones. Aunque la mayoría de las implementaciones están escritas para \verb|C/C++/C#|, recientemente han ido apareciendo algunas nuevas que buscan, principalmente, adaptar los esquemas de cifrado a otros lenguajes. Aunque esto es una buena noticia, nosotros nos centraremos en las "clásicas" evaluadas por el consorcio de estandarización:
 
 \begin{itemize}
     \item Segunda generación
@@ -23,7 +23,7 @@ Hay varias implementaciones de criptografía homomórfica, y varias soluciones p
     \end{itemize}
 \end{itemize}
 
-Para nuestro trabajo utilizaremos las librerías Microsoft SEAL (como representante de la segunda generación de criptografía homomórfica) y THFE (como representante de la tercera). Para la segunda generación habría sido también una muy buena opción utilizar PALISADE, pero la documentación es mucho menor, y no incluye el esquema CKKS (necesario para trabajar con números reales).
+Para nuestro trabajo utilizaremos las librerías Microsoft SEAL (como representante de la segunda generación de criptografía homomórfica) y TFHE (como representante de la tercera). Para la segunda generación habría sido también una muy buena opción utilizar PALISADE, pero la documentación es mucho menor, y no incluye el esquema CKKS (necesario para trabajar con números reales).
 
 \section{Microsoft SEAL}
 \label{tag:msfseal}
@@ -48,8 +48,9 @@ Además, hay que ser consciente de que bajo determinados usos, puede ser insegur
 La API para operar con SEAL está codificada en los siguientes elementos:
 
 \begin{itemize}
-  \item EncryptionParameters
 
+  \item EncryptionParameters
+  
   Parámetros descriptivos de los elementos criptográficos
 
   \item SEALContext
@@ -66,7 +67,7 @@ La API para operar con SEAL está codificada en los siguientes elementos:
 
     \item PublicKey
 
-    Clave pública para descifrar los datos
+    Clave pública para cifrar los datos
 
     \item RelinKeys
 
@@ -133,7 +134,8 @@ Además de \verb|noise_budget|, hay tres parámetros configurables que guardan u
                 \hline
             \end{tabular}
       \end{subtable}
-       \caption{Relación entre \textit{poly\_modulus\_degree} y y el número de bits de \textit{coeff\_modulus\_degree}}\label{table:poly_vs_coeff_modulus}
+       \caption{Relación entre \textit{poly\_modulus\_degree} y y el número de bits de \textit{coeff\_modulus\_degree}}
+       \label{table:poly_vs_coeff_modulus}
     
     \end{table}
     
@@ -148,13 +150,13 @@ En la implementación del esquema CKKS podremos trabajar con número decimales, 
 
 Comparte con BGV tanto \verb|poly_modulus_degree| como \verb|coeff_modulus|, pero desaparece el elemento \verb|plain_modulus| (la integridad del texto cifrado ya no se evaluará con el \verb|noise_budget|), y los valores elegidos para \verb|coeff_modulus| tendrán otras implicaciones.
 
-Aparece un elemento nuevo: la escala. De forma análoga a la que hemos implementado en la maqueta de THFE (ya lo veremos en \ref{chap:poc}) para codificar los números decimales se aplica una escala (se multiplican por un valor muy alto, potencia de 2) y se tratan como número enteros.
+Aparece un elemento nuevo: la escala. De forma análoga a la que hemos implementado en la maqueta de THFE (ya lo veremos en el capítulo \ref{chap:poc}) para codificar los números decimales se aplica una escala (se multiplican por un valor muy alto, potencia de 2) y se tratan como número enteros.
 
 Esta escala aumentará drásticamente cada vez que se multipliquen dos elementos. Siendo $N$ el tamaño del primer factor, y $M$ el del segundo, el resultado del producto tendrá como tamaño $M+N-1$. Para evitar que el número desborde su tamaño máximo, tras un producto puede reducirse la escala. La operación de reescalado implementada en SEAL trunca el valor del texto cifrado tantos bits como tenga el último elemento del vector \verb|coeff_modulus|, y elimina este elemento (cambiando el contexto de cifrado). De esta forma, siendo $P$ el tamaño del elemento eliminado de \verb|coeff_modulus| el texto cifrado pasaría a tener un tamaño $(M+N-1)/P$. Una vez se terminan los elementos de \verb|coeff_modulus| no se puede seguir operando, y se debe conservar siempre uno para poder realizar la operación de descifrado.
 
 Para poder reescalar sin problemas se debe elegir una escala inicial menor que el número expresado por el último valor de \verb|coeff_modulus| (cuando \verb|coeff_modulus| está integro). Además, el primer valor de la cadena (el que se utilizará cuando se vaya a descifrar), debe ser mayor que el resto para poder tener cierta precisión: si este valor es 60, y el segundo (el que se utiliza al realizar la última operación) es 40, tendremos 20 bits de precisión ($60 - 40$) para los decimales al retirar la escala.
 
-A continuación veremos en qué consiste exactamente el contexto.
+A continuación veremos en qué consisten exactamente el contexto y la cadena de la que hablamos.
 
 \subsection{SEALContext, niveles de error y realinearización}
 
@@ -181,10 +183,11 @@ coeff_modulus: { 50, 30, 30, 50, 50 }  +---+  Level 4
                                           |
                coeff_modulus: { 50 }  +---+  Level 0
     \end{minted}
-    \caption{Cadena de SEALContext (documentación de SEAL)}\label{fig:seal_levels}
+    \caption{Cadena de SEALContext (documentación de SEAL)}
+    \label{fig:seal_levels}
 \end{listing}
 
-Se puede descender, pero nunca ascender. Cuanto más abajo, más rápidos son los cálculos, pero menos cálculos se pueden hacer. En ocasiones, debido al tamaño del texto plano, descender no tendrá consecuencias en cuanto al nivel de error, por lo que se podrá hacer para tener mayor eficiencia. En otros, será una condición indispensable para poder seguir operando. Es por esto que, cumpliendo los requisitos sobre el tamaño de \verb|coeff_modulus| con respecto a \verb|poly_modulus_degree|, y siguiendo las pautas que hemos comentado con respecto al primer y último elemento de la cadena, elijamos el mayor número de elementos intermedios posible.
+Se puede descender, pero nunca ascender. Cuanto más abajo, más rápidos son los cálculos, pero menos cálculos se pueden hacer. En ocasiones, debido al tamaño del texto plano, descender no tendrá consecuencias en cuanto al nivel de error, por lo que se podrá hacer para tener mayor eficiencia. En otros, será una condición indispensable para poder seguir operando. Es por esto que, cumpliendo los requisitos sobre el tamaño de \verb|coeff_modulus| con respecto a \verb|poly_modulus_degree|, y siguiendo las pautas que hemos comentado con respecto al primer y último elemento de la cadena, es recomendable que elijamos el mayor número de elementos intermedios posible.
 
 Mientras que en BGV este contexto no tiene mucha importancia (más allá de la eficiencia) en CKKS la cosa cambia. Cuando se reescala en CKKS, se está eliminando al mismo tiempo parte de esta cadena. Por lo tanto, hay que tener en cuenta que si se ha reescalado, y se ha cambiado el contexto de cifrado de un elemento, tendremos que ajustar el contexto del resto de elementos que queramos operar con él (para que estén en la misma escala y usen los mismos parámetros criptográficos), ya sea reescalando (cuando sea necesario) o haciendo al elemento "descender" en la cadena.
 
@@ -200,7 +203,7 @@ SEAL ofrece tres sistemas para codificar los datos con los que se va a trabajar:
 
     \item \verb|BatchEncoder| (para BFV)
 
-    Crea una matriz $2x(N/2)$ con N el número de elementos codificables. Estos elementos son conocidos como \textit{slots}, y su número es igual a \verb|poly_modulus_degree|. En cada \textit{slot} se almacena un número módulo \verb|plain_modulus|. Si se codifica un vector, se introducirá tal cual, y si sólo se codifica un valor, se llenarán todas las posiciones de la matriz con ese valor.
+    Crea una matriz $2 \times (N/2)$ con N el número de elementos codificables. Estos elementos son conocidos como \textit{slots}, y su número es igual a \verb|poly_modulus_degree|. En cada \textit{slot} se almacena un número en base modular $\mathbb{Z}_{plain\_modulus}$. Si se codifica un vector, se introducirá tal cual, y si sólo se codifica un valor, se llenarán todas las posiciones de la matriz con ese valor.
 
     \begin{gather}
       a =
@@ -225,10 +228,12 @@ SEAL ofrece tres sistemas para codificar los datos con los que se va a trabajar:
 
 \subsection{Trabajo con vectores}
 
-Tanto \verb|BatchEncoder| como \verb|CKKSEncoder|, interpretan todos los datos como vectores. Una de las cosas más interesantes de esta forma de codificar los datos, es que se pueden rotar las columnas y las filas. La rotación es cíclica, es decir, cuando se rota una posición a la izquierda el primer valor pasa a la última posición.
+Tanto \verb|BatchEncoder| como \verb|CKKSEncoder|, interpretan todos los datos como vectores. Una de las cosas más interesantes de esta forma de codificar los datos, es que se pueden rotar las columnas y las filas. Para ello será necesario el empleo de unas claves especiales llamadas \textit{Galois Keys}. La rotación es cíclica, es decir, cuando se rota una posición a la izquierda el primer valor pasa a la última posición.
 
 \begin{itemize}
     \item Rotando filas
+    
+    % TODO GALOIS!!!
     
     \begin{gather}
         \begin{bmatrix}
@@ -305,7 +310,7 @@ Por otro lado, las operaciones aritméticas se realizan entre los valores de cad
 Por último, conociendo todo lo que se puede hacer con SEAL, veremos cómo hacerlo. Para trabajar con los elementos cifrados SEAL ofrece las siguientes operaciones, codificadas en la clase \verb|Evaluator|:
 
 \begin{itemize}
-    \item negate
+    \item \verb|negate|
     
     Negar (equivalente a multiplicar por $-1$) la variable introducida.
     
@@ -353,9 +358,9 @@ Todas las operaciones aritméticas se pueden aplicar para operar tanto entre ele
 
 En TFHE se trabaja directamente con puertas lógicas. No hay ningún parámetro adicional que seleccionar (mas allá de los relacionados con generar una clave aleatoria), tiene una API simple pero muy potente, pero para hacer cualquier cálculo hay que implementarlo desde el nivel más bajo. Cuando se cifra un dato se genera un array de bits correspondiente al dato cifrado. Será este array (codificado en la clase \verb|LweSample|) sobre el que aplicaremos los algoritmos y procedimientos que diseñaremos, como si trabajásemos con el texto plano.
 
-Los elementos que forman TFHE son mucho menos complejos que los de SEAL, con un único sistema de cifrado (http://lab.algonics.net/slides_ac16/index-asiacrypt.html).
+% Los elementos que forman TFHE son mucho menos complejos que los de SEAL, con un único sistema de cifrado \url{http://lab.algonics.net/slides_ac16/index-asiacrypt.html}.
 
-CONTAR: Sólo definir el parámetro $\lambda$ (ver http://lab.algonics.net/slides_ac16/index-asiacrypt.html#/7)
+% CONTAR: Sólo definir el parámetro $\lambda$ (ver http://lab.algonics.net/slides_ac16/index-asiacrypt.html#/7)
 
 Están codificados en sólo unos pocos grupos:
 

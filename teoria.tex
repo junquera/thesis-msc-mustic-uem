@@ -216,7 +216,7 @@ Dentro de la categoría de esquemas previos a la criptografía homomórfica se e
     \item CKKS (\cite{cheon_homomorphic_2017})
     \label{tag:ckks}
 
-    No está descrito en el estándar, pero sí se plantea su implementación y se extiende su uso en varias librerías. Su funcionamiento consiste en introducir una función de reescalado del texto cifrado a medida que se va trabajando con él. El reescalado trunca el mensaje cifrado (operación equivalente a dividir para reducir su magnitud) eliminando progresivamente el error cada vez que se opera. De esta forma se pueden realizar operaciones aritméticas con número reales (pertenecientes a \mathbbb{R}) e ir eliminando el error (se reduce cuando se trunca el mensaje) a medida que se va operando.
+    No está descrito en el estándar, pero sí se plantea su implementación y se extiende su uso en varias librerías. Su funcionamiento consiste en introducir una función de reescalado del texto cifrado a medida que se va trabajando con él. El reescalado trunca el mensaje cifrado (operación equivalente a dividir para reducir su magnitud) eliminando progresivamente el error cada vez que se opera. De esta forma se pueden realizar operaciones aritméticas con número reales (pertenecientes a \mathbb{R}) e ir eliminando el error (se reduce cuando se trunca el mensaje) a medida que se va operando.
 
     Introduce además una técnica de codificación de los datos que nos permitirá trabajar con ellos como vectores, permitiendo aplicar técnicas SIMD (Single Instruction Multiple Data (\cite{wikipedia_contributors._simd_2017})) para paralelizar determinadas tareas, técnica que utilizaremos en nuestra implementación con Microsoft SEAL (\ref{tag:msfseal}).
 
