@@ -251,7 +251,30 @@ Tanto \verb|BatchEncoder| como \verb|CKKSEncoder|, interpretan todos los datos c
 %     [  7,  0,  0,  0,  0, ...,  0,  0,  4,  5,  6 ]
 %     [  3,  0,  0,  0,  0, ...,  0,  0,  0,  1,  2 ]
 
-Por otro lado, las operaciones aritméticas se realizan 
+Por otro lado, las operaciones aritméticas se realizan entre los valores de cada posición uno a uno, no como una operación entre matrices. Por ejemplo, el producto sería:
+
+\begin{gather}
+  \begin{pmatrix}
+    c_1 & c2    & \\
+    c_2 \\
+    \vdots{} \\
+    c_n
+  \end{pmatrix}
+  =
+  \begin{pmatrix}
+    a \\
+    a & \hdots{} &  a
+  \end{pmatrix}
+  *
+  \begin{pmatrix}
+    \Box \\
+    \Box \\
+    \vdots{} \\
+    \Box
+  \end{pmatrix}
+\end{gather}
+
+
 
 \subsection{Evaluator}
 
