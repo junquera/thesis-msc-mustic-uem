@@ -20,9 +20,9 @@ En este sistema habrá tres actores: el cliente, el servidor de posicionamiento 
 Generaremos dicho modelo (la curva de regresión $f(x)$) con TFHE porque para ello necesitaremos realizar operaciones aritméticas que no nos ofrece SEAL. De esta forma, podremos realizar la evaluación de los datos introducidos por el usuario con SEAL (distancia entre el valor de temperatura $y$ especificado por el usuario, y $f(x)$ con $x$ el mes del año) utilizando sus operaciones más básicas, y aprovechando su sistema de vectores para evaluar todas las curvas al mismo tiempo.
 
 \begin{figure}[h]
+    \includegraphics[width=\linewidth]{sistema_completo}
     \caption{Flujo de los datos cifrados\footnote{Diagrama generado con Piktochart \url{https://piktochart.com}}}
     \label{fig:sistema_completo}
-    \includegraphics[width=\linewidth]{sistema_completo}
 \end{figure}
 
 \subsection{Generación del modelo}
@@ -44,9 +44,9 @@ Para generar el modelo el cliente (en este caso, el servidor de posicionamiento 
 Finalmente, con los parámetros recibidos, el cliente obtendría una curva similar a \ref{fig:reg2_cg}.
 
 \begin{figure}[h]
+    \includegraphics[width=\linewidth]{reg2_cg}
     \caption{Curva de Regresión Cuadrática con temperaturas de Cabo de Gata}
     \label{fig:reg2_cg}
-    \includegraphics[width=\linewidth]{reg2_cg}
 \end{figure}
 
 \subsection{Obtención de la posición}
@@ -72,9 +72,9 @@ Teniendo el servidor de SEAL ya generados los modelos de la temperatura de cada 
 En la figura \ref{fig:t_vs_r2} se puede ver un ejemplo del funcionamiento del sistema de posicionamiento. Los puntos introducidos corresponden a las temperaturas de varias ubicaciones, y el sistema de posicionamiento devolvería la distancia entre estos puntos y las dos curvas de regresión. De esta forma se puede obtener una estimación de la posición. En el ejemplo vemos que, la temperatura en Cabo de Gata está muy próxima a su curva en el mes de junio, y daría un resultado indeterminado en abril; que la temperatura de Madrid no casaría con ninguna de las dos curvas; o que la temperatura de Finisterre en noviembre efectivamente está mucho más cerca de la curva de Finisterre que de la de Cabo de Gata.
 
 \begin{figure}[h]
+    \includegraphics[width=\linewidth]{t_vs_r2}
     \caption{Temperatura vs Regresión}
     \label{fig:t_vs_r2}
-    \includegraphics[width=\linewidth]{t_vs_r2}
 \end{figure}
 
 \section{Implementación con TFHE}
@@ -278,9 +278,9 @@ A continuación veremos cómo trabajan nuestras principales funciones:
   % }
   %
   \begin{figure}[h]
+    \includegraphics[width=\textwidth]{mult_float}
     \caption{Algoritmo de multiplicación}
     \label{fig:mult_float}
-    \includegraphics[width=\textwidth]{mult_float}
   \end{figure}
 
   \item \texttt{div}
@@ -321,9 +321,9 @@ A continuación veremos cómo trabajan nuestras principales funciones:
   % }
   %
   \begin{figure}[h]
+    \includegraphics[width=\textwidth]{div_float}
     \caption{Algoritmo de división}
     \label{fig:div_float}
-    \includegraphics[width=\textwidth]{div_float}
   \end{figure}
 
 
@@ -360,7 +360,6 @@ Procedemos de la siguiente manera:
     \end{enumerate}
 
     \begin{gather}
-      \label{form:distancias_seal}
         \begin{pmatrix}
             d_1 \\
             d_2 \\
@@ -396,6 +395,7 @@ Procedemos de la siguiente manera:
             c_n
         \end{pmatrix}
         )
+        \label{form:distancias_seal}
     \end{gather}
 
     \item Finalmente, como nuestro $y$ es el resultado de dos reescalados, tendremos que reescalar dos veces el $y$ introducido por el usuario (al que llamaremos $y_0$) para poder operar. Tras hacerlo, devolvemos el resultado \verb|encrypted_result| igual a $y - y_0$.
@@ -430,8 +430,6 @@ Para ambas, se ha programado una clase cliente, y una clase servidor, como hemos
     El módulo que hace las veces de servidor con TFHE generará los parámetros $a$, $b$ y $c$ de los que llevamos hablando toda la sección en base a los archivos \verb|ciudad_...| que haya en la carpeta que se le indique. Como el proceso es muy lento, almacenará los resultados de las operaciones intermedias para recurrir a ellos si se corta la ejecución (ver \ref{fig:resultados_tfhe}), hasta generar los archivos $a.data$, $b.data$ y $c.data$.
 
 \begin{listing}[ht]
-    \caption{Archivos generados por el servidor}
-    \label{fig:resultados_tfhe}
     \begin{minted}{console}
     junquera@opa:~/UEM/TFM/results/tfhe/ciudad_A/resultados$ ls -la
     total 4240
@@ -449,6 +447,7 @@ Para ambas, se ha programado una clase cliente, y una clase servidor, como hemos
     -rw-rw-r-- 1 junquera junquera 129024 ago 16 10:06 w.data
     -rw-rw-r-- 1 junquera junquera 129024 ago 23 20:06 wj.data
     \end{minted}
+    \caption{Archivos generados por el servidor TFHE} \label{fig:resultados_tfhe}
 \end{listing}
 
     Para hacer una prueba lo más realista posible de todo el sistema, he cifrado los datos que he obtenido de AEMET (ver \ref{appendix:datos_aemet}) de las temperaturas en las dos ciudades con el cliente de TFHE, y los he subido a la nube (DigitalOcean, \url{https://www.digitalocean.com/}) para procesarlos con el código del servidor TFHE.
@@ -468,10 +467,9 @@ Para ambas, se ha programado una clase cliente, y una clase servidor, como hemos
         \item La otra funcionalidad, que se ejecuta tras la ejecución del código del servidor lee el archivo  \verb|result.data| de la carpeta en la que se ejecuta, lo descifra e imprime por pantalla el resultado combinado del vector descifrado con el archivo \verb|curve_names.data|. En \ref{fig:ejecuta_seal_cs} se puede ver la ejecución del sistema completo.
 
       \begin{figure}[h]
-        \caption{Ejecución completa del sistema de SEAL}
-        \label{fig:ejecuta_seal_cs}
         \centering
         \includegraphics[width=0.75\textwidth]{ejecuta_seal_cs}
+        \caption{Ejecución completa del sistema de SEAL} \label{fig:ejecuta_seal_cs}
       \end{figure}
     \end{enumerate}{}
 \end{itemize}

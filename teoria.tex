@@ -37,9 +37,9 @@ Un retículo o red (también conocidos como lattice en inglés) es un conjuntos 
 Por ejemplo, a los vectores $u = (2, 0)$ y $v = (-1, 3)$ serían la base de la red bidimensional generada por todas sus combinaciones $n*u + m*v$ (ver \ref{fig:lattice1}).
 
 \begin{figure}[h]
+  \includegraphics[]{lattice1}
   \caption{Espacio vectorial generado por u y v}
   \label{fig:lattice1}
-  \includegraphics[]{lattice1}
 \end{figure}
 
 Es decir, el conjunto de puntos del gráfico \ref{fig:lattice1} sería un retículo, cuya base está formada por los vectores $u$ y $v$.
@@ -54,9 +54,9 @@ En la búsqueda de soluciones criptográficas resistentes a la computación cuá
   Consiste en dada una base larga, buscar un vector corto lo más cercano al origen, sin ser el origen mismo (ver \ref{fig:svp}).
 
   \begin{figure}[h]
+    \includegraphics[]{svp}
     \caption{Short vector problem (\cite{wikipedia_contributors._lattice_2019})}
     \label{fig:svp}
-    \includegraphics[]{svp}
   \end{figure}
 
   \item Short Basis Problem (SBP)
@@ -68,9 +68,9 @@ En la búsqueda de soluciones criptográficas resistentes a la computación cuá
   Dada una base larga y un punto $P$ de la red, buscar el vector de la red formada por la base más cercano a $P$ (ver \ref{fig:cvp}).
 
   \begin{figure}[h]
+    \includegraphics[]{cvp}
     \caption{Closest vector problem (\cite{wikipedia_contributors._lattice_2019})}
     \label{fig:cvp}
-    \includegraphics[]{cvp}
   \end{figure}
 
 
@@ -105,9 +105,9 @@ En su estudio, Regev (\cite{regev_learning_2010}) formula un sistema de clave p�
   Se emite como clave pública una colección de valores $(ai, bi)$ generada como hemos visto en \ref{form:gen_lwe}. El conjunto de vectores $a_i$ se interpretará en algunas implementaciones como una matriz $A \leftarrow \mathbbb{Z}_q^{m \times n}$.
 
     \begin{figure}[h]
+      \includegraphics[width=\textwidth]{lwe}
       \caption{LWE (\cite{halevi_homomorphic_2017})}
       \label{fig:lwe}
-      \includegraphics[width=\textwidth]{lwe}
     \end{figure}
 
   \item Cifrado

@@ -49,45 +49,45 @@ La API para operar con SEAL está codificada en los siguientes elementos:
 
 \begin{itemize}
   \item EncryptionParameters
-  
+
   Parámetros descriptivos de los elementos criptográficos
-  
+
   \item SEALContext
-  
+
   Contexto del texto cifrado (cambia a medida que se opera)
-  
+
   \item Claves
-  
+
   \begin{itemize}
-  
+
     \item SecretKey
-  
+
     Clave secreta para descifrar los datos
-  
+
     \item PublicKey
-  
+
     Clave pública para descifrar los datos
-  
+
     \item RelinKeys
-  
+
     Claves públicas para realinearizar los datos y reducir el nivel de error acumulado tras operar
-  
+
     \item GaloisKeys
-  
+
     Claves públicas para trabajar con rotaciones en los vectores cifrados (en nuestro ejemplo no las usamos)
-  
+
   \end{itemize}
-  
+
   \item Encryptor, Decryptor
-  
+
   Sistemas para cifrar y descifrar los datos
-  
+
   \item Evaluator
-  
+
   Es el componente que realiza las operaciones sobre los datos cifrados
-  
+
   \item Encoders
-  
+
   Encargado de codificar los datos en función del esquema que se desee utilizar
 
 \end{itemize}
@@ -102,8 +102,8 @@ Los parámetros criptográficos dependerán del esquema con el que se quiere tra
 
   \item BFV
 
-  BFV es el esquema "básico" de SEAL. Permite trabajar con números enteros, y operar con ellos hasta que se alcanza el límite máximo de error. En BFV, este límite se podría conceptualizar como un cubo de fichas que se gastan cada vez que se opera. 
-  
+  BFV es el esquema "básico" de SEAL. Permite trabajar con números enteros, y operar con ellos hasta que se alcanza el límite máximo de error. En BFV, este límite se podría conceptualizar como un cubo de fichas que se gastan cada vez que se opera.
+
   Hay algunas operaciones que son casi gratuitas (la suma y la resta), y la multiplicación es muy costosa. Una vez se vacía este cubo (codificado en el parámetro \verb|noise_budget|), nuestro cifrado quedará corrupto y no se puede recuperar el texto.
 
   Además de \verb|noise_budget|, hay tres parámetros configurables que guardan una estrecha relación:
@@ -122,7 +122,7 @@ Los parámetros criptográficos dependerán del esquema con el que se quiere tra
             \centering
             \begin{tabular}{  c  c  }
                 \hline
-                \verb|poly_modulus_degree|  & Número de bits de \verb|coeff_modulus| \\ [0.5ex] 
+                \verb|poly_modulus_degree|  & Número de bits de \verb|coeff_modulus| \\ [0.5ex]
                 \hline
                 \hline
                 1024  & 27  \\
@@ -144,120 +144,89 @@ Los parámetros criptográficos dependerán del esquema con el que se quiere tra
 
   \item CKKS
 
-  En este esquema podremos trabajar con número decimales, pero hay que estar ajustando constantemente los parámetros para que no se desborde el tamaño y se mantenga la integridad de lo calculado.
+  En la implementación del esquema CKKS podremos trabajar con número decimales, pero tendremos que realizar algunas gestiones adicionales a las de BGV para evitar que se pierda la integridad de nuestros cálculos.
 
-  Comparte con BGV el \verb|poly_modulus_degree| y \verb|coeff_modulus|, pero desaparece el \verb|plain_modulus|, y los valores de \verb|coeff_modulus| tienen otras implicaciones.
+  Comparte con BGV tanto \verb|poly_modulus_degree| como \verb|coeff_modulus|, pero desaparece el elemento \verb|plain_modulus| (la integridad del texto cifrado ya no se evaluará con el \verb|noise_budget|), y los valores elegidos para \verb|coeff_modulus| tendrán otras implicaciones.
 
-  Reescalado: cuando se reescala se hace ...
+  Aparece un elemento nuevo: la escala. De forma análoga a la que hemos implementado en la maqueta de THFE (ya lo veremos en \ref{chap:poc}) para codificar los números decimales se aplica una escala (se multiplican por un valor muy alto, potencia de 2) y se tratan como número enteros.
 
-  Se elige una escala inicial menor que los \verb|coeff_modulus| para que permita operar con los valores correctamente (por ejemplo, si el tamaño del \verb|coeff_mod| es 60 bits se elige una escala de 40 bits para tener 20 de margen).
+  Esta escala aumentará drásticamente cada vez que se multipliquen dos elementos. Siendo $N$ el tamaño del primer factor, y $M$ el del segundo, el resultado del producto tendrá como tamaño $M+N-1$. Para evitar que el número desborde su tamaño máximo, tras un producto puede reducirse la escala. La operación de reescalado implementada en SEAL trunca el valor del texto cifrado tantos bits como tenga el último elemento del vector \verb|coeff_modulus|, y elimina este elemento (cambiando el contexto de cifrado). De esta forma, siendo $P$ el tamaño del elemento eliminado de \verb|coeff_modulus| el texto cifrado pasaría a tener un tamaño $(M+N-1)/P$. Una vez se terminan los elementos de \verb|coeff_modulus| no se puede seguir operando, y se debe conservar siempre uno para poder realizar la operación de descifrado.
 
-  Lo suyo es elegir los coeff\_modulus para que el primero y el último sean más grandes (el primero para tener más precisión al quitar la escala y volver a poner en decimal, el último para poder hacer una escala cómodamente), y el resto normales (para que no sean muy pesadas las operaciones. Cuando se hace una multiplicación el tamaño del texto inicial S se convierte en $S^2$, por lo que hay que reescalarlo. Si se reescala al coeff\_modulus (de tamaño M) correspondiente en la cadena, se tiene un texto $S^2/M$ que, si se han elegido bien los parámetros, será muy parecido a S.
+  Para poder reescalar sin problemas se debe elegir una escala inicial menor que el número expresado por el último valor de \verb|coeff_modulus| (cuando \verb|coeff_modulus| está integro). Además, el primer valor de la cadena (el que se utilizará cuando se vaya a descifrar), debe ser mayor que el resto para poder tener cierta precisión: si este valor es 60, y el segundo (el que se utiliza al realizar la última operación) es 40, tendremos 20 bits de precisión ($60 - 40$) para los decimales al retirar la escala.
 
-  Además la operación de suma requiere que los sumandos estén en la misma escala, lo que es un problema tras haber operado previamente con ellos (linea 253 del ejemplo 4 de SEAL)...
-
-  Especialmente destinado a trabajar con vectores (como en el modo BatchEncoder).
+  A continuación veremos en qué consiste exactamente el contexto.
 
 \end{itemize}
 
-\subsection{SEALContext}
+\subsection{\verb|SEALContext|, niveles de error y realinearización}
 
-% When a SEALContext is created from a given EncryptionParameters instance,
-% Microsoft SEAL automatically creates a so-called `modulus switching chain',
-% which is a chain of other encryption parameters derived from the original set.
+\verb|SEALContext| (lo que llamamos contexto, o contexto criptográfico) es la clase en la que se codifican las propiedades del texto cifrado, desde el esquema utilizado a los distintos parámetros de cifrado. La creación del \verb|SEALContext| genera una estructura similar a una cadena que guardará el estado de \verb|coeff_modulus|. De esta forma, podremos mantener la integridad al operar entre distintos textos cifrados símplemente verificando que esta cadena es igual.
 
-% Each set of parameters in the chain involves unique pre-computations performed
-% when the SEALContext is created, and stored in a SEALContext::ContextData
-% object. The chain is basically a linked list of SEALContext::ContextData
-% objects, and can easily be accessed through the SEALContext at any time. Each
-% node can be identified by the parms_id of its specific encryption parameters
-% (poly_modulus_degree remains the same but coeff_modulus varies).
+Inicialmente, la cadena se inicializa con la información de \verb|coeff_modulus|, y va cambiando a medida que, por ejemplo, se aplican operaciones de reescalado. La cadena es una lista enlazada de los \verb|SEALContext| en cada momento de operación:
 
-\subsection{Evaluator}
+\begin{listing}[ht]
+    \begin{minted}{}
+         special prime +---------+
+                                 |
+                                 v
+coeff_modulus: { 50, 30, 30, 50, 50 }  +---+  Level 4
+                                          |
+                                          |
+   coeff_modulus: { 50, 30, 30, 50 }  +---+  Level 3
+                                          |
+                                          |
+       coeff_modulus: { 50, 30, 30 }  +---+  Level 2
+                                          |
+                                          |
+           coeff_modulus: { 50, 30 }  +---+  Level 1
+                                          |
+                                          |
+               coeff_modulus: { 50 }  +---+  Level 0
+    \end{minted}
+    \caption{Cadena de SEALContext (documentación de SEAL)}\label{fig:seal_levels}
+\end{listing}
 
-Operaciones de Evaluator:
+Se puede descender, pero nunca ascender. Cuanto más abajo, más rápidos son los cálculos, pero menos cálculos se pueden hacer. En ocasiones, debido al tamaño del texto plano, descender no tendrá consecuencias en cuanto al nivel de error, por lo que se podrá hacer para tener mayor eficiencia. En otros, será una condición indispensable para poder seguir operando. Es por esto que, cumpliendo los requisitos sobre el tamaño de \verb|coeff_modulus| con respecto a \verb|poly_modulus_degree|, y siguiendo las pautas que hemos comentado con respecto al primer y último elemento de la cadena, elijamos el mayor número de elementos intermedios posible.
 
-...
+Mientras que en BGV este contexto no tiene mucha importancia (más allá de la eificiencia) en CKKS la cosa cambia. Cuando se reescala en CKKS, se está eliminando al mismo tiempo parte de esta cadena. Por lo tanto, hay que tener en cuenta que si se ha reescalado, y se ha cambiado el contexto de cifrado de un elemento, tendremos que ajustar el contexto del resto de elementos que queramos operar con él (para que estén en la misma escala y usen los mismos parámetros criptográficos), ya sea reescalando (cuando sea necesario) o haciendo al elemento "descender" en la cadena.
+
+Otra forma de reducir la velocidad a la que aumenta el nivel de error sin perder profundidad computacional (capacidad para realizar más operaciones) es la realinearización. Como hemos visto anteriormente, a medida que se opera, el error aumenta. La suma es casi gratuita, pero con el producto de dos elementos de tamaño $M$ y $N$, teniendo el resultado tamaño $M+N-1$, el error aumenta considerablemente. Interpretaremos este tamaño como el grado polinómico del elemento. La realinearización es una operación que permite, utilizando unas claves especiales (claves de realinearización), reducir el tamaño tras una multiplicación, reduciendo así el consumo de \verb|noise_budget| en las siguientes operaciones. Tiene un coste computacional alto en comparación con el resto de operaciones, pero permite operar de forma más eficiente, y que el elemento no crezca hasta "romperse" (o crezca de una forma más lenta).
 
 \subsection{Encoders}
 
 SEAL ofrece tres sistemas para codificar los datos con los que se va a trabajar:
 
-    - IntegerEncoder (BFV)
+    - \verb|IntegerEncoder| (para BFV)
 
-    Descompone el número en una sucesión de exponenciaciones.
+    Codifica el número descomponiendolo en una sucesión de exponenciaciones para poder trabajar con sus subelementos de forma independiente.
 
-    - BatchEncoder (BFV)
+    - \verb|BatchEncoder| (para BFV)
 
-    Crea matrices para BFV.
+    Crea una matriz $2x(N/2)$ con N el número de elementos codificables. Estos elementos son conocidos como \textit{slots}, y su número es igual a \verb|poly_modulus_degree|. En cada \textit{slot} se almacena un número módulo \verb|plain_modulus|. Si se codifica un vector, se introducirá tal cual, y si sólo se codifica un valor, se llenarán todas las posiciones de la matriz con ese valor.
 
-    The total number of batching `slots' equals the poly_modulus_degree, N, and
-    these slots are organized into 2-by-(N/2) matrices that can be encrypted and
-    computed on. Each slot contains an integer modulo plain_modulus.
+    \begin{gather}
+      a =
+      \begin{pmatrix}
+        a & a & \hdots & a \\
+        a & a & \hdots & a
+      \end{pmatrix} &
+      \begin{pmatrix}
+        c_1 & c_2 & c_3
+      \end{pmatrix}
+      =
+      \begin{pmatrix}
+        c_1 & c_2 & c_3 & 0 & \hdots &  0 \\
+        0 & 0 & \hdots &  0
+      \end{pmatrix}
+    \end{gather}
 
-    Matriz con dos filas.
+    - \verb|CCKSEncoder|
 
-    Se introduce un vector, y si se introduce un solo valor, llena todo con el valor.
-
-    - CCKSEncoder
-
-    Crea matrices para CKKS.
-
-
-     (In CKKS the number of slots is poly\_modulus\_degree / 2 and each slot encodes one real or complex number.) Para operar con \textbn{reales}, se pasan a enteros (multiplicando por $10^x$) perdiendo precisión y aumentando el tamaño.
-
-\subsection{Niveles de error y realinearización}
-
-A medida que se opera, el error aumenta. La suma es casi gratuita, pero con el producto de dos elementos de tamaño M y N, teniendo el resultado tamaño M+N-1, el error aumenta considerablemente. Interpretaremos este tamaño como el grado polinómico del elemento.
-
-La realinearización es una operación que permite reducir el tamaño tras una multiplicación. Tiene un coste computacional alto en comparación con el resto de operaciones, pero permite que la operaciones posteriores sean más eficientes, y que el elemento no crezca hasta "romperse".
-
-% Relinearization requires special `relinearization keys', which can be thought
-% of as a kind of public key. Relinearization keys can easily be created with
-% the KeyGenerator.
-
-Levels: Permite ir reduciendo los coeff\_modulus para reducir el tamaño del texto cifrado cuando ya no se van a hacer más operaciones, y que las operaciones se hagan rápido.
-
-Se corresponden con los eslabones de la cadena del SEALContext.
-
-
-%           special prime +---------+
-%                                   |
-%                                   v
-% coeff_modulus: { 50, 30, 30, 50, 50 }  +---+  Level 4 (all keys; `key level')
-%                                            |
-%                                            |
-%     coeff_modulus: { 50, 30, 30, 50 }  +---+  Level 3 (highest `data level')
-%                                            |
-%                                            |
-%         coeff_modulus: { 50, 30, 30 }  +---+  Level 2
-%                                            |
-%                                            |
-%             coeff_modulus: { 50, 30 }  +---+  Level 1
-%                                            |
-%                                            |
-%                 coeff_modulus: { 50 }  +---+  Level 0 (lowest level)
-
-
-Se puede descender, pero nunca ascender. Cuanto más abajo, más rápidos son los cálculos, pero menos cálculos se pueden hacer. En ocasiones, debido al tamaño del texto plano, descender no tendrá consecuencias en cuanto al nivel de error, por lo que se podrá hacer para tener mayor eficiencia.
-
-Mientras que en BGV esto no tiene mucha importancia (más allá de la eificiencia) en CKKS la cosa cambia. Cuando se reescala en CKKS, se está eliminando al mismo tiempo parte de esta cadena
-
-More precisely, suppose that the scale in a CKKS ciphertext is S, and the
-    last prime in the current coeff_modulus (for the ciphertext) is P. Rescaling
-    to the next level changes the scale to S/P, and removes the prime P from the
-    coeff_modulus, as usual in modulus switching. The number of primes limits
-    how many rescalings can be done, and thus limits the multiplicative depth of
-    the computation.
-
-
-Tras cada multiplicación, el valor con tamaño S multiplicado y el coeff_modulus con tamaño P: they have scale S^2 after multiplication, and S^2/P_i after rescaling.
-
-POr ello, la idea es tener el mayor número posible de valores (para poder hacer muchos productos) dejando el último más grande (realmente, el primer valor de la cadena) para no perder precisión. Si el penúltimo es por ejemplo 40, y el último 60 (como en los ejemplos) al hacer la última multiplicación el tamaño se duplicará hasta 80, por lo que al pasar a 60, solo perdemos 20 bits (en lugar de 40) si tiene el mismo tamaño.
+    Funciona de forma similar al \verb|BatchEncoder|, pero tiene la mitad de posiciones con respecto al mismo \verb|poly_modulus_degree|.
 
 \subsection{Trabajo con vectores}
 
-Tanto BatchEncoder como CKKSEncoder, interpretan todos los datos como vectores.
+Tanto \verb|BatchEncoder| como \verb|CKKSEncoder|, interpretan todos los datos como vectores.
 
 \begin{gather}
   \begin{pmatrix}
@@ -302,6 +271,34 @@ Una de las cosas más interesantes de esta forma de codificar los datos, es que 
 %
 %     [  7,  0,  0,  0,  0, ...,  0,  0,  4,  5,  6 ]
 %     [  3,  0,  0,  0,  0, ...,  0,  0,  0,  1,  2 ]
+
+\subsection{Evaluator}
+
+Por último, conociendo todo lo que se puede hacer con SEAL, veremos cómo hacerlo.
+
+Operaciones de Evaluator (tanto con número cifrados como con números en texto plano)
+
+- negate
+
+- add
+
+- sub
+
+- multiply
+
+- square
+
+- realinearize
+
+- mod_switch
+
+- reescale
+
+- exponentiate
+
+- rotate
+
+...
 
 
 \section{TFHE}
