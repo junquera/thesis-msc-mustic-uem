@@ -195,12 +195,12 @@ Otra forma de reducir la velocidad a la que aumenta el nivel de error sin perder
 \subsection{Encoders}
 
 SEAL ofrece tres sistemas para codificar los datos con los que se va a trabajar:
-
-    - \verb|IntegerEncoder| (para BFV)
+\begin{itemize}
+    \item \verb|IntegerEncoder| (para BFV)
 
     Codifica el número descomponiendolo en una sucesión de exponenciaciones para poder trabajar con sus subelementos de forma independiente.
 
-    - \verb|BatchEncoder| (para BFV)
+    \item \verb|BatchEncoder| (para BFV)
 
     Crea una matriz $2x(N/2)$ con N el número de elementos codificables. Estos elementos son conocidos como \textit{slots}, y su número es igual a \verb|poly_modulus_degree|. En cada \textit{slot} se almacena un número módulo \verb|plain_modulus|. Si se codifica un vector, se introducirá tal cual, y si sólo se codifica un valor, se llenarán todas las posiciones de la matriz con ese valor.
 
@@ -220,9 +220,10 @@ SEAL ofrece tres sistemas para codificar los datos con los que se va a trabajar:
       \end{pmatrix}
     \end{gather}
 
-    - \verb|CCKSEncoder|
+    \item \verb|CCKSEncoder|
 
     Funciona de forma similar al \verb|BatchEncoder|, pero tiene la mitad de posiciones con respecto al mismo \verb|poly_modulus_degree|.
+\end{itemize}{}
 
 \subsection{Trabajo con vectores}
 
