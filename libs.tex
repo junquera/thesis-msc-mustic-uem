@@ -230,7 +230,15 @@ SEAL ofrece tres sistemas para codificar los datos con los que se va a trabajar:
 Tanto \verb|BatchEncoder| como \verb|CKKSEncoder|, interpretan todos los datos como vectores. Una de las cosas más interesantes de esta forma de codificar los datos, es que se pueden rotar las columnas y las filas. La rotación es cíclica, es decir, cuando se rota una posición a la izquierda el primer valor pasa a la última posición.
 
 \begin{itemize}
-    \item Rotando
+    \item Rotando columnas
+    
+    
+    \begin{bmatrix}
+        b_{11}  & \hdots    & b_{1n} \\
+        b_{21}  & \hdots    & b_{2n}
+    \end{bmatrix} 
+    
+    \i
 \end{itemize}
 %
 %     [  0,  1,  2,  3,  0, ...,  0,  0,  0,  0,  0 ]
