@@ -118,25 +118,22 @@ Además de \verb|noise_budget|, hay tres parámetros configurables que guardan u
     
     \begin{table}
         \centering
-        \begin{subtable}
-            \centering
-            \begin{tabular}{  c  c  }
-                \hline
-                \verb|poly_modulus_degree|  & Número de bits de \verb|coeff_modulus| \\ [0.5ex]
-                \hline
-                \hline
-                1024  & 27  \\
-                2048  & 54  \\
-                4096  & 109 \\
-                8192  & 218 \\
-                16384 & 438 \\
-                32768 & 881 \\ [1ex]
-                \hline
-            \end{tabular}
-      \end{subtable}
-       \caption{Relación entre \textit{poly\_modulus\_degree} y y el número de bits de \textit{coeff\_modulus\_degree}}
-       \label{table:poly_vs_coeff_modulus}
-    
+        \begin{tabular}{  c  c  }
+        \hline
+        \verb|poly_modulus_degree|  & Número de bits de \verb|coeff_modulus| \\ [0.5ex]
+        \hline
+        \hline
+        1024  & 27  \\
+        2048  & 54  \\
+        4096  & 109 \\
+        8192  & 218 \\
+        16384 & 438 \\
+        32768 & 881 \\ [1ex]
+        \hline
+        \end{tabular}
+        \caption{Relación entre \textit{poly\_modulus\_degree} y y el número de bits de \textit{coeff\_modulus\_degree}}
+        \label{table:poly_vs_coeff_modulus}
+
     \end{table}
     
     \item \verb|plain_modulus|
@@ -365,10 +362,14 @@ En TFHE se trabaja directamente con puertas lógicas. No hay ningún parámetro 
 Están codificados en sólo unos pocos grupos:
 
 \begin{itemize}
-  \item Parámetros de cifrado (\texttt{TFheGateBootstrappingParameterSet})
-  \item Claves: Privada ( (\texttt{TFheGateBootstrappingSecretKeySet})) y pública (\texttt{TFheGateBootstrappingCloudKeySet})
+  \item Parámetros de cifrado (\verb|TFheGateBootstrappingParameterSet|)
+  \item Claves
+  \begin{itemize}
+      \item Privada (\verb|TFheGateBootstrappingSecretKeySet|)
+      \item Pública (\verb|TFheGateBootstrappingCloudKeySet|)
+  \end{itemize}
+  \item Operaciones lógicas sobre texto cifrado (\verb|LweSample|)
   \item Operaciones de cifrado y descifrado
-  \item Operaciones lógicas sobre texto cifrado (\texttt{LweSample})
 \end{itemize}
 
 Además, TFHE ofrece funciones para limpiar la memoria, dejando en manos del desarrollador la posibilidad de evitar fugas de información una vez no se va a utilizar un elemento.
@@ -383,19 +384,19 @@ A continuación haremos un repaso de las principales operaciones sobre el texto 
 
   Carga una constante en \verb|value| en la variable cifrada \verb|result|.
 
-  \begin{lstlisting}[language=c++]
-    void bootsCONSTANT(LweSample* result, int value,
-                      const TFheGateBootstrappingCloudKeySet* bk);
-  \end{lstlisting}
+  \begin{minted}{c++}
+    bootsCONSTANT(LweSample* result, int value,
+                  const TFheGateBootstrappingCloudKeySet* bk);
+  \end{minted}
 
   \item bootsNOT
 
   Niega el valor de la variable \verb|ca| y lo almacena en \verb|result|.
 
-  \begin{lstlisting}[language=c++]
-    void bootsNOT(LweSample* result, const LweSample* ca,
-                  const TFheGateBootstrappingCloudKeySet* bk);
-  \end{lstlisting}
+  \begin{minted}{c++}
+    bootsNOT(LweSample* result, const LweSample* ca,
+             const TFheGateBootstrappingCloudKeySet* bk);
+  \end{minted}
 
   % TODO Alinear y verbatim
   % TODO Etiquetar los códigos
@@ -403,31 +404,31 @@ A continuación haremos un repaso de las principales operaciones sobre el texto 
 
   Copia el valor de la variable \verb|ca| y lo almacena en \verb|result|. Cuando se utilizan tanto esta función como las funciones \verb|bootsCONSTANT|  y \verb|bootsNOT| se suele trabajar bit a bit iterando sobre los dos arrays. Si no se hace así, a veces pueden tener comportamientos erráticos.
 
-  \begin{lstlisting}[language=c++]
+  \begin{minted}{c++}
     bootsCOPY(LweSample* result, const LweSample* ca,
               const TFheGateBootstrappingCloudKeySet* bk);
-  \end{lstlisting}
+  \end{minted}
 
   \item bootsMUX
 
   Es una implementación del operador ternario (\verb|a ? b : c|) esencial para poder introducir cómputos con divergencias en su flujo de ejecución aunque (como hemos comentado anteriormente) no podamos modificarlo. Asigna a \verb|result| el valor de \verb|b| si se cumple \verb|a|, si no, le asigna el valor de \verb|c|.
 
-  \begin{lstlisting}[language=c++]
+  \begin{minted}{c++}
     bootsMUX(LweSample* result, const LweSample* a,
             const LweSample* b, const LweSample* c,
             const TFheGateBootstrappingCloudKeySet* bk);
-  \end{lstlisting}
+  \end{minted}
 
   Esta función es especialmente interesante, y es la que le da todo el valor a la librería para hacer implementaciones complejas. Por ejemplo, una función con el siguiente código:
 
-  \begin{lstlisting}[language=c++]
+  \begin{minted}{c++}
     while (result < 100)
       result = result * 2;
-  \end{lstlisting}
+  \end{minted}
 
   No podría ser implementada sin evaluar el valor de result. Sin embargo, con el operador \verb|MUX| podemos hacer lo siguiente (es pseudocódigo):
 
-  \begin{lstlisting}[language=c++]
+  \begin{minted}{c++}
     /*
      Hasta que el menor valor que podamos
      escribir con los bits que hemos asignado a
@@ -441,28 +442,28 @@ A continuación haremos un repaso de las principales operaciones sobre el texto 
       // result = result * factor
       multiplica(result, result, factor);
     }
-  \end{lstlisting}
+  \end{minted}
 
   \item Puertas lógicas
 
   También implementa las siguientes puertas lógicas booleanas. La utilizaremos como base para hacer el resto de operaciones, como por ejemplo la suma (la función de suma es igual que un circuito sumador).
 
   \begin{itemize}
-    \item NAND
+    \item \verb|NAND|
 
-    \item OR
+    \item \verb|OR|
 
-    \item AND
+    \item \verb|AND|
 
-    \item XOR
+    \item \verb|XOR|
 
-    \item XNOR
+    \item \verb|XNOR|
 
-    \item NOR
+    \item \verb|NOR|
 
-    \item ANDNY, ANDYN
+    \item \verb|ANDNY|, \verb|ANDYN|
 
-    \item ORNY, ORYN
+    \item \verb|ORNY|, \verb|ORYN|
 
   \end{itemize}
 
