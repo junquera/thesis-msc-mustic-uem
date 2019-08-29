@@ -106,39 +106,41 @@ Hay algunas operaciones que son casi gratuitas (la suma y la resta), y la multip
 
 Además de \verb|noise_budget|, hay tres parámetros configurables que guardan una estrecha relación:
 
-- \verb|poly_modulus_degree|
-
-Determina el módulo del polinomio usado para realizar las operaciones criptográficas (recordemos que implementa LWE sobre un anillo de polinomios, ver \ref{tag:bfv}). Se expresará como una potencia de 2 que cuanto más grande sea, más operaciones permitirá hacer, pero serán más lentas.
-
-- \verb|coeff_modulus|
-
-Es un vector de números primos que determina el módulo del texto cifrado. A mayor módulo, mayor será el \verb|noise_budget|. Cuando decíamos que a mayor \verb|poly_modulus_degree|, podíamos hacer más operaciones, era porque el número de bits de \verb|coeff_modulus| está acotado por el de \verb|poly_modulus_degree| de la forma indicada en la figura \ref{table:poly_vs_coeff_modulus}
-
-\begin{table}
-    \centering
-    \begin{subtable}
+\begin{itemize}
+    \item \verb|poly_modulus_degree|
+    
+    Determina el módulo del polinomio usado para realizar las operaciones criptográficas (recordemos que implementa LWE sobre un anillo de polinomios, ver \ref{tag:bfv}). Se expresará como una potencia de 2 que cuanto más grande sea, más operaciones permitirá hacer, pero serán más lentas.
+    
+    \item \verb|coeff_modulus|
+    
+    Es un vector de números primos que determina el módulo del texto cifrado. A mayor módulo, mayor será el \verb|noise_budget|. Cuando decíamos que a mayor \verb|poly_modulus_degree|, podíamos hacer más operaciones, era porque el número de bits de \verb|coeff_modulus| está acotado por el de \verb|poly_modulus_degree| de la forma indicada en la figura \ref{table:poly_vs_coeff_modulus}
+    
+    \begin{table}
         \centering
-        \begin{tabular}{  c  c  }
-            \hline
-            \verb|poly_modulus_degree|  & Número de bits de \verb|coeff_modulus| \\ [0.5ex]
-            \hline
-            \hline
-            1024  & 27  \\
-            2048  & 54  \\
-            4096  & 109 \\
-            8192  & 218 \\
-            16384 & 438 \\
-            32768 & 881 \\ [1ex]
-            \hline
-        \end{tabular}
-  \end{subtable}
-   \caption{Relación entre \textit{poly\_modulus\_degree} y y el número de bits de \textit{coeff\_modulus\_degree}}\label{table:poly_vs_coeff_modulus}
-
-\end{table}
-
-- \verb|plain_modulus|
-
-Modulo del texto plano. El consumo de \verb|noise_budget| se produce de forma logarítmica en base al tamaño de \verb|plain_modulus|, por lo que cuanto más pequeño es, más operaciones podremos realizar. También debe ser menor que \verb|poly_modulus_degree|.
+        \begin{subtable}
+            \centering
+            \begin{tabular}{  c  c  }
+                \hline
+                \verb|poly_modulus_degree|  & Número de bits de \verb|coeff_modulus| \\ [0.5ex]
+                \hline
+                \hline
+                1024  & 27  \\
+                2048  & 54  \\
+                4096  & 109 \\
+                8192  & 218 \\
+                16384 & 438 \\
+                32768 & 881 \\ [1ex]
+                \hline
+            \end{tabular}
+      \end{subtable}
+       \caption{Relación entre \textit{poly\_modulus\_degree} y y el número de bits de \textit{coeff\_modulus\_degree}}\label{table:poly_vs_coeff_modulus}
+    
+    \end{table}
+    
+    \item \verb|plain_modulus|
+    
+    Modulo del texto plano. El consumo de \verb|noise_budget| se produce de forma logarítmica en base al tamaño de \verb|plain_modulus|, por lo que cuanto más pequeño es, más operaciones podremos realizar. También debe ser menor que \verb|poly_modulus_degree|.
+\end{itemize}{}
 
 \subsubsection{CKKS}
 
