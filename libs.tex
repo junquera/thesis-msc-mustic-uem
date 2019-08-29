@@ -229,6 +229,7 @@ SEAL ofrece tres sistemas para codificar los datos con los que se va a trabajar:
 
 Tanto \verb|BatchEncoder| como \verb|CKKSEncoder|, interpretan todos los datos como vectores. Una de las cosas más interesantes de esta forma de codificar los datos, es que se pueden rotar las columnas y las filas. La rotación es cíclica, es decir, cuando se rota una posición a la izquierda el primer valor pasa a la última posición.
 
+\begin{ite}{}
 %
 %     [  0,  1,  2,  3,  0, ...,  0,  0,  0,  0,  0 ]
 %     [  4,  5,  6,  7,  0, ...,  0,  0,  0,  0,  0 ]
@@ -255,18 +256,18 @@ Por otro lado, las operaciones aritméticas se realizan entre los valores de cad
 
 \begin{gather}
     \begin{bmatrix}
-        a_{11}    & a_{12}  & \hdots    & a_{1n} \\
-        a_{21}    & a_{22}  & \hdots    & a_{2n}
+        a_{11}  & \hdots    & a_{1n} \\
+        a_{21}  & \hdots    & a_{2n}
     \end{bmatrix}
     *
     \begin{bmatrix}
-        b_{11}    & b_{12}  & \hdots    & b_{1n} \\
-        b_{21}    & b_{22}  & \hdots    & b_{2n}
+        b_{11}  & \hdots    & b_{1n} \\
+        b_{21}  & \hdots    & b_{2n}
     \end{bmatrix} 
     =
     \begin{bmatrix}
-        (a_{11} * b_{11})    & (a_{12} * b_{12})  & \hdots    & (a_{1n} * b_{1n}) \\
-        (a_{21} * b_{21})    & (a_{22} * b_{22})  & \hdots    & (a_{2n} * b_{2n})
+        (a_{11} * b_{11})    & \hdots    & (a_{1n} * b_{1n}) \\
+        (a_{21} * b_{21})    & \hdots    & (a_{2n} * b_{2n})
     \end{bmatrix}
 \end{gather}
 
