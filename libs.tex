@@ -98,65 +98,61 @@ A continuación explicaremos más detalladamente el funcionamiento de los compon
 
 Los parámetros criptográficos dependerán del esquema con el que se quiere trabajar.
 
-\begin{itemize}
+\subsubsection{BFV}
 
-  \item BFV
+BFV es el esquema "básico" de SEAL. Permite trabajar con números enteros, y operar con ellos hasta que se alcanza el límite máximo de error. En BFV, este límite se podría conceptualizar como un cubo de fichas que se gastan cada vez que se opera.
 
-  BFV es el esquema "básico" de SEAL. Permite trabajar con números enteros, y operar con ellos hasta que se alcanza el límite máximo de error. En BFV, este límite se podría conceptualizar como un cubo de fichas que se gastan cada vez que se opera.
+Hay algunas operaciones que son casi gratuitas (la suma y la resta), y la multiplicación es muy costosa. Una vez se vacía este cubo (codificado en el parámetro \verb|noise_budget|), nuestro cifrado quedará corrupto y no se puede recuperar el texto.
 
-  Hay algunas operaciones que son casi gratuitas (la suma y la resta), y la multiplicación es muy costosa. Una vez se vacía este cubo (codificado en el parámetro \verb|noise_budget|), nuestro cifrado quedará corrupto y no se puede recuperar el texto.
+Además de \verb|noise_budget|, hay tres parámetros configurables que guardan una estrecha relación:
 
-  Además de \verb|noise_budget|, hay tres parámetros configurables que guardan una estrecha relación:
+- \verb|poly_modulus_degree|
 
-  - \verb|poly_modulus_degree|
+Determina el módulo del polinomio usado para realizar las operaciones criptográficas (recordemos que implementa LWE sobre un anillo de polinomios, ver \ref{tag:bfv}). Se expresará como una potencia de 2 que cuanto más grande sea, más operaciones permitirá hacer, pero serán más lentas.
 
-  Determina el módulo del polinomio usado para realizar las operaciones criptográficas (recordemos que implementa LWE sobre un anillo de polinomios, ver \ref{tag:bfv}). Se expresará como una potencia de 2 que cuanto más grande sea, más operaciones permitirá hacer, pero serán más lentas.
+- \verb|coeff_modulus|
 
-  - \verb|coeff_modulus|
+Es un vector de números primos que determina el módulo del texto cifrado. A mayor módulo, mayor será el \verb|noise_budget|. Cuando decíamos que a mayor \verb|poly_modulus_degree|, podíamos hacer más operaciones, era porque el número de bits de \verb|coeff_modulus| está acotado por el de \verb|poly_modulus_degree| de la forma indicada en la figura \ref{table:poly_vs_coeff_modulus}
 
-  Es un vector de números primos que determina el módulo del texto cifrado. A mayor módulo, mayor será el \verb|noise_budget|. Cuando decíamos que a mayor \verb|poly_modulus_degree|, podíamos hacer más operaciones, era porque el número de bits de \verb|coeff_modulus| está acotado por el de \verb|poly_modulus_degree| de la forma indicada en la figura \ref{table:poly_vs_coeff_modulus}
-
-    \begin{table}
+\begin{table}
+    \centering
+    \begin{subtable}
         \centering
-        \begin{subtable}
-            \centering
-            \begin{tabular}{  c  c  }
-                \hline
-                \verb|poly_modulus_degree|  & Número de bits de \verb|coeff_modulus| \\ [0.5ex]
-                \hline
-                \hline
-                1024  & 27  \\
-                2048  & 54  \\
-                4096  & 109 \\
-                8192  & 218 \\
-                16384 & 438 \\
-                32768 & 881 \\ [1ex]
-                \hline
-            \end{tabular}
-      \end{subtable}
-       \caption{Relación entre \textit{poly\_modulus\_degree} y y el número de bits de \textit{coeff\_modulus\_degree}}\label{table:poly_vs_coeff_modulus}
+        \begin{tabular}{  c  c  }
+            \hline
+            \verb|poly_modulus_degree|  & Número de bits de \verb|coeff_modulus| \\ [0.5ex]
+            \hline
+            \hline
+            1024  & 27  \\
+            2048  & 54  \\
+            4096  & 109 \\
+            8192  & 218 \\
+            16384 & 438 \\
+            32768 & 881 \\ [1ex]
+            \hline
+        \end{tabular}
+  \end{subtable}
+   \caption{Relación entre \textit{poly\_modulus\_degree} y y el número de bits de \textit{coeff\_modulus\_degree}}\label{table:poly_vs_coeff_modulus}
 
-    \end{table}
+\end{table}
 
-  - \verb|plain_modulus|
+- \verb|plain_modulus|
 
-  Modulo del texto plano. El consumo de \verb|noise_budget| se produce de forma logarítmica en base al tamaño de \verb|plain_modulus|, por lo que cuanto más pequeño es, más operaciones podremos realizar. También debe ser menor que \verb|poly_modulus_degree|.
+Modulo del texto plano. El consumo de \verb|noise_budget| se produce de forma logarítmica en base al tamaño de \verb|plain_modulus|, por lo que cuanto más pequeño es, más operaciones podremos realizar. También debe ser menor que \verb|poly_modulus_degree|.
 
-  \item CKKS
+\subsubsection{CKKS}
 
-  En la implementación del esquema CKKS podremos trabajar con número decimales, pero tendremos que realizar algunas gestiones adicionales a las de BGV para evitar que se pierda la integridad de nuestros cálculos.
+En la implementación del esquema CKKS podremos trabajar con número decimales, pero tendremos que realizar algunas gestiones adicionales a las de BGV para evitar que se pierda la integridad de nuestros cálculos.
 
-  Comparte con BGV tanto \verb|poly_modulus_degree| como \verb|coeff_modulus|, pero desaparece el elemento \verb|plain_modulus| (la integridad del texto cifrado ya no se evaluará con el \verb|noise_budget|), y los valores elegidos para \verb|coeff_modulus| tendrán otras implicaciones.
+Comparte con BGV tanto \verb|poly_modulus_degree| como \verb|coeff_modulus|, pero desaparece el elemento \verb|plain_modulus| (la integridad del texto cifrado ya no se evaluará con el \verb|noise_budget|), y los valores elegidos para \verb|coeff_modulus| tendrán otras implicaciones.
 
-  Aparece un elemento nuevo: la escala. De forma análoga a la que hemos implementado en la maqueta de THFE (ya lo veremos en \ref{chap:poc}) para codificar los números decimales se aplica una escala (se multiplican por un valor muy alto, potencia de 2) y se tratan como número enteros.
+Aparece un elemento nuevo: la escala. De forma análoga a la que hemos implementado en la maqueta de THFE (ya lo veremos en \ref{chap:poc}) para codificar los números decimales se aplica una escala (se multiplican por un valor muy alto, potencia de 2) y se tratan como número enteros.
 
-  Esta escala aumentará drásticamente cada vez que se multipliquen dos elementos. Siendo $N$ el tamaño del primer factor, y $M$ el del segundo, el resultado del producto tendrá como tamaño $M+N-1$. Para evitar que el número desborde su tamaño máximo, tras un producto puede reducirse la escala. La operación de reescalado implementada en SEAL trunca el valor del texto cifrado tantos bits como tenga el último elemento del vector \verb|coeff_modulus|, y elimina este elemento (cambiando el contexto de cifrado). De esta forma, siendo $P$ el tamaño del elemento eliminado de \verb|coeff_modulus| el texto cifrado pasaría a tener un tamaño $(M+N-1)/P$. Una vez se terminan los elementos de \verb|coeff_modulus| no se puede seguir operando, y se debe conservar siempre uno para poder realizar la operación de descifrado.
+Esta escala aumentará drásticamente cada vez que se multipliquen dos elementos. Siendo $N$ el tamaño del primer factor, y $M$ el del segundo, el resultado del producto tendrá como tamaño $M+N-1$. Para evitar que el número desborde su tamaño máximo, tras un producto puede reducirse la escala. La operación de reescalado implementada en SEAL trunca el valor del texto cifrado tantos bits como tenga el último elemento del vector \verb|coeff_modulus|, y elimina este elemento (cambiando el contexto de cifrado). De esta forma, siendo $P$ el tamaño del elemento eliminado de \verb|coeff_modulus| el texto cifrado pasaría a tener un tamaño $(M+N-1)/P$. Una vez se terminan los elementos de \verb|coeff_modulus| no se puede seguir operando, y se debe conservar siempre uno para poder realizar la operación de descifrado.
 
-  Para poder reescalar sin problemas se debe elegir una escala inicial menor que el número expresado por el último valor de \verb|coeff_modulus| (cuando \verb|coeff_modulus| está integro). Además, el primer valor de la cadena (el que se utilizará cuando se vaya a descifrar), debe ser mayor que el resto para poder tener cierta precisión: si este valor es 60, y el segundo (el que se utiliza al realizar la última operación) es 40, tendremos 20 bits de precisión ($60 - 40$) para los decimales al retirar la escala.
+Para poder reescalar sin problemas se debe elegir una escala inicial menor que el número expresado por el último valor de \verb|coeff_modulus| (cuando \verb|coeff_modulus| está integro). Además, el primer valor de la cadena (el que se utilizará cuando se vaya a descifrar), debe ser mayor que el resto para poder tener cierta precisión: si este valor es 60, y el segundo (el que se utiliza al realizar la última operación) es 40, tendremos 20 bits de precisión ($60 - 40$) para los decimales al retirar la escala.
 
-  A continuación veremos en qué consiste exactamente el contexto.
-
-\end{itemize}
+A continuación veremos en qué consiste exactamente el contexto.
 
 \subsection{SEALContext, niveles de error y realinearización}
 
