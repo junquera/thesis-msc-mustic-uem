@@ -12,8 +12,11 @@ using namespace std;
 
 class RegresionCuadratica {
   public:
-    RegresionCuadratica(int _nb_bits, int _float_bits, TFheGateBootstrappingCloudKeySet* _bk);
-    void calcula(LweSample* a, LweSample* b, LweSample* c, const vector<LweSample*> xs, const vector<LweSample*> ys, string results_path);
+    RegresionCuadratica(int _nb_bits, int _float_bits,
+                        TFheGateBootstrappingCloudKeySet* _bk);
+    void calcula(LweSample* a, LweSample* b, LweSample* c,
+                const vector<LweSample*> xs, const vector<LweSample*> ys,
+                string results_path);
   private:
     int nb_bits;
     int float_bits;
@@ -23,7 +26,9 @@ class RegresionCuadratica {
     /*
       Inicialización de valores: i, j, k, l, u, v y w
     */
-    void initVectores(const vector<LweSample*> xs, const vector<LweSample*> ys, string results_path);
+    void initVectores(const vector<LweSample*> xs,
+                      const vector<LweSample*> ys,
+                      string results_path);
     /*
       Cálculo de potencias con vectores iniciales: i^2, j^2...
     */
@@ -38,10 +43,12 @@ class RegresionCuadratica {
     */
     void calcComplejos(string results_path);
 
-    void calcC(LweSample* c, string results_path);
-    void calcB(LweSample* b, LweSample* c, string results_path);
-    void calcA(LweSample* a, LweSample* b, LweSample* c, string results_path);
-
+    void calcC(LweSample* c,
+              string results_path);
+    void calcB(LweSample* b, LweSample* c,
+              string results_path);
+    void calcA(LweSample* a, LweSample* b, LweSample* c,
+              string results_path);
 
     LweSample* aux1;
     LweSample* aux2;
