@@ -156,30 +156,18 @@ Pero sin lugar a dudas el mayor problema es el de la eficiencia: si bien nuestra
 
 \subsection{Tiempos de ejecución}
 
-En casi todo 0
+Hemos probado los tiempos de ejecución con las siguiente operaciones.
 
-% op,poly_modulus_degree_bits,t
-% slots with 8192 poly_modulus_degree: 4096
-% encode_batch,13,0
-% encode,13,0
-% encrypt_batch,13,0
-% encrypt_number,13,0
-% multiply,13,0
-% add,13,0
-% slots with 16384 poly_modulus_degree: 8192
-% encode_batch,14,0
-% encode,14,0
-% encrypt_batch,14,0
-% encrypt_number,14,0
-% multiply,14,0
-% add,14,0
-% slots with 32768 poly_modulus_degree: 16384
-% encode_batch,15,0
-% encode,15,0
-% encrypt_batch,15,0
-% encrypt_number,15,1
-% multiply,15,0
-% add,15,0
+\begin{itemize}
+    \item Codificación de variable
+    \item Codificación de variable como matriz
+    \item Cifrado
+    \item Cifrado de matriz
+    \item Multiplicación
+    \item Suma
+\end{itemize}
+
+En todas ellas, y con números de 8192, 16384 y 32768 bits, la ejecución se realiza de forma prácticamente instantánea (menos de un segundo). 
 
 \subsection{Límites de cómputo}
 
