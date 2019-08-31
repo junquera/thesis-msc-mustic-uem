@@ -1,10 +1,20 @@
 \chapter{Conclusiones}
 \label{chap:conclusiones}
 
+- Principalemente la eficiencia: Por mucho que optimizásemos nuestra solución, los $50$ ms que tarda en calcularse la curva de regresión en \textit{python} (un lenguaje que ya de por sí es lento comparado con los lenguajes compilados) equivalen a ejecutar dos puertas lógicas de TFHE.
+
+
 - Ya no es solo la eficiencia, es muy dificil programar
 
 - Hay que saber mucho para hacerlo, y más para hacerlo correctamente (\cite{peng_danger_2019})
 
 - Como hemos visto, la seguridad tiene que implementarse en función del riesgo. Estas implementaciones pueden ser útiles para operaciones comunes, por ejemplo, en nubes públicas, siempre que el valor del activo así lo requiera.
+
+
+- Lo ideal es buscar algo adaptado a la solución concreta.
+
+    - POr ejemplo, si se va a trabajar con 64 bits, hacer un circuito cerrado de 64 bits es más eficiente.
+- Evaluar soluciones como cuHE on cingulata
+
 
 - Reto de TFHE: http://lab.algonics.net/slides_ac16/index-asiacrypt.html#/38

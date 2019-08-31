@@ -119,19 +119,16 @@ Además de \verb|noise_budget|, hay tres parámetros configurables que guardan u
     \begin{table}
         \centering
         \begin{tabular}{  c  c  }
-        \hline
-        \verb|poly_modulus_degree|  & Número de bits de \verb|coeff_modulus| \\ [0.5ex]
-        \hline
-        \hline
+        \verb|poly_modulus_degree|  & Número de bits de \verb|coeff_modulus| \\
+        \hline \hline \\
         1024  & 27  \\
         2048  & 54  \\
         4096  & 109 \\
         8192  & 218 \\
         16384 & 438 \\
-        32768 & 881 \\ [1ex]
-        \hline
+        32768 & 881
         \end{tabular}
-        \caption{Relación entre \textit{poly\_modulus\_degree} y y el número de bits de \textit{coeff\_modulus\_degree}}
+        \caption{Relación \textit{poly\_modulus\_degree}/\textit{coeff\_modulus\_degree}}
         \label{table:poly_vs_coeff_modulus}
 
     \end{table}
@@ -304,7 +301,7 @@ Por otro lado, las operaciones aritméticas se realizan entre los valores de cad
 
 \subsection{Evaluator}
 
-Por último, conociendo todo lo que se puede hacer con SEAL, veremos cómo hacerlo. Para trabajar con los elementos cifrados SEAL ofrece las siguientes operaciones, codificadas en la clase \verb|Evaluator|:
+Por último, tras conocer todo lo que se puede hacer con SEAL, veremos cómo hacerlo. Para trabajar con los elementos cifrados SEAL ofrece las siguientes operaciones, codificadas en la clase \verb|Evaluator|:
 
 \begin{itemize}
     \item \verb|negate|
@@ -353,13 +350,36 @@ Todas las operaciones aritméticas se pueden aplicar para operar tanto entre ele
 
 \section{TFHE}
 
-En TFHE se trabaja directamente con puertas lógicas. No hay ningún parámetro adicional que seleccionar (mas allá de los relacionados con generar una clave aleatoria), tiene una API simple pero muy potente, pero para hacer cualquier cálculo hay que implementarlo desde el nivel más bajo. Cuando se cifra un dato se genera un array de bits correspondiente al dato cifrado. Será este array (codificado en la clase \verb|LweSample|) sobre el que aplicaremos los algoritmos y procedimientos que diseñaremos, como si trabajásemos con el texto plano.
+En TFHE se trabaja directamente con puertas lógicas en lugar de con operaciones aritméticas. A diferencia de SEAL, y entre otras cosas por implementar un único esquema de cifrad, no hay que seleccionar más que un parámetro de seguridad (lambda, $\lambda$) y aportarle una semilla que le permita generar una clave aleatoria (o al menos, lo más aleatoria posible). En la figura \ref{fig:init_tfhe} podemos ver lo simple que es comenzar a trabajar con TFHE.
 
-% Los elementos que forman TFHE son mucho menos complejos que los de SEAL, con un único sistema de cifrado \url{http://lab.algonics.net/slides_ac16/index-asiacrypt.html}.
+\begin{listing}
+    \begin{minted}{c++}
+    //generate a keyset
+    const int minimum_lambda = 110;
+    TFheGateBootstrappingParameterSet* params =
+    new_default_gate_bootstrapping_parameters(minimum_lambda);
+    
+    //generate a random key
+    uint32_t seed[] = { 314, 1592, 657 };
+    tfhe_random_generator_setSeed(seed,3);
+    TFheGateBootstrappingSecretKeySet* key = 
+    new_random_gate_bootstrapping_secret_keyset(params);
+    \end{minted}
+    \caption{Inicialización de TFHE (documentación de TFHE)}
+    \label{fig:init_tfhe}
+\end{listing}
 
-% CONTAR: Sólo definir el parámetro $\lambda$ (ver http://lab.algonics.net/slides_ac16/index-asiacrypt.html#/7)
+Este parámetro "lambda" ($\lambda$) se usa para caracterizar el nivel de seguridad en función de los $n$ bits de entropía de la clave secreta y la tase de error $\alpha$. En la figura \ref{fig:lambda_tfhe} podemos ver cómo están relacionados estos parámetros.
 
-Están codificados en sólo unos pocos grupos:
+\begin{figure}[h]
+    \includegraphics[width=\linewidth]{lambda_tfhe}
+    \caption{Curva de seguridad de $\lambda$ (\cite{cheon_faster_2016})}
+    \label{fig:lambda_tfhe}
+\end{figure}
+
+Tiene una API simple pero muy potente, pero para hacer cualquier cálculo hay que implementarlo desde el nivel más bajo. Los datos cifrados se representan como un array de bits sobre el que se opera como si el dato estuviese en claro. Será este array (codificado en la clase \verb|LweSample|) sobre el que aplicaremos los algoritmos y procedimientos que diseñaremos.
+
+Los elementos de TFHE están codificados en sólo unos pocos grupos:
 
 \begin{itemize}
   \item Parámetros de cifrado (\verb|TFheGateBootstrappingParameterSet|)
@@ -426,7 +446,7 @@ A continuación haremos un repaso de las principales operaciones sobre el texto 
       result = result * 2;
   \end{minted}
 
-  No podría ser implementada sin evaluar el valor de result. Sin embargo, con el operador \verb|MUX| podemos hacer lo siguiente (es pseudocódigo):
+  No podría ser implementada sin evaluar el valor de \verb|result|. Sin embargo, con el operador \verb|MUX| podemos hacer lo siguiente (es pseudocódigo):
 
   \begin{minted}{c++}
     /*
@@ -471,4 +491,4 @@ A continuación haremos un repaso de las principales operaciones sobre el texto 
 
 \subsection{Evolución de TFHE}
 
-En su desarrollo se plantea la implementación de un modo conocido como Chimera (\cite{boura_chimera:_2018}) en el que se puedan mover los datos entre el esquema de TFHE y esquemas más eficientes como BFV, CKKS; y viceversa, sin tener que descifrarlos. Por ejemplo, esto puede ser útil para trabajar con muchas puertas lógicas y hacer alguna operación aritmética rápida entre medias.
+En su desarrollo se plantea la implementación de un interesante modo conocido como Chimera (\cite{boura_chimera:_2018}) en el que se puedan mover los datos entre el esquema de TFHE y esquemas más eficientes como BFV y CKKS; y viceversa, sin tener que descifrarlos. Esto puede ser útil, por ejemplo, para trabajar con muchas puertas lógicas y hacer alguna operación aritmética rápida entre medias.

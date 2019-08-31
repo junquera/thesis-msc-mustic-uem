@@ -5,127 +5,146 @@
 
 \section{TFHE}
 
-Al ser una ejecución "especulativa"...
-
 \subsection{Tiempos de ejecución}
 
-\subsubsection{reg2}
+Al ser una ejecución "especulativa", la optimización de las funciones está muy limitada (se tiene que operar con todos los bits, gestionando el flujo de los datos eligiendo los valores con los que se opera mediante la puerta \verb|MUX|). Sin embargo, siempre que el circuito lógico sea cerrado para un número concreto de bits (de forma similar a un circuito físico), pueden utilizarse métodos formales y algebraicos para aumentar su eficiencia.
+
+Por otro lado, crear algoritmos que sean versátiles con respecto al número de bits hace que estos circuitos lógicos tengan que hacer operaciones redundantes, o introducir demasiada complejidad ciclomática para estar preparado para cualquier tamaño de palabra.
+
+\subsubsection{Operaciones aritméticas}
+
+Según la documentación de TFHE, cada puerta lógica tarda 13ms en ejecutarse, y las puertas MUX tardan 26ms. Sabiendo que sólo el $ 13\% $ de las puertas lógicas en nuestro código son puertas MUX podemos establecer un tiempo por puerta de unos 15ms para calcular el tiempo teórico que deberían tardar nuestras operaciones en función del número de puertas lógicas que emplean. En la tabla \ref{table:time_by_gates} podemos ver los resultados del cálculo.
+
+\begin{table}[]
+    \centering
+    \begin{tabular}{r | cc}
+        operación       & puertas logicas       & tiempo estimado \\
+        \hline \hline
+        compare\_bit     & 2     & 0,04 \\
+        equal   & 128   & 2,56 \\
+        is\_negative     & 1     & 0,02 \\
+        minimum/maximum & 388   & 7,76 \\
+        add\_bit & 5     & 0,1 \\ 
+        sum     & 320   & 6,4 \\
+        negativo        & 192   & 3,84 \\
+        resta   & 512   & 10,24 \\
+        multiply        & 46826 & 936,52 \\
+        mayor\_igual     & 128   & 2,56 \\   
+        shiftl/shiftr   & 771   & 15,42 \\
+        u\_shiftl/u\_shiftr       & 129   & 2,58 \\
+        divide  & 85776 & 1715,52 \\
+    \end{tabular}
+    \caption{Tiempo estimado de ejecución}
+    \label{table:time_by_gates}
+\end{table}
+
+Hemos medido los tiempos de ejecución de las distintas operaciones aritméticas con varios tamaños de palabra (de 4, 8, 16, 32 y 64 bits). En la figura \ref{fig:crec_func} podemos observar como prácticamente todas tienen un crecimiento lineal con mayor o menor pendiente: hay algunas que son casi gratuitas, como las operaciones \verb|shift|; y hay otras como la resta, que crecen un poco más rápido (porque están compuestas por varias operaciones crecientes) pero sin perder su comportamiento lineal.
+
+\begin{figure}[h]
+    \includegraphics[width=\textwidth]{crec_func}
+    \caption{Tiempo de ejecución por número de bits}
+    \label{fig:crec_func}
+\end{figure}
+
+Sin embargo hay dos operaciones que crecen de una forma más preocupante: la multiplicación y la división. En ambas funciones se juntan tres factores:
+
+\begin{enumerate}
+    \item Requiere el uso de un gran número de funciones adicionales: sumas, restas, comparaciones, etc; haciendo que crezca el número de puertas lógicas.
+    \item Debido a su complejidad, tiene varios bucles anidados cuyas iteraciones están relacionadas con el número de bits.
+    \item Abordamos las operaciones trabajando con el doble de bits de la entrada. Es decir, un número de 64 bits se opera como si tuviese 128 para evitar desbordamientos.
+\end{enumerate}
+
+En la tabla \ref{table:ops_real_time} vemos cuáles son estos tiempos con números de 64 bits.
+
+\begin{table}[]
+    \centering
+    \begin{tabular}{cc}
+        Operación       & Tiempo (s) \\
+        \hline \hline
+        compare\_bit     & 0 \\
+        is\_negative     & 0 \\
+        u\_shift       & 0 \\
+        add\_bit & 0 \\
+        equal   & 3 \\
+        mayor\_igual     & 4 \\
+        min / max & 14 \\
+        sum     & 8 \\
+        negativo        & 8 \\
+        resta   & 16 \\
+        shift   & 19 \\
+        multiply        & 1257 \\
+        divide  & 11662
+    \end{tabular}
+    \caption{Tiempo real de ejecución}
+    \label{table:ops_real_time}
+\end{table}
+
+En la figura \ref{fig:crec_div_mult} se puede ver cómo el crecimiento de cada valor con respecto al anterior  ($f(2^x)/f(2^{x-1})$ con $x$ número de bits) de ambas funciones corresponde con un crecimiento potencial con respecto al número de bits.
+
+\begin{figure}[h]
+    \includegraphics[width=\textwidth]{crec_div_mult}
+    \caption{Crecimiento: división y multiplicación}
+    \label{fig:crec_div_mult}
+\end{figure}
+% ---
+
+Por último, calcularemos el tiempo teórico que tardarían en realizarse las operaciones de la curva de regresión (sumando los tiempos de sus sumas, multiplicaciones, divisiones...) y lo compararemos con el tiempo que han tardado realmente.
+
+En la tabla \ref{table:sub_ops_r2} analizamos las operaciones contenidas en cada uno de los cálculos (ver anexo \ref{appendix:regresion_cuadratica}) y el tiempo estimado que tardarían en función de los tiempos mostrados en la tabla \ref{table:ops_real_time} . 
+
+\begin{table}[]
+    \centering
+    \begin{tabular}{r | c c c c}
+        Cálculo & Sumas & Multiplicaciones  & Divisiones  & Tiempo  estimado (s) \\
+        \hline \hline
+        initVectores  & 7 & 5 & 0 & 76092 \\
+        calcCuadrados & 0 & 4 & 0 & 5028 \\
+        calcDuplas  & 0 & 9 & 0 & 11313 \\
+        calcComplejos & 0 & 10  & 0 & 12570 \\
+        CalcC & 6 & 0 & 4 & 46776 \\
+        CalcB & 4 & 2 & 1 & 14208 \\
+        CalcA & 2 & 2 & 1 & 14192 \\
+        Total & 9 & 32  & 6 & 180179 \\
+    \end{tabular}
+    \caption{Sub-operaciones de regresión cuadrática}
+    \label{table:sub_ops_r2}
+\end{table}
+
+En la tabla \ref{table:t_r2} vemos el tiempo total que han tardado en realizarse estas operaciones frente al calculado.
+
+\begin{table}[]
+    \centering
+    \begin{tabular}{r | c c c c}
+        Cálculo & Tiempo,estimado & Tiempo,real & Proporción \\
+        \hline \hline
+        initVectores  & 76092 & 235885  & 3,09 \\
+        calcCuadrados & 5028  & 15687 & 3,11 \\
+        calcDuplas  & 11313 & 35608 & 3,14 \\
+        calcComplejos & 12570 & 75325 & 5,99 \\
+        CalcC & 46776 & 220161  & 4,70 \\
+        CalcB & 14208 & 264239  & 18,59 \\
+        CalcA & 14192 & 352023  & 24,80 \\
+        Total & 180179  & 1198928 & 6,65 \\
+
+    \end{tabular}
+    \caption{Tiempo real de regresión}
+    \label{table:t_r2}
+\end{table}
+
+% Resultados de regresión cuadrática
+
 %
 % initVectores! 235885
 % calcCuadrados! 15687
 % calcDuplas! 35608
 % calcComplejos! 75325
-% dCalcC! 220161
+% CalcC! 220161
 % CalcB! 264239
 % CalcA! 352023
 
 % ---
 
-% TODO Gráficos de drive
-% op,bits,time(s)
-% equal,4,0
-% is_negative,4,0
-% minimum,4,1
-% maximum,4,1
-% sum,4,1
-% negativo,4,0
-% resta,4,1
-% multiply,4,5
-% multiply_float,4,12
-% mayor_igual,4,1
-% shiftl,4,1
-% shiftr,4,1
-% u_shiftl,4,0
-% u_shiftr,4,0
-% porDiez,4,6
-% entreDiez,4,15
-% reescala-+,4,0
-% reescala+-,4,0
-% divide,4,15
-% divide_float,4,57
-% equal,8,0
-% is_negative,8,0
-% minimum,8,2
-% maximum,8,2
-% sum,8,1
-% negativo,8,1
-% resta,8,2
-% multiply,8,12
-% multiply_float,8,37
-% mayor_igual,8,0
-% shiftl,8,3
-% shiftr,8,3
-% u_shiftl,8,0
-% u_shiftr,8,0
-% porDiez,8,10
-% entreDiez,8,33
-% reescala-+,8,0
-% reescala+-,8,0
-% divide,8,57
-% divide_float,8,211
-% equal,16,1
-% is_negative,16,0
-% minimum,16,4
-% maximum,16,3
-% sum,16,2
-% negativo,16,3
-% resta,16,4
-% multiply,16,31
-% multiply_float,16,110
-% mayor_igual,16,2
-% shiftl,16,4
-% shiftr,16,6
-% u_shiftl,16,0
-% u_shiftr,16,0
-% porDiez,16,21
-% entreDiez,16,72
-% reescala-+,16,0
-% reescala+-,16,0
-% divide,16,211
-% divide_float,16,801
-% equal,32,2
-% is_negative,32,0
-% minimum,32,7
-% maximum,32,7
-% sum,32,4
-% negativo,32,4
-% resta,32,8
-% multiply,32,93
-% multiply_float,32,345
-% mayor_igual,32,2
-% shiftl,32,10
-% shiftr,32,11
-% u_shiftl,32,0
-% u_shiftr,32,0
-% porDiez,32,41
-% entreDiez,32,142
-% reescala-+,32,0
-% reescala+-,32,0
-% divide,32,812
-% divide_float,32,3108
-% equal,64,3
-% is_negative,64,0
-% minimum,64,14
-% maximum,64,15
-% sum,64,8
-% negativo,64,8
-% resta,64,16
-% multiply,64,330
-% multiply_float,64,1257
-% mayor_igual,64,4
-% shiftl,64,19
-% shiftr,64,22
-% u_shiftl,64,0
-% u_shiftr,64,0
-% porDiez,64,82
-% entreDiez,64,294
-% reescala-+,64,0
-% reescala+-,64,0
-% divide,64,3076
-% divide_float,64,11662
-
-% ---
-
+% Es la operación más costosa. Va en función del número de valores introducidos, mientras que el resto siempre tardarán lo mismo (con el mismo número de bits)
 % /*
 %   multi = 5
 %   suma = 7
@@ -133,8 +152,10 @@ Al ser una ejecución "especulativa"...
 %   t_multi = 1257
 %   t_suma = 8
 %
+%   values = 12
+%
 %   t_total = (t_multi*multi + t_suma*suma)*values
-%           = (6341*values)s = (105.68*values) minutos
+%           = (6341*values)s = 76092
 % */
 % void RegresionCuadratica::initVectores(const vector<LweSample*> xs, const vector<LweSample*> ys, string results_path){
 %
@@ -144,7 +165,7 @@ Al ser una ejecución "especulativa"...
 %
 %   t_multi = 1257
 %
-%   t_total = t_multi*multi = 5028s = 83.8 minutos
+%   t_total = t_multi*multi = 5028
 % */
 % void RegresionCuadratica::calcCuadrados(string results_path)
 %
@@ -165,7 +186,7 @@ Al ser una ejecución "especulativa"...
 %
 %   t_multi = 1257
 %
-%   t_total = t_multi*multi = 12570s = 209.5m = 3.49 horas
+%   t_total = t_multi*multi = 12570
 % */
 % void RegresionCuadratica::calcComplejos(string results_path)
 %
@@ -177,7 +198,7 @@ Al ser una ejecución "especulativa"...
 %   t_div = 11662
 %
 %   t_total = t_div*div + t_suma*suma
-%           = 46776s = 13 horas
+%           = 46776
 % */
 % void RegresionCuadratica::calcC(LweSample* c, string results_path){
 %
@@ -192,7 +213,7 @@ Al ser una ejecución "especulativa"...
 %   t_div = 11662
 %
 %   t_total = t_div*div + t_multi*multi + t_suma*suma
-%           = 14208s = 3.94 horas
+%           = 14208
 % */
 % void RegresionCuadratica::calcB(LweSample* b, LweSample* c, string results_path){
 %
@@ -207,33 +228,32 @@ Al ser una ejecución "especulativa"...
 %   t_div = 11662
 %
 %   t_total = t_div*div + t_multi*multi + t_suma*suma
-%           = 14192s = 3.94 horas
+%           = 14192
 % */
 % void RegresionCuadratica::calcA(LweSample* a, LweSample* b, LweSample* c, string results_path){
 
-\subsection{Tamaño máximo de los datos}
 
-% log(X, 2)*max_exponente <= (64 bits de entero - 10 bits de decimal - 1 bit de signo) = 53 bits
+Se puede apreciar que hay referencias con respecto a los datos teóricos, pueden estar derivadas de que no sólo se está ejecutando el programa, si no la lógica que ejecuta el programa, o ...
 
-% 4 < max_exponente < 10
+\subsection{Límites de cómputo}
 
-% X < 32
+No los hay, más allá de los relacionados con la codificación al devolver el resultado plano, pero hay que estar pendiente (muy pendiente) del crecimiento cuando se opera, y a medida que aumenta el tamaño de los datos, aumenta notablemente el tiempo de ejecución...
+
+Por ejemplo, para determinar cuántos bits necesitábamos para nuestra regresión cuadrática calculamos con $X$ el mayor valor de las $x$ (en nuestro caso 12), $n$ el mayor grado alcanzable (el mayor número de multiplicaciones que se podían acumular sobre ese valor), $d$ el número de bits para decimales y añadiéndole 1 (el bit del signo):
+
+\begin{gather}
+bits\_necesarios = n * (\log_2{X}) + d + 1 = 51
+\end{gather}
+
+Podríamos haber implementado la solución con números de 51 bits sin problemas, pero decidimos hacerlo con 64 para poder contrastar los resultados con los obtenidos evaluando las operaciones de forma individual.
 
 \subsection{Problemas encontrados}
 
-- Signo
+A medida que hemos ido desarrollando la solución hemos encontrado principalmente problemas derivados de tener que trabajar con número en un sistema de puertas lógicas: implementar los algoritmos, gestionar el signo, los decimales, etc; sin tener casi documentación ni librerías de apoyo. Es decir, uno de los principales problemas de TFHE es que cualquier solución se tiene que construir desde la base, como si efectivamente se estuviese programando en ensamblador y sin poder acudir a librerías de código abierto o documentación de ningún tipo (mas allá de la propia del sistema).
 
-- Floats
+Aunque este es un problema importante a la hora de realizar una implementación destinada al uso comercial, desde el punto de vista del tiempo de implantación (hay que invertir muchas horas), es principalmente un problema para la estabilidad de las soluciones, que se basan en sistemas que no han sido probados previamente por nadie (se ha invertido casi el mismo tiempo en desarrollar nuestra solución que en depurarla y arreglar errores).
 
-- Eficiencia
-
-% TODO Documentar tiempos
-
-- Tamaño de los datos al multiplicar...
-
-% TODO Mostrar algunos ejemplos de codificación de números en bits
-l = sum(1, n)
-nb_bits > 1 + math.log(n, 2) + 10
+Pero sin lugar a dudas el mayor problema es el de la eficiencia: si bien nuestra solución es optimizable, el cálculo de una curva de regresión con la maqueta en \textit{python} (ver \ref{appendix:regresion_cuadratica}) tarda menos de $50$ ms, frente a las $50.88$ segundos ($2,1$ días) del cálculo cifrado. 
 
 \section{SEAL}
 
@@ -284,6 +304,10 @@ Con BFV sólo enteros, y por niveles de error:
 % 13,1
 % 14,4
 % 15,9
+
+\subsection{Problemas encontrados}
+
+SEAL es extremadamente limitado. No se pueden hacer casi operaciones, y tampoco permite que se aumente el tamaño de los datos (aun a riesgo de que sea menos eficiente).
 
 \section{Coste de la implantación}
 
