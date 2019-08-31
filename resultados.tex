@@ -172,21 +172,24 @@ En todas ellas, y con números de 8192, 16384 y 32768 bits, la ejecución se rea
 \begin{table}[]
     \centering
     \begin{tabular}{r | c c c c}
-        Cálculo & Tiempo estimado (s) & Tiempo real (s) & Proporción \\
+        Operación   & BGV (ms) & CKKS (ms)  \\
         \hline \hline
-        initVectores  & 76092 & 235885  & 3,09 \\
-        calcCuadrados & 5028  & 15687 & 3,11 \\
-        calcDuplas  & 11313 & 35608 & 3,14 \\
-        calcComplejos & 12570 & 75325 & 5,99 \\
-        CalcC & 46776 & 220161  & 4,70 \\
-        CalcB & 14208 & 264239  & 18,59 \\
-        CalcA & 14192 & 352023  & 24,80 \\
-        Total & 180179  & 1198928 & 6,65 \\
+        encode  & 410  & 12753 \\
+        decode  & 359  & 34802 \\
+        encrypt & 15324 & 20628 \\
+        decrypt & 7145  & 1055 \\
+        add & 344 & 300 \\
+        multiply  & 76506  & 3567 \\
+        multiply plain  & 12462  & 1140 \\
+        square  & 54013  & 2662 \\
+        relinearize & 31034 & 33513 \\
+        rotate vector one step  & 31823  & 36967 \\
+        rotate vector random  & 31432  & 199463 \\
+        rescale  & - & 11607
     \end{tabular}
     \caption{Tests de eficiencia de SEAL}
     \label{table:benchmarks_seal}
 \end{table}
-
 
 \subsection{Límites de cómputo}
 
