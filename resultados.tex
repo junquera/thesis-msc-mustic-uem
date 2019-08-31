@@ -167,7 +167,26 @@ Hemos probado los tiempos de ejecución con las siguiente operaciones.
     \item Suma
 \end{itemize}
 
-En todas ellas, y con números de 8192, 16384 y 32768 bits, la ejecución se realiza de forma prácticamente instantánea (menos de un segundo). En el apéndice \ref{appendix:benchmarks_seal} se pueden ver los resultados en bruto de la ejecución de los tests incluídos en la documentación de SEAL. En la tabla \ref{table:benchmarks_seal} 
+En todas ellas, y con números de 8192, 16384 y 32768 bits, la ejecución se realiza de forma prácticamente instantánea (menos de un segundo). En el apéndice \ref{appendix:benchmarks_seal} se pueden ver los resultados en bruto de la ejecución de los tests incluídos en la documentación de SEAL. En la tabla \ref{table:benchmarks_seal} podemos ver un resumen.
+
+\begin{table}[]
+    \centering
+    \begin{tabular}{r | c c c c}
+        Cálculo & Tiempo estimado (s) & Tiempo real (s) & Proporción \\
+        \hline \hline
+        initVectores  & 76092 & 235885  & 3,09 \\
+        calcCuadrados & 5028  & 15687 & 3,11 \\
+        calcDuplas  & 11313 & 35608 & 3,14 \\
+        calcComplejos & 12570 & 75325 & 5,99 \\
+        CalcC & 46776 & 220161  & 4,70 \\
+        CalcB & 14208 & 264239  & 18,59 \\
+        CalcA & 14192 & 352023  & 24,80 \\
+        Total & 180179  & 1198928 & 6,65 \\
+    \end{tabular}
+    \caption{Tests de eficiencia de SEAL}
+    \label{table:benchmarks_seal}
+\end{table}
+
 
 \subsection{Límites de cómputo}
 
