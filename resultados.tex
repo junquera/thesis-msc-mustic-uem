@@ -172,7 +172,7 @@ En todas ellas, y con números de 8192, 16384 y 32768 bits, la ejecución se rea
 \begin{table}[]
     \centering
     \begin{tabular}{r | c c}
-        Operación   & BGV & CKKS  \\
+        Operación   & BFV & CKKS  \\
         \hline \hline
         encode  & 410  & 12753 \\
         decode  & 359  & 34802 \\
@@ -184,7 +184,7 @@ En todas ellas, y con números de 8192, 16384 y 32768 bits, la ejecución se rea
         square  & 54013  & 2662 \\
         relinearize & 31034 & 33513 \\
         rotate vector one step  & 31823  & 36967 \\
-        rotate vector random  & 31432  & 199463 \\
+        rotate columns  & 31432  & 199463 \\
         rescale  & - & 11607
     \end{tabular}
     \caption{Tests de eficiencia de SEAL (microsegundos)}
