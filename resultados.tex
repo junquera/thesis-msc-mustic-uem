@@ -24,12 +24,12 @@ Según la documentación de TFHE, cada puerta lógica tarda 13ms en ejecutarse, 
         equal   & 128   & 2,56 \\
         is\_negative     & 1     & 0,02 \\
         minimum/maximum & 388   & 7,76 \\
-        add\_bit & 5     & 0,1 \\ 
+        add\_bit & 5     & 0,1 \\
         sum     & 320   & 6,4 \\
         negativo        & 192   & 3,84 \\
         resta   & 512   & 10,24 \\
         multiply        & 46826 & 936,52 \\
-        mayor\_igual     & 128   & 2,56 \\   
+        mayor\_igual     & 128   & 2,56 \\
         shiftl/shiftr   & 771   & 15,42 \\
         u\_shiftl/u\_shiftr       & 129   & 2,58 \\
         divide  & 85776 & 1715,52 \\
@@ -90,7 +90,7 @@ En la figura \ref{fig:crec_div_mult} se puede ver cómo el crecimiento de cada v
 
 Por último, calcularemos el tiempo teórico que tardarían en realizarse las operaciones de la curva de regresión (sumando los tiempos de sus sumas, multiplicaciones, divisiones...) y lo compararemos con el tiempo que han tardado realmente.
 
-En la tabla \ref{table:sub_ops_r2} analizamos las operaciones contenidas en cada uno de los cálculos (ver anexo \ref{appendix:regresion_cuadratica}) y el tiempo estimado que tardarían en función de los tiempos mostrados en la tabla \ref{table:ops_real_time} . 
+En la tabla \ref{table:sub_ops_r2} analizamos las operaciones contenidas en cada uno de los cálculos (ver anexo \ref{appendix:regresion_cuadratica}) y el tiempo estimado que tardarían en función de los tiempos mostrados en la tabla \ref{table:ops_real_time} .
 
 \begin{table}[]
     \centering
@@ -131,108 +131,6 @@ En la tabla \ref{table:t_r2} vemos el tiempo total que han tardado en realizarse
     \label{table:t_r2}
 \end{table}
 
-% Resultados de regresión cuadrática
-
-%
-% initVectores! 235885
-% calcCuadrados! 15687
-% calcDuplas! 35608
-% calcComplejos! 75325
-% CalcC! 220161
-% CalcB! 264239
-% CalcA! 352023
-
-% ---
-
-% Es la operación más costosa. Va en función del número de valores introducidos, mientras que el resto siempre tardarán lo mismo (con el mismo número de bits)
-% /*
-%   multi = 5
-%   suma = 7
-%
-%   t_multi = 1257
-%   t_suma = 8
-%
-%   values = 12
-%
-%   t_total = (t_multi*multi + t_suma*suma)*values
-%           = (6341*values)s = 76092
-% */
-% void RegresionCuadratica::initVectores(const vector<LweSample*> xs, const vector<LweSample*> ys, string results_path){
-%
-%
-% /*
-%   multi = 4
-%
-%   t_multi = 1257
-%
-%   t_total = t_multi*multi = 5028
-% */
-% void RegresionCuadratica::calcCuadrados(string results_path)
-%
-%
-% /*
-%   multi = 9
-%
-%   t_multi = 1257
-%
-%   t_total = t_multi*multi = 11313s = 188.55m = 3.14 horas
-% */
-% void RegresionCuadratica::calcDuplas(string results_path){
-%
-%
-%
-% /*
-%   multi = 10
-%
-%   t_multi = 1257
-%
-%   t_total = t_multi*multi = 12570
-% */
-% void RegresionCuadratica::calcComplejos(string results_path)
-%
-% /*
-%   suma = 16
-%   div = 4
-%
-%   t_suma = 8
-%   t_div = 11662
-%
-%   t_total = t_div*div + t_suma*suma
-%           = 46776
-% */
-% void RegresionCuadratica::calcC(LweSample* c, string results_path){
-%
-%
-% /*
-%   suma = 4
-%   multi = 2
-%   div = 1
-%
-%   t_suma = 8
-%   t_multi = 1257
-%   t_div = 11662
-%
-%   t_total = t_div*div + t_multi*multi + t_suma*suma
-%           = 14208
-% */
-% void RegresionCuadratica::calcB(LweSample* b, LweSample* c, string results_path){
-%
-%
-% /*
-%   suma = 2
-%   multi = 2
-%   div = 1
-%
-%   t_suma = 8
-%   t_multi = 1257
-%   t_div = 11662
-%
-%   t_total = t_div*div + t_multi*multi + t_suma*suma
-%           = 14192
-% */
-% void RegresionCuadratica::calcA(LweSample* a, LweSample* b, LweSample* c, string results_path){
-
-
 Se puede apreciar que hay referencias con respecto a los datos teóricos, pueden estar derivadas de que no sólo se está ejecutando el programa, si no la lógica que ejecuta el programa, o ...
 
 \subsection{Límites de cómputo}
@@ -253,7 +151,7 @@ A medida que hemos ido desarrollando la solución hemos encontrado principalment
 
 Aunque este es un problema importante a la hora de realizar una implementación destinada al uso comercial, desde el punto de vista del tiempo de implantación (hay que invertir muchas horas), es principalmente un problema para la estabilidad de las soluciones, que se basan en sistemas que no han sido probados previamente por nadie (se ha invertido casi el mismo tiempo en desarrollar nuestra solución que en depurarla y arreglar errores).
 
-Pero sin lugar a dudas el mayor problema es el de la eficiencia: si bien nuestra solución es optimizable, el cálculo de una curva de regresión con la maqueta en \textit{python} (ver \ref{appendix:regresion_cuadratica}) tarda menos de $50$ ms, frente a las $50.88$ segundos ($2,1$ días) del cálculo cifrado. 
+Pero sin lugar a dudas el mayor problema es el de la eficiencia: si bien nuestra solución es optimizable, el cálculo de una curva de regresión con la maqueta en \textit{python} (ver \ref{appendix:regresion_cuadratica}) tarda menos de $50$ ms, frente a las $50.88$ segundos ($2,1$ días) del cálculo cifrado.
 
 \section{SEAL}
 
@@ -317,7 +215,7 @@ Equipo de ingenieros, estudio, pruebas...
 % - Estudio de herramientas
 % - Mes con 6 horas al día
 
-Máquina digital ocean con cálculo (tiempo*precio).
+Máquina digital ocean con cálculo (tiempo*precio): Datos de facturación + Pantallazo
 
 Los resultados para curva A han sido: ...
 para curva B han sido: ...
