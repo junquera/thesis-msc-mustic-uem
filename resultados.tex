@@ -183,7 +183,7 @@ En todas ellas, y con números de 8192, 16384 y 32768 bits, la ejecución se rea
         multiply plain  & 12462  & 1140 \\
         square  & 54013  & 2662 \\
         relinearize & 31034 & 33513 \\
-        rotate vector one step  & 31823  & 36967 \\
+        rotate vector  & 31823  & 36967 \\
         rotate columns  & 31432  & - \\
         rescale  & - & 11607
     \end{tabular}
@@ -193,28 +193,63 @@ En todas ellas, y con números de 8192, 16384 y 32768 bits, la ejecución se rea
 
 \subsection{Límites de cómputo}
 
-Con CKKS, por tamaño de la cadena:
-
-El primer y el último número de la cadena tienen que ser mayores que el número a cifrar/descifrar, y los intermedios tienen que ser lo algo más grandes  que los intermedios para asegurar la precisión, y la suma de estos dos con los intermedios tiene que ser menos que  \verb|max coeff_modulus| bit-length. POr lo tanto:
+Para cada uno de los esquemas veremos un límite de cómputo distinto, dependiendo de qué parámetro determina la capacidad de operación:
 
 \begin{itemize}
-    \item Para un número de 40 bits, es necesario utilizr al menos  \verb|poly_modulus_degree de 8192|, y se pueden hacer 4 operaciones.
-    \item Para un número de 64 bits, es necesario utilizr al menos  \verb|poly_modulus_degree de 16384|, y se pueden hacer 7 operaciones.
-    \item Para un número de 64 bits, es necesario utilizr al menos \verb|poly_modulus_degree de 16384|, y se pueden hacer 14 operaciones.
+    \item El parámetro \verb|noise_budget| en el esquema BFV
+    \item Los elementos dentro de la cadena de CKKS
 \end{itemize}
 
-Este es el número de operaciones tras el cual el resultado es inválido.
+Además cuando hablamos de límites no hablamos sólo del número de operaciones, sino que debemos incluir que en SEAL sólo podremos trabajar con números, y en resumen con sólo tres tipos de operación: suma, resta y multiplicación.
 
-Con BFV sólo enteros, y por niveles de error:
+\subsubsection{BFV}
 
-% poly_modulus_degree_bits,n
-% 13,1
-% 14,4
-% 15,9
+Con BFV la limitación de trabajar con números se amplía: sólo podemos trabajar con números enteros. El parámetro que determina cuántos cálculos se pueden hacer es \verb|noise_budget|. Como comentamos en el capítulo \ref{chap:teoria}, este parámetro se va reduciendo a medida que se opera, y si llega a 0 el número se vuelve irrecuperable.
+
+Hemos evaluado estos límites mediante un programa que multiplica mientras el nivel sea mayor que cero. Probando con distintos tamaños (\verb|poly_modulus_degree|) bajo los parámetros recomendados por SEAL, obtenemos los resultados de la tabla \ref{table:seal_bfv_mult_depth}.
+
+\begin{table}[]
+    \centering
+    \begin{tabular}{c c}
+        \textit{poly\_modulus\_degree}   & Multiplicaciones realizables  \\
+        \hline \hline \\
+        $2^{13}$  & 1 \\
+        $2^{14}$  & 4 \\
+        $2^{15}$  & 9
+    \end{tabular}
+    \caption{Profundidad computacional máxima BFV}
+    \label{table:seal_bfv_mult_depth}
+\end{table}
+
+Vemos que el número de productos realizable es similar al que podemos realizar con 64 bits en TFHE, pero es mucho más bajo realmente. Mientras que en nuestro ejemplo de TFHE podíamos realizar 10 productos sin ningún problema, en este sólo podemos realizar 8 (si nuestro test nos ha devuelto 9 significa que con 9 el resultado está corrupto), sólo con número enteros de hasta 60 bits.
+
+\subsubsection{CKKS}
+
+Con CKKS, por tamaño de la cadena. El primer y el último número de la cadena tienen que ser mayores que el número a cifrar/descifrar, y la suma de estos dos con los intermedios tiene que ser menos que  \verb|max coeff_modulus| bit-length. Para calcular el tamaño de la cadena seguiremos el siguiente procedimiento:
+
+\begin{enumerate}
+    \item Reservaremos 120 bits: 60 para el primer número de la cadena (el número que determinará la precisión del descifrado) y otros 60 para el último (que tiene que tener al menos el mismo número de bits que el más grande del resto de la cadena)
+    \item Rellenamos los espacios intermedios con números de 40 bits mientras la suma de toda la cadena sea menor que el número máximo de bits asignable a \verb|coeff_modulus| (ver \ref{table:poly_vs_coeff_modulus}).
+\end{enumerate}
+
+Tras realizar este cálculo, obtendremos el tamaño de la cadena equivalente al número de multiplicaciones realizables de la tabla \ref{table:seal_ckks_mult_depth}.
+
+\begin{table}[]
+    \centering
+    \begin{tabular}{c c }
+        \textit{poly\_modulus\_degree}   & Multiplicaciones realizables  \\
+        \hline \hline \\
+        $2^{13}$  & 2 \\
+        $2^{14}$  & 7 \\
+        $2^{15}$  & 19
+    \end{tabular}
+    \caption{Profundidad computacional máxima CKKS}
+    \label{table:seal_ckks_mult_depth}
+\end{table}
 
 \subsection{Problemas encontrados}
 
-SEAL es extremadamente limitado. No se pueden hacer casi operaciones, y tampoco permite que se aumente el tamaño de los datos (aun a riesgo de que sea menos eficiente).
+SEAL es extremadamente limitado. No se pueden hacer casi operaciones, y tampoco permite que se aumente el tamaño de los datos mas allá de los tipificados en sus ejemplos (aun a riesgo de que sea menos eficiente).
 
 \section{Coste de la implantación}
 
