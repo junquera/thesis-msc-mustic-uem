@@ -309,7 +309,20 @@ Equipo de ingenieros, estudio, pruebas...
 
 % \ref{appendix:server-do}
 
-Para la ejecución del servidor de TFHE hemos contratado una máquina en DigitalOcean (\url{https://www.digitalocean.com/}) durante una semana. Comenzamos 
+Para la ejecución del servidor de TFHE hemos contratado una máquina en Digital Ocean (\url{https://www.digitalocean.com/}) durante una semana. Así utilizamos sus servicios:
 
-Máquina digital ocean con cálculo (tiempo*precio): Datos de facturación + Pantallazos
+\begin{itemize}
+    \item Durante un día tuvimos contratada una instancia con un núcleo de CPU, con un precio de $5$ dólares al mes.
+    En esta instancia instalamos las librerías necesarias, nuestro código, y lanzamos las pruebas de eficiencia de TFHE (con las que hemos generado los resultados de la figura \ref{fig:crec_func}).
+    \item Tras esta prueba reescalamos las características de la máquina para que tuviese 2 CPU y poder realizar los cálculos de las dos curvas de regresión de forma paralela. Esta máquina tiene un coste de $15$ dólares al mes, y estuvo corriendo durante otros 6 días (el tiempo que tardó en calcular las curvas, más el tiempo de repetir algunos cálculos a medida que ibamos detectando errores en nuestro código), consumiendo el $100\%$ de sus recursos casi todo el tiempo.
+\end{itemize}
 
+El coste final ha sido de $4.66$ dólares. En un entorno real este coste dependería del número de máquinas que fuesen necesarias para calcular los valores de cada curva, durante unos 3 días por cada una de ellas. La parte positiva es que, con el modelo que hemos construido para el sistema, sólo sería necesario realizar estos cálculos una vez para cada curva.
+
+En el anexo \ref{appendix:server-do} pueden verse todos los detalles de facturación, y en la figura \ref{fig:stats-do} el panel de control web con las estadísticas de la máquina.
+
+\begin{figure}[h]
+    \includegraphics[width=\textwidth]{stats-do}
+    \caption{Panel web de estadísticas del servidor}
+    \label{fig:stats-do}
+\end{figure}
