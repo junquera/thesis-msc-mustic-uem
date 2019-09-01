@@ -150,7 +150,7 @@ A medida que hemos ido desarrollando la solución hemos encontrado principalment
 
 Aunque este es un problema importante a la hora de realizar una implementación destinada al uso comercial, desde el punto de vista del tiempo de implantación (hay que invertir muchas horas), es principalmente un problema para la estabilidad de las soluciones, que se basan en sistemas que no han sido probados previamente por nadie (se ha invertido casi el mismo tiempo en desarrollar nuestra solución que en depurarla y arreglar errores).
 
-Pero sin lugar a dudas el mayor problema es el de la eficiencia: si bien nuestra solución es optimizable, el cálculo de una curva de regresión con la maqueta en \textit{python} (ver \ref{appendix:regresion_cuadratica}) tarda menos de $50$ ms, frente a las $50.88$ segundos ($2,1$ días) del cálculo cifrado.
+Pero sin lugar a dudas el mayor problema es el de la eficiencia: si bien nuestra solución es optimizable, el cálculo de una curva de regresión con la maqueta en \textit{python} (ver \ref{appendix:regresion_cuadratica}) tarda menos de $50$ ms, frente a las $50,88$ segundos ($2,1$ días) del cálculo cifrado.
 
 \section{SEAL}
 
@@ -299,15 +299,17 @@ A continuación desarrollaremos los costes que ha tenido el desarrollo de este t
 
 \subsection{Coste de desarrollo}
 
-Equipo de ingenieros, estudio, pruebas...
+Para el desarrollo de este trabajo se han invertido las siguientes horas de trabajo:
 
-% - Estudio teórico: 2 meses, 2 horas a la semana
-% - Estudio de librerías/herramientas: 1 mes, dos horas a la semana
-% - Implementación: Mes con 6 horas al día
+\begin{itemize}
+    \item Estudio teórico (mediados de abril, mediados de junio de 2019): 2 meses, 2 horas a la semana. Total: 18 horas
+    \item Estudio de las librerías y herramientas (mediados de junio, finales de de julio de 2019): 1 mes y medio, 2 horas a la semana. Total: 12 horas
+    \item Implementación de la solución (mes de agosto de 2019): Un mes, promedio de 6 horas al día, de lunes a viernes. Total: 90 horas
+\end{itemize}
+
+Contabilizadas 120 horas, y con un sueldo mínimo de $30000$\euro{} al año (fuente: Universidad Europea de Madrid \footnote{Cuánto gana un ingeniero informático, \url{https://universidadeuropea.es/blog/cuanto-gana-un-ingeniero-informatico}}), podríamos estimar el coste del desarrollo en $1800$\euro{}.
 
 \subsection{Coste de despliegue}
-
-% \ref{appendix:server-do}
 
 Para la ejecución del servidor de TFHE hemos contratado una máquina en Digital Ocean (\url{https://www.digitalocean.com/}) durante una semana. Así utilizamos sus servicios:
 
@@ -317,7 +319,7 @@ Para la ejecución del servidor de TFHE hemos contratado una máquina en Digital
     \item Tras esta prueba reescalamos las características de la máquina para que tuviese 2 CPU y poder realizar los cálculos de las dos curvas de regresión de forma paralela. Esta máquina tiene un coste de $15$ dólares al mes, y estuvo corriendo durante otros 6 días (el tiempo que tardó en calcular las curvas, más el tiempo de repetir algunos cálculos a medida que ibamos detectando errores en nuestro código), consumiendo el $100\%$ de sus recursos casi todo el tiempo.
 \end{itemize}
 
-El coste final ha sido de $4.66$ dólares. En un entorno real este coste dependería del número de máquinas que fuesen necesarias para calcular los valores de cada curva, durante unos 3 días por cada una de ellas. La parte positiva es que, con el modelo que hemos construido para el sistema, sólo sería necesario realizar estos cálculos una vez para cada curva.
+El coste final ha sido de $5,07$ dólares ($4,6$\euro). En un entorno real este coste dependería del número de máquinas que fuesen necesarias para calcular los valores de cada curva, durante unos 3 días por cada una de ellas. La parte positiva es que, con el modelo que hemos construido para el sistema, sólo sería necesario realizar estos cálculos una vez para cada curva.
 
 En el anexo \ref{appendix:server-do} pueden verse todos los detalles de facturación, y en la figura \ref{fig:stats-do} el panel de control web con las estadísticas de la máquina.
 

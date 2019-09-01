@@ -410,28 +410,26 @@ Finalmente, para cada una de las tecnologías se han desarrollado dos programas 
 
 Para ambas, se ha programado una clase cliente, y una clase servidor, como hemos comentado cada una con las funciones que le son propias por su rol en la arquitectura, y para el desarrollo del trabajo hemos creado cuatro ejecutables que, apoyándose en las clases cliente/servidor implementarán la lógica para generar la curva de regresión y evaluar en el resultado los valores. De ahora en adelante cuando hablemos de cliente y servidor nos referiremos a estos ejecutables.
 
-\begin{itemize}
+\subsubsection{TFHE}
 
-    \item TFHE
+Código fuente en: \url{https://gitlab.com/junquera/tfhe-cs}
 
-    Código fuente en: \url{https://gitlab.com/junquera/tfhe-cs}
+El cliente TFHE ofrece la posibilidad de:
 
-    El cliente TFHE ofrece la posibilidad de:
+\begin{enumerate}
+    \item Generar datos cifrados de la temperatura en Cabo de Gata guardando los $n$ valores de las $x$ con el formato \verb|ciudad_AXn.data| y los de las $y$ como  \verb|ciudad_AYn.data|).
+    \item Generar datos cifrados de la temperatura en Finisterre siguiendo el mismo formato que anteriormente, pero con el prefijo \verb|ciudad_B|.
+    \item Analizar los resultados generados por el servidor (indicándole la ruta en la que están, busca los archivos \verb|{a,b,c}.data|
+    \item Descifrar un archivo cifrado con TFHE
+\end{enumerate}{}
 
-    \begin{enumerate}
-        \item Generar datos cifrados de la temperatura en Cabo de Gata guardando los $n$ valores de las $x$ con el formato \verb|ciudad_AXn.data| y los de las $y$ como  \verb|ciudad_AYn.data|).
-        \item Generar datos cifrados de la temperatura en Finisterre siguiendo el mismo formato que anteriormente, pero con el prefijo \verb|ciudad_B|.
-        \item Analizar los resultados generados por el servidor (indicándole la ruta en la que están, busca los archivos \verb|{a,b,c}.data|
-        \item Descifrar un archivo cifrado con TFHE
-    \end{enumerate}{}
+Cuando genera los datos cifrados, además exporta al sistema de archivos las claves para poder descifrar estos archivos cuando sea necesario, y poder subir la pública al servidor para procesar los datos.
 
-    Cuando genera los datos cifrados, además exporta al sistema de archivos las claves para poder descifrar estos archivos cuando sea necesario, y poder subir la pública al servidor para procesar los datos.
-
-    El módulo que hace las veces de servidor con TFHE generará los parámetros $a$, $b$ y $c$ de los que llevamos hablando toda la sección en base a los archivos \verb|ciudad_...| que haya en la carpeta que se le indique. Como el proceso es muy lento, almacenará los resultados de las operaciones intermedias para recurrir a ellos si se corta la ejecución (ver \ref{fig:resultados_tfhe}), hasta generar los archivos $a.data$, $b.data$ y $c.data$.
+El módulo que hace las veces de servidor con TFHE generará los parámetros $a$, $b$ y $c$ de los que llevamos hablando toda la sección en base a los archivos \verb|ciudad_...| que haya en la carpeta que se le indique. Como el proceso es muy lento, almacenará los resultados de las operaciones intermedias para recurrir a ellos si se corta la ejecución (ver figura \ref{fig:resultados_tfhe}), hasta generar los archivos $a.data$, $b.data$ y $c.data$.
 
 \begin{listing}[ht]
     \begin{minted}{console}
-    junquera@opa:~/UEM/TFM/results/tfhe/ciudad_A/resultados$ ls -la
+    junquera@opa:~/UEM/TFM/results/tfhe/ciudad_A/resultados\$ ls -la
     total 4240
     drwxrwxr-x 2 junquera junquera   4096 ago 27 22:29 .
     drwxrwxr-x 3 junquera junquera   4096 ago 16 10:06 ..
@@ -450,63 +448,59 @@ Para ambas, se ha programado una clase cliente, y una clase servidor, como hemos
     \caption{Archivos generados por el servidor TFHE} \label{fig:resultados_tfhe}
 \end{listing}
 
-    Para hacer una prueba lo más realista posible de todo el sistema, he cifrado los datos que he obtenido de AEMET (ver \ref{appendix:datos_aemet}) de las temperaturas en las dos ciudades con el cliente de TFHE, y los he subido a la nube (DigitalOcean, \url{https://www.digitalocean.com/}) para procesarlos con el código del servidor TFHE.
+Para hacer una prueba lo más realista posible de todo el sistema, he cifrado los datos que he obtenido de AEMET (ver anexo \ref{appendix:datos_aemet}) de las temperaturas en las dos ciudades con el cliente de TFHE, y los he subido a la nube de Digital Ocean (\url{https://www.digitalocean.com/}) para procesarlos con el código del servidor TFHE.
 
-    Tras finalizar el cálculo, los he descargado y descifrado con el cliente TFHE, y he insertado manualmente los resultados (ver tabla \ref{table:r2_cg_ft}) en el código del servidor SEAL.
+Tras finalizar el cálculo, los he descargado y descifrado con el cliente TFHE, y he insertado manualmente los resultados (ver tabla \ref{table:r2_cg_ft}) en el código del servidor SEAL.
 
-    \begin{table}[]
-        \centering
-        \begin{tabular}{c c c c}
-            Ubicación  & a & b & c \\
-            \hline \hline 
-            Cabo de Gata    & $-0.413$ & $5.928$ & $2.423$ \\
-            Finisterre    & $-0.261$ & $3.801$ & $5.041$
-        \end{tabular}
-        \caption{Resultados del servidor TFHE}
-        \label{table:r2_cg_ft}
-    \end{table}
+\begin{table}[]
+    \centering
+    \begin{tabular}{c c c c}
+        Ubicación  & a & b & c \\
+        \hline \hline 
+        Cabo de Gata    & $-0.413$ & $5.928$ & $2.423$ \\
+        Finisterre    & $-0.261$ & $3.801$ & $5.041$
+    \end{tabular}
+    \caption{Resultados del servidor TFHE}
+    \label{table:r2_cg_ft}
+\end{table}
 
-    \item SEAL
+\subsubsection{SEAL}
 
-    Código fuente en: \url{https://gitlab.com/junquera/seal-cs}
+Código fuente en: \url{https://gitlab.com/junquera/seal-cs}
 
-    El servidor (\verb|server.main|) lee de la carpeta en la que se está ejecutando los archivos cifrados \verb|x.data| y \verb|y.data| generados por el cliente, y los elementos criptográficos necesarios (clave pública, clave de realinearización y parámetros de cifrado). Tras procesar estos datos con los valores de las curvas que ha calculado previamente en TFHE, genera el archivo \verb|result.data| y un archivo de texto con los nombres de las curvas (para que el cliente pueda interpretar los resultados).
+El servidor (\verb|server.main|) lee de la carpeta en la que se está ejecutando los archivos cifrados \verb|x.data| y \verb|y.data| generados por el cliente, y los elementos criptográficos necesarios (clave pública, clave de realinearización y parámetros de cifrado). Tras procesar estos datos con los valores de las curvas que ha calculado previamente en TFHE, genera el archivo \verb|result.data| y un archivo de texto con los nombres de las curvas (para que el cliente pueda interpretar los resultados).
 
-    El \verb|main| del cliente (codificado en el archivo \verb|client-main.cpp|) tiene dos funcionalidades:
-    \begin{enumerate}
-        \item En la primera pide que se introduzcan dos valores (temperatura y fecha), los cifra y genera dos archivos: \verb|x.data| y \verb|y.data|.
+El \verb|main| del cliente (codificado en el archivo \verb|client-main.cpp|) tiene dos funcionalidades:
+\begin{enumerate}
+    \item En la primera pide que se introduzcan dos valores (temperatura y fecha), los cifra y genera dos archivos: \verb|x.data| y \verb|y.data|.
 
-        \item La otra funcionalidad, que se ejecuta tras la ejecución del código del servidor lee el archivo  \verb|result.data| de la carpeta en la que se ejecuta, lo descifra e imprime por pantalla el resultado combinado del vector descifrado con el archivo \verb|curve_names.data|. En \ref{fig:ejecuta_seal_cs} se puede ver la ejecución del sistema completo.
+    \item La otra funcionalidad, que se ejecuta tras la ejecución del código del servidor lee el archivo  \verb|result.data| de la carpeta en la que se ejecuta, lo descifra e imprime por pantalla el resultado combinado del vector descifrado con el archivo \verb|curve_names.data|. En \ref{fig:ejecuta_seal_cs} se puede ver la ejecución del sistema completo.
 
-      \begin{figure}[h]
-        \centering
-        \includegraphics[width=0.75\textwidth]{ejecuta_seal_cs}
-        \caption{Ejecución completa del sistema de SEAL} \label{fig:ejecuta_seal_cs}
-      \end{figure}
-    \end{enumerate}{}
-\end{itemize}
+  \begin{figure}[h]
+    \centering
+    \includegraphics[width=0.75\textwidth]{ejecuta_seal_cs}
+    \caption{Ejecución completa del sistema de SEAL} \label{fig:ejecuta_seal_cs}
+  \end{figure}
+\end{enumerate}
 
 \section{Evaluación de límites y rendimientos}
 
 Por último se han desarrollado varios archivos de prueba para evaluar los límites y el rendimiento de las librerías. Estas pruebas son la culminación de este estudio, y buscan aportar un enfoque cuantitativo a su funcionamiento, más allá de los cálculos que se puedan hacer con el conocimiento de las tecnologías o la visión empírica desde el punto de vista del desarrollador. Se ha evaluado:
 
+
+\subsubsection{TFHE}
+
+Para evaluar la eficiencia de TFHE ejecutamos todas las funciones aritméticas que hemos escrito en \verb|tfhe-math| con distintos tamaños de texto cifrado (desde 4 hasta 64 bits) calculando el tiempo que tardan en realizarse. En el capítulo de resultados (capítulo \ref{chap:resultados}) veremos la comparativa entre los resultados obtenidos y el tiempo estimado en base a la teoría.
+
+\subsubsection{SEAL}
+
+Con SEAL hemos desarrollado dos tipos de pruebas:
+
 \begin{itemize}
-
-    \item TFHE
-
-    Para evaluar la eficiencia de TFHE ejecutamos todas las funciones aritméticas que hemos escrito en \verb|tfhe-math| con distintos tamaños de texto cifrado (desde 4 hasta 64 bits) calculando el tiempo que tardan en realizarse. En el capítulo de resultados (\ref{chap:resultados}) veremos la comparativa entre los resultados obtenidos y el tiempo estimado en base a la teoría.
-
-    \item SEAL
-
-    Con SEAL hemos desarrollado dos tipos de pruebas:
-
-    \begin{itemize}
-        \item Al igual que con TFHE, hemos evaluado el tiempo que tarda en realizar las operaciones aritméticas (en este caso, sólo suma y multiplicación) con distintos tamaños de texto cifrado.
-        \item También hemos evaluado cuáles son los límites de cómputo con distintos tamaños de texto cifrado, con y sin aplicar realinearizaciones.
-    \end{itemize}
-
-    Además entre los códigos de ejemplo de SEAL se encuentra un programa para evaluar la eficiencia de sus esquemas. Lo incluiremos entre nuestras pruebas.
-
+    \item Al igual que con TFHE, hemos evaluado el tiempo que tarda en realizar las operaciones aritméticas (en este caso, sólo suma y multiplicación) con distintos tamaños de texto cifrado.
+    \item También hemos evaluado cuáles son los límites de cómputo con distintos tamaños de texto cifrado, con y sin aplicar realinearizaciones.
 \end{itemize}
+
+Además entre los códigos de ejemplo de SEAL se encuentra un programa para evaluar la eficiencia de sus esquemas. Lo incluiremos entre nuestras pruebas.
 
 Ya sólo queda analizar los resultados de todos nuestros experimentos.
