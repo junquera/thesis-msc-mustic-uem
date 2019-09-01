@@ -4,9 +4,11 @@
 - Principalemente la eficiencia: Por mucho que optimizásemos nuestra solución, los $50$ ms que tarda en calcularse la curva de regresión en \textit{python} (un lenguaje que ya de por sí es lento comparado con los lenguajes compilados) equivalen a ejecutar dos puertas lógicas de TFHE.
 
 
-- Ya no es solo la eficiencia, es muy dificil programar
+- Ya no es solo la eficiencia, es muy dificil programar (y que funcione)
 
 - Hay que saber mucho para hacerlo, y más para hacerlo correctamente (\cite{peng_danger_2019})
+
+- Es muy buena idea en TFHE que limiten los parámetros a elegir. El desarrollador debería poder trabajar con las librerías de forma segura sin tener que elegir parámetros (eso es trabajo de los criptógrafos).
 
 - Como hemos visto, la seguridad tiene que implementarse en función del riesgo. Estas implementaciones pueden ser útiles para operaciones comunes, por ejemplo, en nubes públicas, siempre que el valor del activo así lo requiera.
 

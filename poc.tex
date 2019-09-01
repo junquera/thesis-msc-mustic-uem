@@ -21,7 +21,7 @@ Generaremos dicho modelo (la curva de regresión $f(x)$) con TFHE porque para el
 
 \begin{figure}[h]
     \includegraphics[width=\linewidth]{sistema_completo}
-    \caption{Flujo de los datos cifrados\footnote{Diagrama generado con Piktochart \url{https://piktochart.com}}}
+    \caption{Flujo de los datos cifrados (Diagrama generado con Piktochart \url{https://piktochart.com})}
     \label{fig:sistema_completo}
 \end{figure}
 
@@ -452,7 +452,19 @@ Para ambas, se ha programado una clase cliente, y una clase servidor, como hemos
 
     Para hacer una prueba lo más realista posible de todo el sistema, he cifrado los datos que he obtenido de AEMET (ver \ref{appendix:datos_aemet}) de las temperaturas en las dos ciudades con el cliente de TFHE, y los he subido a la nube (DigitalOcean, \url{https://www.digitalocean.com/}) para procesarlos con el código del servidor TFHE.
 
-    Tras finalizar el cálculo, los he descargado y descifrado con el cliente TFHE, y he insertado manualmente los resultados en el código del servidor SEAL.
+    Tras finalizar el cálculo, los he descargado y descifrado con el cliente TFHE, y he insertado manualmente los resultados (ver tabla \ref{table:r2_cg_ft}) en el código del servidor SEAL.
+
+    \begin{table}[]
+        \centering
+        \begin{tabular}{c c c c}
+            Ubicación  & a & b & c \\
+            \hline \hline 
+            Cabo de Gata    & $-0.413$ & $5.928$ & $2.423$ \\
+            Finisterre    & $-0.261$ & $3.801$ & $5.041$
+        \end{tabular}
+        \caption{Resultados del servidor TFHE}
+        \label{table:r2_cg_ft}
+    \end{table}
 
     \item SEAL
 

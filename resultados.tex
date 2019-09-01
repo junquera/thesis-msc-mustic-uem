@@ -247,19 +247,65 @@ Tras realizar este cálculo, obtendremos el tamaño de la cadena equivalente al 
     \label{table:seal_ckks_mult_depth}
 \end{table}
 
+Sin embargo, la profundidad de cómputo está también limitada por el tamaño del número en texto plano y por su escala, rompiéndose al alcanzar cifras que realmente son pequeñas (y más en comparación con las cifras que promete poder abordar). En la figura \ref{fig:scale_out_bounds} podemos ver el resultado de ejecutar varias iteraciones $a = a*\pi$ con CKKS. Vemos que a partir del tercer cálculo se corrompe el valor de la constante $\pi$ (lo que parece ser un error en el reescalado, ¡o incluso puede tener origen en algún tipo de overflow en la memoria!), y al llegar al décimo producto (que equivaldría a un número relativamente pequeño: $93174,37$) salta una excepción.
+
+\begin{listing}
+    \begin{minted}{text}
+    # Mult: 0
+    3.14 * 3.14 = 9.8596
+    # Mult: 1
+    9.8596 * 3.14 = 30.9591
+    # Mult: 2
+    30.9591 * 3.14 = 97.2117
+    # Mult: 3
+    97.2117 * -1.27512e+06 = -1.23957e+08
+    # Mult: 4
+    -1.23957e+08 * -1.4063e+18 = -2.23609e+25
+    # Mult: 5
+    -2.23609e+25 * -1.56344e+30 = 6.43309e+56
+    # Mult: 6
+    6.43309e+56 * -1.7182e+42 = -2.09111e+99
+    # Mult: 7
+    -2.09111e+99 * -1.87436e+54 = 3.45003e+153
+    # Mult: 8
+    3.45003e+153 * -2.07686e+66 = 2.8223e+219
+    # Mult: 9
+    2.8223e+219 * -2.27126e+78 = -4.74131e+298
+    # Mult: 10
+    terminate called after throwing an instance of 'std::invalid_argument'
+      what():  scale out of bounds
+    Abortado (`core' generado)
+    \end{minted}
+    \caption{Potencias de $\pi$ con CKKS}
+    \label{fig:scale_out_bounds}
+\end{listing}
+
 \subsection{Problemas encontrados}
 
-SEAL es extremadamente limitado. No se pueden hacer casi operaciones, y tampoco permite que se aumente el tamaño de los datos mas allá de los tipificados en sus ejemplos (aun a riesgo de que sea menos eficiente).
+SEAL es una librería extremadamente limitada: 
 
-\section{Coste de la implantación}
+\begin{itemize}
+    \item Por un lado, no se pueden hacer apenas operaciones, y con un conjunto de datos muy limitados
+    \item Por otro, los límites de cómputo son muy reducidos, y no da la posibilidad de ampliarlos más (aún a riesgo de hacer un programa menos eficiente.
+\end{itemize}
+
+Es justo decir, de todas formas, que la posibilidad de implementar los datos como matrices, y de poder operar con todos ellos a la vez es una solución muy interesante y aplicable a muchos problemas (nuestra prueba de concepto es un ejemplo de ello). Pero los límites en la profundidad de cálculo hacen inviable cualquier solución real.
+
+Los principales problemas a la hora de trabajar con SEAL han sido los relacionados con la selección de parámetros. Aunque las guías de SEAL son impecables (de hecho son un muy buen apoyo para entender la parte teórica) hay que comprender muy bien cómo se codifican los datos y cómo funciona el esquema para que el programa funcione bien, e incluso en ese caso, la ejecución sigue teniendo determinados comportamientos erráticos que llevan a tener que desarrollar mediante ensayo y error...
+
+\section{Coste de desarrollo}
+
+A continuación desarrollaremos los costes que ha tenido el desarrollo de este trabajo.
+
+\subsection{Coste de desarrollo}
 
 Equipo de ingenieros, estudio, pruebas...
 
-% - Estudio teórico
-% - Estudio de herramientas
-% - Mes con 6 horas al día
+% - Estudio teórico: 2 meses, 2 horas a la semana
+% - Estudio de librerías/herramientas: 1 mes, dos horas a la semana
+% - Implementación: Mes con 6 horas al día
 
-Máquina digital ocean con cálculo (tiempo*precio): Datos de facturación + Pantallazo
+\subsection{Coste de despliegue}
 
-Los resultados para curva A han sido: ...
-para curva B han sido: ...
+Máquina digital ocean con cálculo (tiempo*precio): Datos de facturación + Pantallazos
+
