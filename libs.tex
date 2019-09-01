@@ -19,8 +19,20 @@ Hay varias implementaciones de criptografía homomórfica, y varias soluciones p
     \begin{itemize}
         \item TFHE
         \item FHEW
-        \item cuHE
     \end{itemize}
+\end{itemize}
+
+Hay además dos tecnologías remarcables que parecen ser las que marquen el paso de las vías de desarrollo de criptografía homomórfica:
+
+\begin{itemize}
+    \item cuHe (\url{https://github.com/vernamlab/cuHE})
+    
+    Implementación de esquemas de criptografía homomórfica con CUDA para acelerar los circuitos mediante GPU.
+    
+    \item Cingulata (\url{https://github.com/CEA-LIST/Cingulata})
+    
+    Sistema de compilación diseñado para transformar código \verb|C++| en circuitos FHE. Soporta los esquemas BFV y TFHE.
+    
 \end{itemize}
 
 Para nuestro trabajo utilizaremos las librerías Microsoft SEAL (como representante de la segunda generación de criptografía homomórfica) y TFHE (como representante de la tercera). Para la segunda generación habría sido también una muy buena opción utilizar PALISADE, pero la documentación es mucho menor, y no incluye el esquema CKKS (necesario para trabajar con números reales).

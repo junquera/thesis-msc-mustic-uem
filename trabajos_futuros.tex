@@ -1,15 +1,13 @@
 \chapter{Trabajos futuros}
 \label{chap:trabajos_futuros}
 
-- Estudio del nuevo estándar 4
+Las vías más interesantes a explorar en busca de sistemas válidos y eficientes para implementaciones con criptografía homomórfica son:
 
-- Optimización de operaciones en TFHE
+\begin{itemize}
+    \item Paralelización de tareas mediante GPU con librerías como \verb|cuHE|. Aunque es una solución menos versátil (depende del uso de GPUs) puede ser una buena aproximación "intermedia", al menos hasta que haya sistemas más eficientes. 
+    \item Implementación de sistemas utilizando el compilador Cingulata (ver referencia en el capítulo \ref{chap:libs}). Sería especialmente interesante la comparación entre las funciones aritméticas que hemos implementado y el uso de circuitos lógicos. En algunas ponencias de TFHE apuntan al uso de los circuitos documentados en el framework ABY (\url{https://github.com/encryptogroup/ABY/tree/public/bin/circ}) como una alternativa al desarrollo de librerías. Aunque son menos usables desde el punto de vista de desarrollo (el circuito divisor tiene más de $53000$ líneas de código), pueden ser una aproximación más eficiente. 
+\end{itemize}
 
-- Implementar cifrado clásico con homomórfica (por ejemplo para gestores de claves)
+Otro buen aporte podría ser el estudio de formas más eficientes de codificar los datos en TFHE. Se podrían implementar clases que puedan operar con menos bits, que gestionen de otra forma la lógica del signo o los decimales. Quizás la mejor manera de estudiar estas formas de codificación sea tratando de implementar soluciones con criptografía homomórfica, para detectar y evaluar nuevas vías de optimización.
 
-- Otra forma de codificar los datos en TFHE (como el signo, el valor del número, los decimales...)
-
-- Aceleración por GPU (cuHE)
-
-- Lo más interesante:
-- https://github.com/CEA-LIST/Cingulata + https://github.com/encryptogroup/ABY
+Por último, siendo un campo todavía en una fase tan temprana de desarrollo, conviene estar al tanto de los avances en el estándar (la publicación de una posible cuarta generación), en especial del desarrollo de la versión 2 de TFHE con el modo Chimera.
