@@ -130,11 +130,11 @@ En la tabla \ref{table:t_r2} vemos el tiempo total que han tardado en realizarse
     \label{table:t_r2}
 \end{table}
 
-Se puede apreciar que hay referencias con respecto a los datos teóricos, pueden estar derivadas de que no sólo se está ejecutando el programa, si no la lógica que ejecuta el programa, o ...
+Se puede apreciar que hay referencias con respecto a los datos teóricos. Pueden deberse a que no sólo se está ejecutando el programa, si no la propia lógica que ejecuta el programa, pequeñas diferencias de tiempo en la ejecución de las puertas lógicas, o incluso puertas lógicas que hayamos obviado (como las de inicialización) que acumuladas puedan ser significativas.
 
 \subsection{Límites de cómputo}
 
-No los hay, más allá de los relacionados con la codificación al devolver el resultado plano, pero hay que estar pendiente (muy pendiente) del crecimiento cuando se opera, y a medida que aumenta el tamaño de los datos, aumenta notablemente el tiempo de ejecución...
+No los hay, más allá de los relacionados con la codificación al devolver el resultado plano, pero hay que estar pendiente (muy pendiente) del crecimiento cuando se opera, y a medida que aumenta el tamaño de los datos, aumenta notablemente el tiempo de ejecución.
 
 Por ejemplo, para determinar cuántos bits necesitábamos para nuestra regresión cuadrática calculamos con $X$ el mayor valor de las $x$ (en nuestro caso 12), $n$ el mayor grado alcanzable (el mayor número de multiplicaciones que se podían acumular sobre ese valor), $d$ el número de bits para decimales y añadiéndole 1 (el bit del signo):
 
@@ -291,7 +291,7 @@ SEAL es una librería extremadamente limitada:
 
 Es justo decir, de todas formas, que la posibilidad de implementar los datos como matrices, y de poder operar con todos ellos a la vez es una solución muy interesante y aplicable a muchos problemas (nuestra prueba de concepto es un ejemplo de ello). Pero los límites en la profundidad de cálculo hacen inviable cualquier solución real.
 
-Los principales problemas a la hora de trabajar con SEAL han sido los relacionados con la selección de parámetros. Aunque las guías de SEAL son impecables (de hecho son un muy buen apoyo para entender la parte teórica) hay que comprender muy bien cómo se codifican los datos y cómo funciona el esquema para que el programa funcione bien, e incluso en ese caso, la ejecución sigue teniendo determinados comportamientos erráticos que llevan a tener que desarrollar mediante ensayo y error...
+Los principales problemas a la hora de trabajar con SEAL han sido los relacionados con la selección de parámetros. Aunque las guías de SEAL son impecables (de hecho son un muy buen apoyo para entender la parte teórica) hay que comprender muy bien cómo se codifican los datos y cómo funciona el esquema para que el programa funcione bien, e incluso en ese caso, la ejecución sigue teniendo determinados comportamientos erráticos que llevan a tener que desarrollar mediante ensayo y error.
 
 \section{Coste de desarrollo}
 
@@ -303,7 +303,7 @@ Para el desarrollo de este trabajo se han invertido las siguientes horas de trab
 
 \begin{itemize}
     \item Estudio teórico (mediados de abril, mediados de junio de 2019): 2 meses, 2 horas a la semana. Total: 18 horas
-    \item Estudio de las librerías y herramientas (mediados de junio, finales de de julio de 2019): 1 mes y medio, 2 horas a la semana. Total: 12 horas
+    \item Estudio de las librerías y herramientas (mediados de junio, finales de julio de 2019): 1 mes y medio, 2 horas a la semana. Total: 12 horas
     \item Implementación de la solución (mes de agosto de 2019): Un mes, promedio de 6 horas al día, de lunes a viernes. Total: 90 horas
 \end{itemize}
 
