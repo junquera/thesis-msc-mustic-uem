@@ -120,8 +120,6 @@ TFHE sólo ofrece operadores lógicos, así que tenemos que escribir la operacio
 
 \subsection{tfhe-math}
 
-Código fuente en: \url{https://gitlab.com/junquera/tfhe-math}
-
 El desarrollo de esta librería ha sido quizás la parte más costosa del trabajo, pero también la que más resultados arroja sobre la implementación de criptografía homomórfica en un entorno real. Como hemos comentado, hemos desarrollado las operaciones aritméticas necesarias para poder realizar la regresión cuadrática teniendo en cuenta que necesitábamos codificar los valores como número reales.
 
 TFHE sólo trabaja con arrays de bits cifrados, y los datos no se pueden evaluar durante la ejecución del programa, así que hemos tenido que meter algunas funciones redundantes para cubrir todos los supuestos: Por ejemplo, en la multiplicación trabajamos asumiendo que los dos factores tienen signo positivo y corregimos el resultado utilizando la puerta lógica \texttt{MUX}. Por otro lado, como hay algunos casos en los que vamos a tener la certeza del signo de los operandos (porque lo hemos gestionado ya antes), y la lógica de tratamiento del signo es muy pesada, hemos creado algunas funciones para trabajar con números sin signo, cuyo nombre hemos precedido de \texttt{u\_} (de \textit{unsigned}).
@@ -176,6 +174,8 @@ Tenemos que tener precaución principalmente en dos aspectos:
   \end{enumerate}
 
 \end{enumerate}
+
+El código fuente se encuentra disponible en \url{https://gitlab.com/junquera/tfhe-math}. 
 
 \subsubsection{Operaciones}
 \label{tag:tfhe-math-ops}
@@ -413,8 +413,6 @@ Para ambas, se ha programado una clase cliente, y una clase servidor, como hemos
 
 \subsubsection{TFHE}
 
-Código fuente en: \url{https://gitlab.com/junquera/tfhe-cs}
-
 El cliente TFHE ofrece la posibilidad de:
 
 \begin{enumerate}
@@ -465,9 +463,10 @@ Tras finalizar el cálculo, los he descargado y descifrado con el cliente TFHE, 
     \label{table:r2_cg_ft}
 \end{table}
 
+El código fuente se encuentra disponible en \url{https://gitlab.com/junquera/tfhe-cs}.
+
 \subsubsection{SEAL}
 
-Código fuente en: \url{https://gitlab.com/junquera/seal-cs}
 
 El servidor (\verb|server.main|) lee de la carpeta en la que se está ejecutando los archivos cifrados \verb|x.data| y \verb|y.data| generados por el cliente, y los elementos criptográficos necesarios (clave pública, clave de realinearización y parámetros de cifrado). Tras procesar estos datos con los valores de las curvas que ha calculado previamente en TFHE, genera el archivo \verb|result.data| y un archivo de texto con los nombres de las curvas (para que el cliente pueda interpretar los resultados).
 
@@ -484,9 +483,11 @@ El \verb|main| del cliente (codificado en el archivo \verb|client-main.cpp|) tie
   \end{figure}
 \end{enumerate}
 
+El código fuente se encuentra disponible en \url{https://gitlab.com/junquera/seal-cs}. Para más información consultar el apéndice \ref{appendix:manual}.
+
 \section{Evaluación de límites y rendimientos}
 
-Por último se han desarrollado varios archivos de prueba para evaluar los límites y el rendimiento de las librerías. Estas pruebas son la culminación de este estudio, y buscan aportar un enfoque cuantitativo a su funcionamiento, más allá de los cálculos que se puedan hacer con el conocimiento de las tecnologías o la visión empírica desde el punto de vista del desarrollador. Se ha evaluado:
+Por último se han desarrollado varios archivos de prueba para evaluar los límites y el rendimiento de las librerías. Estas pruebas son la culminación de este estudio, y buscan aportar un enfoque cuantitativo a su funcionamiento, más allá de los cálculos que se puedan hacer con el conocimiento de las tecnologías o la visión empírica desde el punto de vista del desarrollador.
 
 
 \subsubsection{TFHE}
