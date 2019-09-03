@@ -7,7 +7,7 @@ Manual de instalación y uso de la solución del trabajo (\ref{chap:poc}). Estos
 
 \subsection{SEAL}
 
-Como hemos comentado, Microsoft SEAL no necesita ninguna dependencia. Para instalarlo (generar las librerías y los archivos de cabecera) seguimos los siguientes pasos:
+Como hemos comentado, Microsoft SEAL no necesita ninguna dependencia. Para instalarlo (generar las librerías y los archivos de cabeceras) seguimos los siguientes pasos:
 
 \begin{minted}{console}
 $ git clone https://github.com/Microsoft/SEAL
@@ -16,13 +16,13 @@ $ cmake .
 $ make
 \end{minted}
 
-Generará la librería compilada en la ruta \verb|SEAL/native/lib|
+Generará la librería compilada en la ruta \verb|SEAL/native/lib|, y tendremos sus archivos \verb|.h| en el directorio \verb|SEAL/native/src|.
 
 Para más detalles, ver la guía de instalación oficial en \url{https://github.com/Microsoft/SEAL}.
 
 \subsection{TFHE}
 
-La librería TFHE sí que tiene algunos prerequisitos:
+La librería TFHE sí que tiene algunos prerequisitos, que satisfaremos ejecutando:
 
 \begin{minted}{console}
 $ sudo apt-get install build-essential cmake cmake-curses-gui
@@ -77,11 +77,13 @@ Editamos el archivo \verb|src/Makefile| y especificamos en la variable \verb|TFH
 Descargaremos el código con las funcionalidades de cliente y servidor desde su repositorio en GitLab:
 
 \begin{minted}{console}
-$ git clone git@gitlab.com:junquera/tfhe-cs.git
+$ git clone --recurse-submodules git@gitlab.com:junquera/tfhe-cs.git
 $ cd tfhe-cs
 \end{minted}
 
-En el archivo \verb|Makefile| símplemente tenemos que especificar la ruta a las carpetas de prefix (las carpetas que contengan las librerías y los archivos de cabeceras \verb|.h|) de \verb|tfhe| y de \verb|tfhe-math|.
+De esta forma, además se descargará la librería \verb|tfhe-math| para que la usemos (si no la hemos instalado aún).
+
+En el archivo \verb|Makefile| tenemos que especificar la ruta a las carpetas de prefix (las carpetas que contengan las librerías y los archivos de cabeceras \verb|.h|) de \verb|tfhe| y de \verb|tfhe-math|.
 
 Ejecutando el comando \verb|make| generaremos el programa cliente, el programa servidor y el ejecutable con los test.
 
@@ -98,15 +100,27 @@ Esta vez, en lugar de especificar la ruta a \verb|tfhe|, indicamos en el archivo
 
 \section{Uso}
 
-A continuación veremos los distintos usos que podemos darle a nuestra implementación, ya sea para ejecutar el código del trabajo o realizar nuestra propia implementación.
+A continuación veremos los distintos usos que podemos darle a nuestra implementación, ya sea para ejecutar el código del trabajo o realizar nuestra propia implementación. Las cabeceras de referencia de cada programa se pueden ver en el anexo \ref{appendix:cs-headers}.
 
 \subsection{tfhe-math}
 
+Para utilizar las funciones de \verb|tfhe-math| únicamente tenemos que enlazar nuestro código 
+con la librería, e incluir sus archivos de cabecera en él. Por ejemplo, para utilizar las funciones aritméticas escribiríamos:
 
+\begin{minted}{c++}
+#include "tfhe-math/arithmetic.h"
+\end{minted}
+
+Después trabajaríamos con sus métodos, que funcionan tal y como hemos indicado en la sección \ref{tag:tfhe-math-ops}, teniendo en cuenta únicamente que:
+
+\begin{itemize}
+    \item Los métodos precedidos con \verb|u_| son más rápidos, pero no tienen en cuenta el sigo.
+    \item Si se trabaja con números reales, para multiplicar y dividir usaremos las funciones \verb|multiply_float| y \verb|divide_float| respectivamente (en lugar de \verb|multiply| y \verb|divide|)
+\end{itemize}
 
 \subsection{tfhe-cs}
 
-Si quisiésemos usar la funcionalidad del cliente o del servidor (no del programa, si no de la clase) bastaría con utilizar los códigos \verb|client.cpp| o \verb|server.cpp| (respectivamente) incluyendo sus cabeceras (\verb|.h|).
+Si quisiésemos usar la funcionalidad del cliente o del servidor (no del programa, si no de la clase) bastaría con utilizar los códigos \verb|client.cpp| o \verb|server.cpp| (respectivamente) incluyendo sus archivos de cabeceras.
 
 \subsection{seal-cs}
 
