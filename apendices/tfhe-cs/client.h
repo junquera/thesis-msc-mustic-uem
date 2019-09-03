@@ -10,7 +10,6 @@ class HClient {
 		void genKeys();
 		void setKeysFromFile(string keyFileName);
 		void cifra(LweSample* answer, int64_t input);
-		// TODO void cifra(LweSample* result, float f_input, int float_bits);
 		int64_t descifra(LweSample* answer);
 		void exportSecretKeyToFile(string name);
 		void exportCloudKeyToFile(string name);

@@ -20,7 +20,9 @@ class SServer {
   public:
     SServer();
     SServer(string config_mask);
-    Ciphertext distance(Ciphertext x_encrypted, Ciphertext y_encrypted, RelinKeys relin_keys);
+    Ciphertext distance(Ciphertext x_encrypted, 
+		    	Ciphertext y_encrypted, 
+			RelinKeys relin_keys);
     void addCurva(Curva c);
     vector<string> getCurveNames();
   private:
