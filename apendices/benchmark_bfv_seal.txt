@@ -1,0 +1,80 @@
++--------------------------------------------------------------------------+
+|         BFV Performance Test with Degrees: 4096, 8192, and 16384         |
++--------------------------------------------------------------------------+
+/
+| Encryption parameters :
+|   scheme: BFV
+|   poly_modulus_degree: 4096
+|   coeff_modulus size: 109 (36 + 36 + 37) bits
+|   plain_modulus: 786433
+\
+
+Generating secret/public keys: Done
+Generating relinearization keys: Done [1503 microseconds]
+Generating Galois keys: Done [32975 microseconds]
+Running tests .......... Done
+
+Average batch: 113 microseconds
+Average unbatch: 99 microseconds
+Average encrypt: 1376 microseconds
+Average decrypt: 502 microseconds
+Average add: 17 microseconds
+Average multiply: 5359 microseconds
+Average multiply plain: 767 microseconds
+Average square: 3793 microseconds
+Average relinearize: 1090 microseconds
+Average rotate rows one step: 1098 microseconds
+Average rotate rows random: 4374 microseconds
+Average rotate columns: 1107 microseconds
+
+/
+| Encryption parameters :
+|   scheme: BFV
+|   poly_modulus_degree: 8192
+|   coeff_modulus size: 218 (43 + 43 + 44 + 44 + 44) bits
+|   plain_modulus: 786433
+\
+
+Generating secret/public keys: Done
+Generating relinearization keys: Done [9157 microseconds]
+Generating Galois keys: Done [207176 microseconds]
+Running tests .......... Done
+
+Average batch: 221 microseconds
+Average unbatch: 163 microseconds
+Average encrypt: 4150 microseconds
+Average decrypt: 1812 microseconds
+Average add: 66 microseconds
+Average multiply: 19627 microseconds
+Average multiply plain: 3140 microseconds
+Average square: 13518 microseconds
+Average relinearize: 5348 microseconds
+Average rotate rows one step: 5277 microseconds
+Average rotate rows random: 25931 microseconds
+Average rotate columns: 5203 microseconds
+
+/
+| Encryption parameters :
+|   scheme: BFV
+|   poly_modulus_degree: 16384
+|   coeff_modulus size: 438 (48 + 48 + 48 + 49 + 49 + 49 + 49 + 49 + 49) bits
+|   plain_modulus: 786433
+\
+
+Generating secret/public keys: Done
+Generating relinearization keys: Done [55666 microseconds]
+Generating Galois keys: Done [1376466 microseconds]
+Running tests .......... Done
+
+Average batch: 410 microseconds
+Average unbatch: 359 microseconds
+Average encrypt: 15324 microseconds
+Average decrypt: 7145 microseconds
+Average add: 344 microseconds
+Average multiply: 76506 microseconds
+Average multiply plain: 12462 microseconds
+Average square: 54013 microseconds
+Average relinearize: 31034 microseconds
+Average rotate rows one step: 31823 microseconds
+Average rotate rows random: 166624 microseconds
+Average rotate columns: 31432 microseconds

@@ -1,0 +1,80 @@
++---------------------------------------------------------------------------+
+|         CKKS Performance Test with Degrees: 4096, 8192, and 16384         |
++---------------------------------------------------------------------------+
+/
+| Encryption parameters :
+|   scheme: CKKS
+|   poly_modulus_degree: 4096
+|   coeff_modulus size: 109 (36 + 36 + 37) bits
+\
+
+Generating secret/public keys: Done
+Generating relinearization keys: Done [3381 microseconds]
+Generating Galois keys: Done [36900 microseconds]
+Running tests .......... Done
+
+Average encode: 1853 microseconds
+Average decode: 2540 microseconds
+Average encrypt: 1832 microseconds
+Average decrypt: 75 microseconds
+Average add: 19 microseconds
+Average multiply: 204 microseconds
+Average multiply plain: 74 microseconds
+Average square: 125 microseconds
+Average relinearize: 1181 microseconds
+Average rescale: 513 microseconds
+Average rotate vector one step: 1424 microseconds
+Average rotate vector random: 6035 microseconds
+Average complex conjugate: 1390 microseconds
+
+/
+| Encryption parameters :
+|   scheme: CKKS
+|   poly_modulus_degree: 8192
+|   coeff_modulus size: 218 (43 + 43 + 44 + 44 + 44) bits
+\
+
+Generating secret/public keys: Done
+Generating relinearization keys: Done [8152 microseconds]
+Generating Galois keys: Done [186742 microseconds]
+Running tests .......... Done
+
+Average encode: 4297 microseconds
+Average decode: 8697 microseconds
+Average encrypt: 5611 microseconds
+Average decrypt: 255 microseconds
+Average add: 74 microseconds
+Average multiply: 770 microseconds
+Average multiply plain: 278 microseconds
+Average square: 519 microseconds
+Average relinearize: 5396 microseconds
+Average rescale: 2609 microseconds
+Average rotate vector one step: 6441 microseconds
+Average rotate vector random: 29696 microseconds
+Average complex conjugate: 6378 microseconds
+
+/
+| Encryption parameters :
+|   scheme: CKKS
+|   poly_modulus_degree: 16384
+|   coeff_modulus size: 438 (48 + 48 + 48 + 49 + 49 + 49 + 49 + 49 + 49) bits
+\
+
+Generating secret/public keys: Done
+Generating relinearization keys: Done [49346 microseconds]
+Generating Galois keys: Done [1325534 microseconds]
+Running tests .......... Done
+
+Average encode: 12753 microseconds
+Average decode: 34802 microseconds
+Average encrypt: 20628 microseconds
+Average decrypt: 1055 microseconds
+Average add: 300 microseconds
+Average multiply: 3567 microseconds
+Average multiply plain: 1140 microseconds
+Average square: 2662 microseconds
+Average relinearize: 33513 microseconds
+Average rescale: 11607 microseconds
+Average rotate vector one step: 36967 microseconds
+Average rotate vector random: 199463 microseconds
+Average complex conjugate: 36792 microseconds
