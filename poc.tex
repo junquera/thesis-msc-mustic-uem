@@ -1,7 +1,7 @@
 \chapter{Solución propuesta}
 \label{chap:poc}
 
-Como hemos comentado utilizaremos una librería de la segunda generación de criptografía homomórfica (Microsoft SEAL) y otra para la tercera (TFHE). Comenzaremos con un estudio del funcionamiento de las librerías, de cuales son sus límites computacionales y finalmente implementaremos una operación "no trivial" que requiera la utilización de ambas tecnologías.
+Como hemos comentado utilizaremos una librería de la segunda generación de criptografía homomórfica (Microsoft SEAL) y otra para la tercera (TFHE). Comenzaremos con un estudio del funcionamiento de las librerías, de cuales son sus límites computacionales y finalmente implementaremos una operación ``no trivial'' que requiera la utilización de ambas tecnologías.
 
 La librería SEAL cuenta con pocas operaciones aritméticas implementadas, pero ofrece la posibilidad de trabajar con matrices y números decimales. La principal complicación con SEAL es determinar cómo se está desviando el cálculo para saber cuándo parar o qué correcciones hacer. Además, el número de operaciones que puede hacer son muy limitadas (cuando se hacen, por ejemplo productos, crece mucho el error). Por último hay que tener en cuenta que el algoritmo que se implemente en SEAL no puede contener más que sumas, restas y multiplicaciones (no existe la división).
 
@@ -166,7 +166,7 @@ Tenemos que tener precaución principalmente en dos aspectos:
 
   \item La gestión del signo
 
-  Para trabajar con el signo de los números se codifican en complemento a 2 (\cite{wikipedia_contributors._complemento_2019}). En la suma y la resta podemos operar libremente, pero a la hora de hacer la división y el producto (nuevamente) hemos tenido que implementar algoritmos que "no entienden de signo".  Siempre que necesitamos trabajar con algoritmos sin signo, y como no podemos cambiar el flujo de ejecución en función del mismo (porque no podemos verlo), realizamos el siguiente proceso con cada operando:
+  Para trabajar con el signo de los números se codifican en complemento a 2 (\cite{wikipedia_contributors._complemento_2019}). En la suma y la resta podemos operar libremente, pero a la hora de hacer la división y el producto (nuevamente) hemos tenido que implementar algoritmos que ``no entienden de signo''.  Siempre que necesitamos trabajar con algoritmos sin signo, y como no podemos cambiar el flujo de ejecución en función del mismo (porque no podemos verlo), realizamos el siguiente proceso con cada operando:
 
   \begin{enumerate}
     \item Negamos el operando: Para ello hemos creado la función \texttt{negativo} que devuelve el negativo del número si es positivo, y el positivo si es negativo.
@@ -178,7 +178,7 @@ Tenemos que tener precaución principalmente en dos aspectos:
 
 \end{enumerate}
 
-El código fuente se encuentra disponible en \url{https://gitlab.com/junquera/tfhe-math}. 
+El código fuente se encuentra disponible en \url{https://gitlab.com/junquera/tfhe-math}.
 
 \subsubsection{Operaciones}
 \label{tag:tfhe-math-ops}
@@ -460,7 +460,7 @@ Tras finalizar el cálculo, los he descargado y descifrado con el cliente TFHE, 
     \centering
     \begin{tabular}{c c c c}
         Ubicación  & a & b & c \\
-        \hline \hline 
+        \hline \hline
         Cabo de Gata    & $-0.413$ & $5.928$ & $2.423$ \\
         Finisterre    & $-0.261$ & $3.801$ & $5.041$
     \end{tabular}
