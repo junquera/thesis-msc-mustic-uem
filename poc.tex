@@ -1,7 +1,7 @@
 \chapter{Solución propuesta}
 \label{chap:poc}
 
-Como hemos comentado utilizaremos una librería de la segunda generación de criptografía homomórfica (Microsoft SEAL) y otra para la tercera (TFHE). Comenzaremos con un estudio del funcionamiento de las librerías, de cuales son sus límites computacionales y finalmente implementaremos una operación "no trivial" que requiera la utilización de ambas tecnologías.
+Como hemos comentado utilizaremos una librería de la segunda generación de criptografía homomórfica (Microsoft SEAL) y otra para la tercera (TFHE). Comenzaremos con un estudio del funcionamiento de las librerías, de cuales son sus límites computacionales y finalmente implementaremos una operación ``no trivial'' que requiera la utilización de ambas tecnologías.
 
 La librería SEAL cuenta con pocas operaciones aritméticas implementadas, pero ofrece la posibilidad de trabajar con matrices y números decimales. La principal complicación con SEAL es determinar cómo se está desviando el cálculo para saber cuándo parar o qué correcciones hacer. Además, el número de operaciones que puede hacer son muy limitadas (cuando se hacen, por ejemplo productos, crece mucho el error). Por último hay que tener en cuenta que el algoritmo que se implemente en SEAL no puede contener más que sumas, restas y multiplicaciones (no existe la división).
 
@@ -20,6 +20,7 @@ En este sistema habrá tres actores: el cliente, el servidor de posicionamiento 
 Generaremos dicho modelo (la curva de regresión $f(x)$) con TFHE porque para ello necesitaremos realizar operaciones aritméticas que no nos ofrece SEAL. De esta forma, podremos realizar la evaluación de los datos introducidos por el usuario con SEAL (distancia entre el valor de temperatura $y$ especificado por el usuario, y $f(x)$ con $x$ el mes del año) utilizando sus operaciones más básicas, y aprovechando su sistema de vectores para evaluar todas las curvas al mismo tiempo.
 
 \begin{figure}[h]
+    \centering
     \includegraphics[width=\linewidth]{sistema_completo}
     \caption{Flujo de los datos cifrados (Diagrama generado con Piktochart \url{https://piktochart.com})}
     \label{fig:sistema_completo}
@@ -44,6 +45,7 @@ Para generar el modelo el cliente (en este caso, el servidor de posicionamiento 
 Finalmente, con los parámetros recibidos, el cliente obtendría una curva similar a \ref{fig:reg2_cg}.
 
 \begin{figure}[h]
+    \centering
     \includegraphics[width=\linewidth]{reg2_cg}
     \caption{Curva de Regresión Cuadrática con temperaturas de Cabo de Gata}
     \label{fig:reg2_cg}
@@ -72,6 +74,7 @@ Teniendo el servidor de SEAL ya generados los modelos de la temperatura de cada 
 En la figura \ref{fig:t_vs_r2} se puede ver un ejemplo del funcionamiento del sistema de posicionamiento. Los puntos introducidos corresponden a las temperaturas de varias ubicaciones, y el sistema de posicionamiento devolvería la distancia entre estos puntos y las dos curvas de regresión. De esta forma se puede obtener una estimación de la posición. En el ejemplo vemos que, la temperatura en Cabo de Gata está muy próxima a su curva en el mes de junio, y daría un resultado indeterminado en abril; que la temperatura de Madrid no casaría con ninguna de las dos curvas; o que la temperatura de Finisterre en noviembre efectivamente está mucho más cerca de la curva de Finisterre que de la de Cabo de Gata.
 
 \begin{figure}[h]
+    \centering
     \includegraphics[width=\linewidth]{t_vs_r2}
     \caption{Temperatura vs Regresión}
     \label{fig:t_vs_r2}
@@ -163,7 +166,7 @@ Tenemos que tener precaución principalmente en dos aspectos:
 
   \item La gestión del signo
 
-  Para trabajar con el signo de los números se codifican en complemento a 2 (\cite{wikipedia_contributors._complemento_2019}). En la suma y la resta podemos operar libremente, pero a la hora de hacer la división y el producto (nuevamente) hemos tenido que implementar algoritmos que "no entienden de signo".  Siempre que necesitamos trabajar con algoritmos sin signo, y como no podemos cambiar el flujo de ejecución en función del mismo (porque no podemos verlo), realizamos el siguiente proceso con cada operando:
+  Para trabajar con el signo de los números se codifican en complemento a 2 (\cite{wikipedia_contributors._complemento_2019}). En la suma y la resta podemos operar libremente, pero a la hora de hacer la división y el producto (nuevamente) hemos tenido que implementar algoritmos que ``no entienden de signo''.  Siempre que necesitamos trabajar con algoritmos sin signo, y como no podemos cambiar el flujo de ejecución en función del mismo (porque no podemos verlo), realizamos el siguiente proceso con cada operando:
 
   \begin{enumerate}
     \item Negamos el operando: Para ello hemos creado la función \texttt{negativo} que devuelve el negativo del número si es positivo, y el positivo si es negativo.
@@ -175,7 +178,7 @@ Tenemos que tener precaución principalmente en dos aspectos:
 
 \end{enumerate}
 
-El código fuente se encuentra disponible en \url{https://gitlab.com/junquera/tfhe-math}. 
+El código fuente se encuentra disponible en \url{https://gitlab.com/junquera/tfhe-math}.
 
 \subsubsection{Operaciones}
 \label{tag:tfhe-math-ops}
@@ -279,6 +282,7 @@ A continuación veremos cómo trabajan nuestras principales funciones:
   % }
   %
   \begin{figure}[h]
+    \centering
     \includegraphics[width=\textwidth]{mult_float}
     \caption{Algoritmo de multiplicación}
     \label{fig:mult_float}
@@ -322,6 +326,7 @@ A continuación veremos cómo trabajan nuestras principales funciones:
   % }
   %
   \begin{figure}[h]
+    \centering
     \includegraphics[width=\textwidth]{div_float}
     \caption{Algoritmo de división}
     \label{fig:div_float}
@@ -455,7 +460,7 @@ Tras finalizar el cálculo, los he descargado y descifrado con el cliente TFHE, 
     \centering
     \begin{tabular}{c c c c}
         Ubicación  & a & b & c \\
-        \hline \hline 
+        \hline \hline
         Cabo de Gata    & $-0.413$ & $5.928$ & $2.423$ \\
         Finisterre    & $-0.261$ & $3.801$ & $5.041$
     \end{tabular}

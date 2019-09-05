@@ -1,15 +1,15 @@
-\documentclass{book}
-
-
-% \usepackage{geometry}
-% \geometry{left=30mm, right=25mm}
+\documentclass[11pt]{book}
+\usepackage[spanish]{babel}
 
 \usepackage{graphicx}
 \graphicspath{ {images/} }
 
 \usepackage[T1]{fontenc}
 \usepackage[utf8]{inputenc}
-\usepackage{natbib}
+
+\usepackage[style=apa,backend=biber]{biblatex}
+\DeclareLanguageMapping{spanish}{spanish-apa}
+\bibliography{references}
 
 % Para símbolos matemáticos
 \usepackage{amsfonts}
@@ -34,41 +34,93 @@
     urlcolor=cyan,
 }
 
+% https://es.overleaf.com/blog/using-your-favourite-fonts-with-sharelatex-2013-04-02
+\usepackage{fontspec}
+% \defaultfontfeatures{
+%     Extension = ttf,
+%     Path=./fonts
+% }
+\setmainfont[
+    Path=fonts/,
+    Ligatures=TeX,
+    BoldFont={Carlito-Bold},
+    ItalicFont={Carlito-Italic}
+]{Carlito-Regular}
+\setlength\parindent{0pt}
+
+% https://www.overleaf.com/learn/latex/Sections_and_chapters
+\usepackage{titlesec}
+    
+% ENCABEZADO: Cuerpo 8 pt. Calibrí normal. Mayúscula
+
+% TÍTULOS: Cuerpo 12 pt. Calibrí negrita. Mayúscula y minúsculas (tipo oración)
+\titleformat{\chapter}[hang]{\fontsize{12pt}{12pt}\selectfont\bfseries}{\thechapter}{0.5em}{}[]
+\titlespacing{\chapter}{0pt}{0pt}{2ex}
+
+% SUBTÍTULOS: Cuerpo 12 pt. Calibrí normal. Mayúscula y minúsculas (tipo oración)
+\titleformat{\section}[hang]{\fontsize{12pt}{12pt}\selectfont}{\thesection}{0.5em}{}[]
+\titlespacing{\section}{0pt}{1.5ex}{1ex}
+
+\titleformat{\subsection}[hang]{\fontsize{12pt}{12pt}\selectfont}{\thesubsection}{0.5em}{}[]
+\titlespacing{\subsection}{0pt}{1.5ex}{1ex}
+
+% CUERPO DE TEXTO: Cuerpo 11 pt. Calibrí normal. Interlineado 1.5 de Word y justificación a ambos lados.
+% 1.5 de Word? https://tex.stackexchange.com/questions/65849/confusion-onehalfspacing-vs-spacing-vs-word-vs-the-world
+\renewcommand{\baselinestretch}{1.3}
+
+% MÁRGENES: Margen exterior: 25 mm. Margen interior: 30 mm.
+% https://www.overleaf.com/learn/latex/Page_size_and_margins
+\usepackage{geometry}
+\geometry{
+    left=30mm,
+    right=25mm
+}
+
+% Las páginas deben ir numeradas en la esquina inferior derecha. 
+% https://www.overleaf.com/learn/latex/Headers_and_footers
+\usepackage{fancyhdr}
+\fancypagestyle{plain}{
+    \fancyhf{}
+    \lhead{\includegraphics[width=3.16cm]{logo_uem_header}}
+    \rfoot{\thepage}
+    \renewcommand{\headrulewidth}{0pt}
+}
+\pagestyle{plain}
+
 \title{Estudio de viabilidad del uso de librerías de criptografía homomórfica en procesos reales}
 \author{Javier Junquera Sánchez}
 \date{Septiembre 2019}
 
 \begin{document}
 
-  \maketitle
-
-  \input{resumen}
-  \input{abstract}
-  \input{agradecimientos}
-
-  \tableofcontents{}
-  \listoftables{}
-  \listoffigures{}
-
-  \input{intro}
-  \input{teoria}
-  \input{libs}
-  \input{poc}
-  \input{resultados}
-  \input{conclusiones}
-  \input{trabajos_futuros}
-
-  \appendix
-  \input{apendices/test_lwe}
-  \input{apendices/regresion_cuadratica}
-  \input{apendices/datos_aemet}
-  \input{apendices/benchmarks_seal}
-  \input{apendices/server-do}
-  \input{apendices/manual}
-  \input{apendices/cs-headers}
-
-  \bibliographystyle{apalike}
-  \nocite{*}
-  \bibliography{references.bib}
+    \maketitle
+    
+    \input{resumen}
+    \input{abstract}
+    \input{agradecimientos}
+    
+    \tableofcontents{}
+    \listoftables{}
+    \listoffigures{}
+    
+    \input{intro}
+    \input{teoria}
+    \input{libs}
+    \input{poc}
+    \input{resultados}
+    \input{conclusiones}
+    \input{trabajos_futuros}
+    
+    \appendix
+    \input{apendices/test_lwe}
+    \input{apendices/regresion_cuadratica}
+    \input{apendices/datos_aemet}
+    \input{apendices/benchmarks_seal}
+    \input{apendices/server-do}
+    \input{apendices/manual}
+    \input{apendices/cs-headers}
+    
+    \nocite{*}
+    \printbibliography
 
 \end{document}
