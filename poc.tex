@@ -20,6 +20,7 @@ En este sistema habrá tres actores: el cliente, el servidor de posicionamiento 
 Generaremos dicho modelo (la curva de regresión $f(x)$) con TFHE porque para ello necesitaremos realizar operaciones aritméticas que no nos ofrece SEAL. De esta forma, podremos realizar la evaluación de los datos introducidos por el usuario con SEAL (distancia entre el valor de temperatura $y$ especificado por el usuario, y $f(x)$ con $x$ el mes del año) utilizando sus operaciones más básicas, y aprovechando su sistema de vectores para evaluar todas las curvas al mismo tiempo.
 
 \begin{figure}[h]
+    \centering
     \includegraphics[width=\linewidth]{sistema_completo}
     \caption{Flujo de los datos cifrados (Diagrama generado con Piktochart \url{https://piktochart.com})}
     \label{fig:sistema_completo}
@@ -44,6 +45,7 @@ Para generar el modelo el cliente (en este caso, el servidor de posicionamiento 
 Finalmente, con los parámetros recibidos, el cliente obtendría una curva similar a \ref{fig:reg2_cg}.
 
 \begin{figure}[h]
+    \centering
     \includegraphics[width=\linewidth]{reg2_cg}
     \caption{Curva de Regresión Cuadrática con temperaturas de Cabo de Gata}
     \label{fig:reg2_cg}
@@ -72,6 +74,7 @@ Teniendo el servidor de SEAL ya generados los modelos de la temperatura de cada 
 En la figura \ref{fig:t_vs_r2} se puede ver un ejemplo del funcionamiento del sistema de posicionamiento. Los puntos introducidos corresponden a las temperaturas de varias ubicaciones, y el sistema de posicionamiento devolvería la distancia entre estos puntos y las dos curvas de regresión. De esta forma se puede obtener una estimación de la posición. En el ejemplo vemos que, la temperatura en Cabo de Gata está muy próxima a su curva en el mes de junio, y daría un resultado indeterminado en abril; que la temperatura de Madrid no casaría con ninguna de las dos curvas; o que la temperatura de Finisterre en noviembre efectivamente está mucho más cerca de la curva de Finisterre que de la de Cabo de Gata.
 
 \begin{figure}[h]
+    \centering
     \includegraphics[width=\linewidth]{t_vs_r2}
     \caption{Temperatura vs Regresión}
     \label{fig:t_vs_r2}
@@ -279,6 +282,7 @@ A continuación veremos cómo trabajan nuestras principales funciones:
   % }
   %
   \begin{figure}[h]
+    \centering
     \includegraphics[width=\textwidth]{mult_float}
     \caption{Algoritmo de multiplicación}
     \label{fig:mult_float}
@@ -322,6 +326,7 @@ A continuación veremos cómo trabajan nuestras principales funciones:
   % }
   %
   \begin{figure}[h]
+    \centering
     \includegraphics[width=\textwidth]{div_float}
     \caption{Algoritmo de división}
     \label{fig:div_float}
