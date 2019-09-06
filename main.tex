@@ -40,12 +40,19 @@
 %     Extension = ttf,
 %     Path=./fonts
 % }
+% \setmainfont[
+%     Path=fonts/,
+%     Ligatures=TeX,
+%     BoldFont={Carlito-Bold},
+%     ItalicFont={Carlito-Italic}
+% ]{Carlito-Regular}
+
 \setmainfont[
     Path=fonts/,
     Ligatures=TeX,
-    BoldFont={Carlito-Bold},
-    ItalicFont={Carlito-Italic}
-]{Carlito-Regular}
+    BoldFont={calibri-bold},
+    ItalicFont={calibri-italic}
+]{calibri-regular}
 \setlength\parindent{0pt}
 
 % https://www.overleaf.com/learn/latex/Sections_and_chapters
@@ -81,11 +88,13 @@
 \usepackage{fancyhdr}
 \fancypagestyle{plain}{
     \fancyhf{}
-    \lhead{\includegraphics[width=3.16cm]{logo_uem_header}}
+    \fancyhead[LE]{\includegraphics[width=3.16cm]{logo_uem_header}}
+    \fancyhead[RO]{\includegraphics[width=3.16cm]{logo_uem_header}}
     \rfoot{\thepage}
     \renewcommand{\headrulewidth}{0pt}
 }
 \pagestyle{plain}
+
 
 \title{Estudio de viabilidad del uso de librerías de criptografía homomórfica en procesos reales}
 \author{Javier Junquera Sánchez}
@@ -112,6 +121,10 @@
     \input{trabajos_futuros}
     
     \appendix
+    
+    \nocite{*}
+    \printbibliography
+    
     \input{apendices/test_lwe}
     \input{apendices/regresion_cuadratica}
     \input{apendices/datos_aemet}
@@ -120,7 +133,5 @@
     \input{apendices/manual}
     \input{apendices/cs-headers}
     
-    \nocite{*}
-    \printbibliography
 
 \end{document}
