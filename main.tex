@@ -46,7 +46,6 @@
 %     BoldFont={Carlito-Bold},
 %     ItalicFont={Carlito-Italic}
 % ]{Carlito-Regular}
-
 \setmainfont[
     Path=fonts/,
     Ligatures=TeX,
@@ -96,13 +95,56 @@
 \pagestyle{plain}
 
 
-\title{Estudio de viabilidad del uso de librerías de criptografía homomórfica en procesos reales}
-\author{Javier Junquera Sánchez}
+% Portada
+\newcommand{\titulo}{Estudio de viabilidad del uso de librerías de criptografía homomórfica en procesos reales}
+\newcommand{\autor}{Javier Junquera Sánchez}
+\newcommand{\tutor}{Alfonso Muñoz Muñoz}
+\newcommand{\curso}{2018-2019}
+
+\title{\titulo}
+\author{\autor}
 \date{Septiembre 2019}
+
+\usepackage[pages=some]{background}
+
+\newcommand{\portada}{
+
+    \BgThispage
+    \thispagestyle{empty}
+    \cleartoleftpage
+
+    \backgroundsetup {
+        scale=1,
+        color=black,
+        opacity=1,
+        angle=0,
+        contents={%
+            \includegraphics[width=\paperwidth,height=\paperheight]{portada}
+        }%
+    }
+    
+    \large
+    .
+    \vspace{5cm}
+    \begin{center}
+        \fontfamily{lmr}\fontseries{b}\selectfont{
+            \huge{\titulo} \\
+            \vspace{3cm}
+            \Large{\autor} \\
+            \vspace{1.95cm}
+            \Large{\tutor} \\
+            \vspace{1.85cm}
+            \hspace{1cm}\curso
+        }
+        
+    \end{center}
+        
+}
+
 
 \begin{document}
 
-    \maketitle
+    \portada
     
     \input{resumen}
     \input{abstract}
