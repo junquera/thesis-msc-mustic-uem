@@ -170,8 +170,8 @@ Tenemos que tener precaución principalmente en dos aspectos:
 
   \begin{enumerate}
     \item Negamos el operando: Para ello hemos creado la función \texttt{negativo} que devuelve el negativo del número si es positivo, y el positivo si es negativo.
-    \item Guardarmos (usando la puerta \texttt{MUX}) el mayor de los dos para asegurarnos de trabajar con el número en positivo
-    \item Guardamos en un bit (cifrado, un bit que no vemos pero que \texttt{MUX} será capaz de interpretar) si el número es positivo (guardarmos \texttt{0}) o negativo (guardamos \texttt{1})
+    \item Guardamos (usando la puerta \texttt{MUX}) el mayor de los dos para asegurarnos de trabajar con el número en positivo
+    \item Guardamos en un bit (cifrado, un bit que no vemos pero que \texttt{MUX} será capaz de interpretar) si el número es positivo (guardamos \texttt{0}) o negativo (guardamos \texttt{1})
     \item Tras operar comparamos con la puerta \texttt{XOR} los bits que indican si los operandos eran positivos o negativos. Nos devolverá \texttt{0} sólo si ambos eran positivos o negativos, indicando que no hay que hacer ninguna corrección. Llamaremos a este bit \texttt{corrector}.
     \item Aplicamos la función \texttt{negativo} sobre el resultado, y esta vez determinamos (usando \texttt{MUX}) qué devolver con el parámetro \texttt{corrector}: Si es \texttt{1} devolvemos el resultado negado, si es \texttt{0} el mismo que ha devuelvo el cálculo.
   \end{enumerate}

@@ -70,6 +70,10 @@
 \titleformat{\subsection}[hang]{\fontsize{12pt}{12pt}\selectfont}{\thesubsection}{0.5em}{}[]
 \titlespacing{\subsection}{0pt}{1.5ex}{1ex}
 
+\titleformat{\subsubsection}[hang]{\fontsize{12pt}{12pt}\selectfont}{\thesubsection}{0.5em}{$\bullet$ }[]
+\titlespacing{\subsubsection}{0pt}{1ex}{0.5ex}
+
+
 % CUERPO DE TEXTO: Cuerpo 11 pt. Calibrí normal. Interlineado 1.5 de Word y justificación a ambos lados.
 % 1.5 de Word? https://tex.stackexchange.com/questions/65849/confusion-onehalfspacing-vs-spacing-vs-word-vs-the-world
 \renewcommand{\baselinestretch}{1.3}
@@ -118,13 +122,13 @@
         color=black,
         opacity=1,
         angle=0,
-        contents={%
+        contents={
             \includegraphics[width=\paperwidth,height=\paperheight]{portada}
-        }%
+        }
     }
     
     \large
-    .
+    \rule{0mm}{0mm} % Para que funcione la vspace
     \vspace{5cm}
     \begin{center}
         \fontfamily{lmr}\fontseries{b}\selectfont{

@@ -32,7 +32,8 @@ Una vez instalados, descargamos el código y lo configuramos para compilarlo:
 
 \begin{minted}{console}
 $ #clone the tfhe repository
-$ git clone --recurse-submodules --branch=master https://github.com/tfhe/tfhe.git
+$ git clone --recurse-submodules \
+  --branch=master https://github.com/tfhe/tfhe.git
 $ cd tfhe
 $ #configure the build options
 $ mkdir build
@@ -115,7 +116,7 @@ Después trabajaríamos con sus métodos, que funcionan tal y como hemos indicad
 
 \begin{itemize}
     \item Los métodos precedidos con \verb|u_| son más rápidos, pero no tienen en cuenta el sigo.
-    \item Si se trabaja con números reales, para multiplicar y dividir usaremos las funciones \verb|multiply_float| y \verb|divide_float| respectivamente (en lugar de \verb|multiply| y \verb|divide|)
+    \item Si se trabaja con números reales, para multiplicar y dividir usaremos \verb|multiply_float| y \verb|divide_float| respectivamente (en lugar de \verb|multiply| y \verb|divide|)
 \end{itemize}
 
 \subsection{tfhe-cs}

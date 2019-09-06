@@ -167,7 +167,7 @@ Hemos probado los tiempos de ejecución con las siguiente operaciones.
     \item Suma
 \end{itemize}
 
-En todas ellas, y con números de 8192, 16384 y 32768 bits, la ejecución se realiza de forma prácticamente instantánea (menos de un segundo). En el apéndice \ref{appendix:benchmarks_seal} se pueden ver los resultados en bruto de la ejecución de los tests incluídos en la documentación de SEAL. En la tabla \ref{table:benchmarks_seal} podemos ver un resumen.
+En todas ellas, y con números de 8192, 16384 y 32768 bits, la ejecución se realiza de forma prácticamente instantánea (menos de un segundo). En el apéndice \ref{appendix:benchmarks_seal} se pueden ver los resultados en bruto de la ejecución de los tests incluidos en la documentación de SEAL. En la tabla \ref{table:benchmarks_seal} podemos ver un resumen.
 
 \begin{table}[]
     \centering
@@ -316,7 +316,7 @@ Para la ejecución del servidor de TFHE hemos contratado una máquina en Digital
 \begin{itemize}
     \item Durante un día tuvimos contratada una instancia con un núcleo de CPU, con un precio de $5$ dólares al mes.
     En esta instancia instalamos las librerías necesarias, nuestro código, y lanzamos las pruebas de eficiencia de TFHE (con las que hemos generado los resultados de la figura \ref{fig:crec_func}).
-    \item Tras esta prueba reescalamos las características de la máquina para que tuviese 2 CPU y poder realizar los cálculos de las dos curvas de regresión de forma paralela. Esta máquina tiene un coste de $15$ dólares al mes, y estuvo corriendo durante otros 6 días (el tiempo que tardó en calcular las curvas, más el tiempo de repetir algunos cálculos a medida que ibamos detectando errores en nuestro código), consumiendo el $100\%$ de sus recursos casi todo el tiempo.
+    \item Tras esta prueba reescalamos las características de la máquina para que tuviese 2 CPU y poder realizar los cálculos de las dos curvas de regresión de forma paralela. Esta máquina tiene un coste de $15$ dólares al mes, y estuvo corriendo durante otros 6 días (el tiempo que tardó en calcular las curvas, más el tiempo de repetir algunos cálculos a medida que íbamos detectando errores en nuestro código), consumiendo el $100\%$ de sus recursos casi todo el tiempo.
 \end{itemize}
 
 El coste final ha sido de $5,07$ dólares ($4,6$\euro). En un entorno real este coste dependería del número de máquinas que fuesen necesarias para calcular los valores de cada curva, durante unos 3 días por cada una de ellas. La parte positiva es que, con el modelo que hemos construido para el sistema, sólo sería necesario realizar estos cálculos una vez para cada curva.
