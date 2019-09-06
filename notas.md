@@ -8,13 +8,13 @@ Centrarse en (decidir por qué):
 - BFV: SEAL
 - BGV y BFV: PALISADE
 
-Usaremos SEAL como "representante" de las segunda generación. 
+Usaremos SEAL como ``representante'' de las segunda generación. 
 
 - PALISADE (son las cubiertas en http://homomorphicencryption.org/wp-content/uploads/2018/10/CCS-HE-Tutorial-Slides.pdf)
 
 ## Fully...
 
-- GSW: FHEW / TFHE 
+- GSW: FHEW / TFHE
 
 Mejor TFHE(-Chimera) (cubre dos modelos)
 
@@ -47,6 +47,6 @@ https://www.di.ens.fr/david.pointcheval/Documents/Papers/2002_sac.pdf
 
 ## cuFHE
 
-Es como TFHE pero con wrapper en python: 
+Es como TFHE pero con wrapper en python:
 
 https://github.com/vernamlab/cuFHE

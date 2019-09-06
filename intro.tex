@@ -1,7 +1,7 @@
 \chapter{Introducción}
 \label{chap:intro}
 
-Para todo $ A,B \in \chi{} $, una operación $ \bigoplus $, y una función $f$; si se cumple $ f(A) \bigoplus f(B) = f(A \bigoplus B)$, $ f $ es una función homomórfica con respecto a $ \bigoplus $ en $ \chi{} $. Cuando una función criptográfica cumple esta condición con alguna operación se dice que es maleable (\cite{dolev_non-malleable_1991}).
+Para todo $ A,B \in \chi{} $, una operación $ \bigoplus $, y una función $f$; si se cumple $ f(A) \bigoplus f(B) = f(A \bigoplus B) $, $ f $ es una función homomórfica con respecto a $ \bigoplus $ en $ \chi{} $. Cuando una función criptográfica cumple esta condición con alguna operación se dice que es maleable (\cite{dolev_non-malleable_1991}).
 
 Aunque es una propiedad que podría no ser deseable en muchos ámbitos (por ejemplo, en un escenario en el que además de confidencialidad se requiera integridad, permitiría a un atacante modificar los datos), si cumple ciertas condiciones puede tener numerosas aplicaciones. Así se crea el campo de estudio de la criptografía homomórfica.
 
@@ -9,7 +9,7 @@ Se conoce como criptografía homomórfica al conjunto de técnicas criptográfic
 
 \section{Estandarización}
 
-El consorcio "Homomorphic Encryption Standardization" (\cite{albrecht_homomorphic_2018}) ha ido desarrollando un estándar a lo largo de los años atendiendo a los avances en las distintas tecnologías que componen la criptografía homomórfica, y prestando un interés especial en las implementaciones necesarias para ponerla en práctica. Así, se han ido sucediendo las tres generaciones de criptografía homomórfica.
+El consorcio ``Homomorphic Encryption Standardization'' (\cite{albrecht_homomorphic_2018}) ha ido desarrollando un estándar a lo largo de los años atendiendo a los avances en las distintas tecnologías que componen la criptografía homomórfica, y prestando un interés especial en las implementaciones necesarias para ponerla en práctica. Así, se han ido sucediendo las tres generaciones de criptografía homomórfica.
 
 El último encuentro de trabajo del grupo se produjo el 17 de Agosto en Santa Clara, y en él se trabajará principalmente la eficiencia, la seguridad y la usabilidad de las librerías.
 
@@ -17,11 +17,11 @@ La documentación del estándar está dividida en tres \textit{white papers} y u
 
 \subsection{Seguridad}
 
-En el documento \cite{chase_security_2017} analizan qué principios seguir para implementar esquemas de criptografía homomórfica y qué beneficios tienen estos esquemas para la seguridad de la información. También hacen un análisis de los ataques existentes a estos esquemas y qué parámetros matemáticos son los ideales para hacer estos esquemas lo más resistentes posible tanto en el panorama actual como en un escenario \textit{post-quantum}.
+En el documento (\cite{chase_security_2017}) analizan qué principios seguir para implementar esquemas de criptografía homomórfica y qué beneficios tienen estos esquemas para la seguridad de la información. También hacen un análisis de los ataques existentes a estos esquemas y qué parámetros matemáticos son los ideales para hacer estos esquemas lo más resistentes posible tanto en el panorama actual como en un escenario \textit{post-quantum}.
 
 \subsection{Aplicaciones}
 
-En el estudio \cite{archer_applications_2017} abordan para qué campos es útil la criptografía homomórfica. Mientras que se han estado centrando los esfuerzos en poder almacenar información en la nube de forma segura (cifrándola) se ha descuidado la seguridad de dicha información cuando sube a la nube para ser procesada. La criptografía homomórfica puede ser la solución a este problema, y en campos como:
+En el estudio (\cite{archer_applications_2017}) abordan para qué campos es útil la criptografía homomórfica. Mientras que se han estado centrando los esfuerzos en poder almacenar información en la nube de forma segura (cifrándola) se ha descuidado la seguridad de dicha información cuando sube a la nube para ser procesada. La criptografía homomórfica puede ser la solución a este problema, y en campos como:
 
 \begin{itemize}
     \item La computación distribuida
@@ -33,7 +33,7 @@ En la última reunión del standard presentaron ejemplos de protocolos de distri
 
 \subsection{API}
 
-Por último el consorcio de estandarización busca establecer un modelo de almacenamiento común tanto de los datos como de las claves, y una terminología (lo llaman \textit{lenguaje ensamblador}) que sirva de lenguaje común para transmitir las ideas y los elementos mínimos que debe tener cualquier sistema de criptografía homomórfica. Están definidos en el documento \cite{brenner_standard_2017}, y como veremos más adelante, encajan perfectamente con los elementos de las implementaciones. Son los siguientes:
+Por último el consorcio de estandarización busca establecer un modelo de almacenamiento común tanto de los datos como de las claves, y una terminología (lo llaman \textit{lenguaje ensamblador}) que sirva de lenguaje común para transmitir las ideas y los elementos mínimos que debe tener cualquier sistema de criptografía homomórfica. Están definidos en el documento (\cite{brenner_standard_2017}), y como veremos más adelante, encajan perfectamente con los elementos de las implementaciones. Son los siguientes:
 
 \begin{itemize}
     \item \verb|SecKeygen|, \verb|PubKeygen|

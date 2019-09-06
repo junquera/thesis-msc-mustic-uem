@@ -3,7 +3,7 @@
 
 \section{Librerías}
 
-Hay varias implementaciones de criptografía homomórfica, y varias soluciones por cada una de las generaciones. Aunque la mayoría de las implementaciones están escritas para \verb|C/C++/C#|, recientemente han ido apareciendo algunas nuevas que buscan, principalmente, adaptar los esquemas de cifrado a otros lenguajes. Aunque esto es una buena noticia, nosotros nos centraremos en las "clásicas" evaluadas por el consorcio de estandarización:
+Hay varias implementaciones de criptografía homomórfica, y varias soluciones por cada una de las generaciones. Aunque la mayoría de las implementaciones están escritas para \verb|C/C++/C#|, recientemente han ido apareciendo algunas nuevas que buscan, principalmente, adaptar los esquemas de cifrado a otros lenguajes. Aunque esto es una buena noticia, nosotros nos centraremos en las ``clásicas'' evaluadas por el consorcio de estandarización:
 
 \begin{itemize}
     \item Segunda generación
@@ -26,13 +26,13 @@ Hay además dos tecnologías remarcables que parecen ser las que marquen el paso
 
 \begin{itemize}
     \item cuHe (\url{https://github.com/vernamlab/cuHE})
-    
+
     Implementación de esquemas de criptografía homomórfica con CUDA para acelerar los circuitos mediante GPU.
-    
+
     \item Cingulata (\url{https://github.com/CEA-LIST/Cingulata})
-    
+
     Sistema de compilación diseñado para transformar código \verb|C++| en circuitos FHE. Soporta los esquemas BFV y TFHE.
-    
+
 \end{itemize}
 
 Para nuestro trabajo utilizaremos las librerías Microsoft SEAL (como representante de la segunda generación de criptografía homomórfica) y TFHE (como representante de la tercera). Para la segunda generación habría sido también una muy buena opción utilizar PALISADE, pero la documentación es mucho menor, y no incluye el esquema CKKS (necesario para trabajar con números reales).
@@ -62,7 +62,7 @@ La API para operar con SEAL está codificada en los siguientes elementos:
 \begin{itemize}
 
   \item EncryptionParameters
-  
+
   Parámetros descriptivos de los elementos criptográficos
 
   \item SEALContext
@@ -113,7 +113,7 @@ Los parámetros criptográficos dependerán del esquema con el que se quiere tra
 
 \subsubsection{BFV}
 
-BFV es el esquema "básico" de SEAL. Permite trabajar con números enteros, y operar con ellos hasta que se alcanza el límite máximo de error. En BFV, este límite se podría conceptualizar como un cubo de fichas que se gastan cada vez que se opera.
+BFV es el esquema ``básico'' de SEAL. Permite trabajar con números enteros, y operar con ellos hasta que se alcanza el límite máximo de error. En BFV, este límite se podría conceptualizar como un cubo de fichas que se gastan cada vez que se opera.
 
 Hay algunas operaciones que son casi gratuitas (la suma y la resta), y la multiplicación es muy costosa. Una vez se vacía este cubo (codificado en el parámetro \verb|noise_budget|), nuestro cifrado quedará corrupto y no se puede recuperar el texto.
 
@@ -121,13 +121,13 @@ Además de \verb|noise_budget|, hay tres parámetros configurables que guardan u
 
 \begin{itemize}
     \item \verb|poly_modulus_degree|
-    
+
     Determina el módulo del polinomio usado para realizar las operaciones criptográficas (recordemos que implementa LWE sobre un anillo de polinomios, ver \ref{tag:bfv}). Se expresará como una potencia de 2 que cuanto más grande sea, más operaciones permitirá hacer, pero serán más lentas.
-    
+
     \item \verb|coeff_modulus|
-    
+
     Es un vector de números primos que determina el módulo del texto cifrado. A mayor módulo, mayor será el \verb|noise_budget|. Cuando decíamos que a mayor \verb|poly_modulus_degree|, podíamos hacer más operaciones, era porque el número de bits de \verb|coeff_modulus| está acotado por el de \verb|poly_modulus_degree| de la forma indicada en la figura \ref{table:poly_vs_coeff_modulus}
-    
+
     \begin{table}
         \centering
         \begin{tabular}{  c  c  }
@@ -144,9 +144,9 @@ Además de \verb|noise_budget|, hay tres parámetros configurables que guardan u
         \label{table:poly_vs_coeff_modulus}
 
     \end{table}
-    
+
     \item \verb|plain_modulus|
-    
+
     Modulo del texto plano. El consumo de \verb|noise_budget| se produce de forma logarítmica en base al tamaño de \verb|plain_modulus|, por lo que cuanto más pequeño es, más operaciones podremos realizar. También debe ser menor que \verb|poly_modulus_degree|.
 \end{itemize}{}
 
@@ -172,22 +172,22 @@ Inicialmente, la cadena se inicializa con la información de \verb|coeff_modulus
 
 \begin{listing}[ht]
     \begin{minted}{console}
-         special prime +---------+
-                                 |
-                                 v
-coeff_modulus: { 50, 30, 30, 50, 50 }  +---+  Level 4
-                                          |
-                                          |
-   coeff_modulus: { 50, 30, 30, 50 }  +---+  Level 3
-                                          |
-                                          |
-       coeff_modulus: { 50, 30, 30 }  +---+  Level 2
-                                          |
-                                          |
-           coeff_modulus: { 50, 30 }  +---+  Level 1
-                                          |
-                                          |
-               coeff_modulus: { 50 }  +---+  Level 0
+                 special prime +---------+
+                                         |
+                                         v
+        coeff_modulus: { 50, 30, 30, 50, 50 }  +---+  Level 4
+                                                  |
+                                                  |
+           coeff_modulus: { 50, 30, 30, 50 }  +---+  Level 3
+                                                  |
+                                                  |
+               coeff_modulus: { 50, 30, 30 }  +---+  Level 2
+                                                  |
+                                                  |
+                   coeff_modulus: { 50, 30 }  +---+  Level 1
+                                                  |
+                                                  |
+                       coeff_modulus: { 50 }  +---+  Level 0
     \end{minted}
     \caption{Cadena de SEALContext (documentación de SEAL)}
     \label{fig:seal_levels}
@@ -195,9 +195,9 @@ coeff_modulus: { 50, 30, 30, 50, 50 }  +---+  Level 4
 
 Se puede descender, pero nunca ascender. Cuanto más abajo, más rápidos son los cálculos, pero menos cálculos se pueden hacer. En ocasiones, debido al tamaño del texto plano, descender no tendrá consecuencias en cuanto al nivel de error, por lo que se podrá hacer para tener mayor eficiencia. En otros, será una condición indispensable para poder seguir operando. Es por esto que, cumpliendo los requisitos sobre el tamaño de \verb|coeff_modulus| con respecto a \verb|poly_modulus_degree|, y siguiendo las pautas que hemos comentado con respecto al primer y último elemento de la cadena, es recomendable que elijamos el mayor número de elementos intermedios posible.
 
-Mientras que en BGV este contexto no tiene mucha importancia (más allá de la eficiencia) en CKKS la cosa cambia. Cuando se reescala en CKKS, se está eliminando al mismo tiempo parte de esta cadena. Por lo tanto, hay que tener en cuenta que si se ha reescalado, y se ha cambiado el contexto de cifrado de un elemento, tendremos que ajustar el contexto del resto de elementos que queramos operar con él (para que estén en la misma escala y usen los mismos parámetros criptográficos), ya sea reescalando (cuando sea necesario) o haciendo al elemento "descender" en la cadena.
+Mientras que en BGV este contexto no tiene mucha importancia (más allá de la eficiencia) en CKKS la cosa cambia. Cuando se reescala en CKKS, se está eliminando al mismo tiempo parte de esta cadena. Por lo tanto, hay que tener en cuenta que si se ha reescalado, y se ha cambiado el contexto de cifrado de un elemento, tendremos que ajustar el contexto del resto de elementos que queramos operar con él (para que estén en la misma escala y usen los mismos parámetros criptográficos), ya sea reescalando (cuando sea necesario) o haciendo al elemento ``descender'' en la cadena.
 
-Otra forma de reducir la velocidad a la que aumenta el nivel de error sin perder profundidad computacional (capacidad para realizar más operaciones) es la realinearización. Como hemos visto anteriormente, a medida que se opera, el error aumenta. La suma es casi gratuita, pero con el producto de dos elementos de tamaño $M$ y $N$, teniendo el resultado tamaño $M+N-1$, el error aumenta considerablemente. Interpretaremos este tamaño como el grado polinómico del elemento. La realinearización es una operación que permite, utilizando unas claves especiales (claves de realinearización), reducir el tamaño tras una multiplicación, reduciendo así el consumo de \verb|noise_budget| en las siguientes operaciones. Tiene un coste computacional alto en comparación con el resto de operaciones, pero permite operar de forma más eficiente, y que el elemento no crezca hasta "romperse" (o crezca de una forma más lenta).
+Otra forma de reducir la velocidad a la que aumenta el nivel de error sin perder profundidad computacional (capacidad para realizar más operaciones) es la realinearización. Como hemos visto anteriormente, a medida que se opera, el error aumenta. La suma es casi gratuita, pero con el producto de dos elementos de tamaño $M$ y $N$, teniendo el resultado tamaño $M+N-1$, el error aumenta considerablemente. Interpretaremos este tamaño como el grado polinómico del elemento. La realinearización es una operación que permite, utilizando unas claves especiales (claves de realinearización), reducir el tamaño tras una multiplicación, reduciendo así el consumo de \verb|noise_budget| en las siguientes operaciones. Tiene un coste computacional alto en comparación con el resto de operaciones, pero permite operar de forma más eficiente, y que el elemento no crezca hasta ``romperse'' (o crezca de una forma más lenta).
 
 \subsection{Encoders}
 
@@ -212,19 +212,19 @@ SEAL ofrece tres sistemas para codificar los datos con los que se va a trabajar:
     Crea una matriz $2 \times (N/2)$ con N el número de elementos codificables. Estos elementos son conocidos como \textit{slots}, y su número es igual a \verb|poly_modulus_degree|. En cada \textit{slot} se almacena un número en base modular $\mathbb{Z}_{plain\_modulus}$. Si se codifica un vector, se introducirá tal cual, y si sólo se codifica un valor, se llenarán todas las posiciones de la matriz con ese valor.
 
     \begin{gather}
-      a =
-      \begin{pmatrix}
+        a =
+        \begin{pmatrix}
         a & a & \hdots & a \\
         a & a & \hdots & a
-      \end{pmatrix} &
-      \begin{pmatrix}
+        \end{pmatrix} &
+        \begin{pmatrix}
         c_1 & c_2 & c_3
-      \end{pmatrix}
-      =
-      \begin{pmatrix}
+        \end{pmatrix}
+        =
+        \begin{pmatrix}
         c_1 & c_2   & c_3   & 0     & \hdots & 0 \\
         0   & 0     & 0     & 0     & \hdots & 0
-      \end{pmatrix}
+        \end{pmatrix}
     \end{gather}
 
     \item \verb|CCKSEncoder|
@@ -238,9 +238,9 @@ Tanto \verb|BatchEncoder| como \verb|CKKSEncoder|, interpretan todos los datos c
 
 \begin{itemize}
     \item Rotando filas
-    
+
     % TODO GALOIS!!!
-    
+
     \begin{gather}
         \begin{bmatrix}
             b_{11}  & b_{12}  & \hdots    & b_{1n} \\
@@ -252,9 +252,9 @@ Tanto \verb|BatchEncoder| como \verb|CKKSEncoder|, interpretan todos los datos c
             b_{22}  & \hdots    & b_{2n}    & b_{21}
         \end{bmatrix}
     \end{gather}
-    
-    \item Rotando columnas 
-    
+
+    \item Rotando columnas
+
     \begin{gather}
         \begin{bmatrix}
             b_{11}  & b_{12}  & \hdots    & b_{1n} \\
@@ -263,10 +263,10 @@ Tanto \verb|BatchEncoder| como \verb|CKKSEncoder|, interpretan todos los datos c
         \rightarrow
         \begin{bmatrix}
             b_{21}  & b_{22}  & \hdots    & b_{2n} \\
-            b_{11}  & b_{12}  & \hdots    & b_{1n} 
+            b_{11}  & b_{12}  & \hdots    & b_{1n}
         \end{bmatrix}
     \end{gather}
-    
+
 \end{itemize}
 %
 %     [  0,  1,  2,  3,  0, ...,  0,  0,  0,  0,  0 ]
@@ -301,7 +301,7 @@ Por otro lado, las operaciones aritméticas se realizan entre los valores de cad
     \begin{bmatrix}
         b_{11}  & \hdots    & b_{1n} \\
         b_{21}  & \hdots    & b_{2n}
-    \end{bmatrix} 
+    \end{bmatrix}
     =
     \begin{bmatrix}
         (a_{11} * b_{11})    & \hdots    & (a_{1n} * b_{1n}) \\
@@ -317,45 +317,45 @@ Por último, tras conocer todo lo que se puede hacer con SEAL, veremos cómo hac
 
 \begin{itemize}
     \item \verb|negate|
-    
+
     Negar (equivalente a multiplicar por $-1$) la variable introducida.
-    
+
     \item \verb|add|
-    
+
     Función de suma
-    
+
     \item \verb|sub|
-    
+
     Función de resta
-    
+
     \item \verb|multiply|
-    
+
     Función de multiplicación
-    
+
     \item \verb|square|
-    
+
     Función para elevar al cuadrado.
-    
+
     \item \verb|exponentiate|
-    
+
     Función de exponenciación.
-    
+
     \item \verb|rotate_rows| /  \verb|rotate_columns|
-    
+
     Funciones para rotar los elementos codificados como matrices (con \verb|BatchEncoder| o \verb|CKKSEncoder|).
-    
+
     \item \verb|realinearize|
-    
+
     Función de realinearización
-    
+
     \item \verb|rescale|
-    
+
     Función para reescalar un elemento al siguiente nivel de su cadena
-    
+
     \item \verb|mod_switch|
-    
+
     Función para descender en la cadena del contexto de un elemento
-    
+
 \end{itemize}
 
 Todas las operaciones aritméticas se pueden aplicar para operar tanto entre elementos cifrados como con números en texto plano (símplemente codificados). Todas devuelven el resultado en una variable adicional, a no se que se añada el sufijo \verb|_inline|, que aplicaría la operación sobre la primera variable introducida en la función.
@@ -370,20 +370,21 @@ En TFHE se trabaja directamente con puertas lógicas en lugar de con operaciones
     const int minimum_lambda = 110;
     TFheGateBootstrappingParameterSet* params =
     new_default_gate_bootstrapping_parameters(minimum_lambda);
-    
+
     //generate a random key
     uint32_t seed[] = { 314, 1592, 657 };
     tfhe_random_generator_setSeed(seed,3);
-    TFheGateBootstrappingSecretKeySet* key = 
+    TFheGateBootstrappingSecretKeySet* key =
     new_random_gate_bootstrapping_secret_keyset(params);
     \end{minted}
     \caption{Inicialización de TFHE (documentación de TFHE)}
     \label{fig:init_tfhe}
 \end{listing}
 
-Este parámetro "lambda" ($\lambda$) se usa para caracterizar el nivel de seguridad en función de los $n$ bits de entropía de la clave secreta y la tase de error $\alpha$. En la figura \ref{fig:lambda_tfhe} podemos ver cómo están relacionados estos parámetros.
+Este parámetro ``lambda'' ($\lambda$) se usa para caracterizar el nivel de seguridad en función de los $n$ bits de entropía de la clave secreta y la tase de error $\alpha$. En la figura \ref{fig:lambda_tfhe} podemos ver cómo están relacionados estos parámetros.
 
 \begin{figure}[h]
+    \centering
     \includegraphics[width=\linewidth]{lambda_tfhe}
     \caption{Curva de seguridad de $\lambda$ (\cite{cheon_faster_2016})}
     \label{fig:lambda_tfhe}
@@ -507,7 +508,7 @@ A continuación haremos un repaso de las principales operaciones sobre el texto 
     \caption{Circuito lógico de suma}
     \label{fig:adder_digital_circuit}
 \end{figure}
- 
+
 
 \subsection{Evolución de TFHE}
 
