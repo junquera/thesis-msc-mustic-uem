@@ -4,21 +4,20 @@
 \usepackage{fontspec}
 
 \ifthenelse{\useWinFont}{
-calibri
-  \setmainfont[
-    Path=fonts/,
-    Ligatures=TeX,
-    BoldFont={calibri-bold},
-    ItalicFont={calibri-italic}
-  ]{calibri-regular}
-}{
-carlito
   \setmainfont[
     Path=fonts/,
     Ligatures=TeX,
     BoldFont={Carlito-Bold},
     ItalicFont={Carlito-Italic}
   ]{Carlito-Regular}
+}{
+  calibri = \useWinFont
+  \setmainfont[
+    Path=fonts/,
+    Ligatures=TeX,
+    BoldFont={calibri-bold},
+    ItalicFont={calibri-italic}
+  ]{calibri-regular}
 }
 \setlength\parindent{0pt}
 
