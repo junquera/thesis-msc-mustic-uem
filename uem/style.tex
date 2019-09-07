@@ -3,8 +3,8 @@
 % https://es.overleaf.com/blog/using-your-favourite-fonts-with-sharelatex-2013-04-02
 \usepackage{fontspec}
 
-\ifthenelse{\useWinFont}{
-  % \useWinFont = False
+\ifthenelse{ \useWinFont }{
+  % \useWinFont = 0
   \setmainfont[
     Path=fonts/,
     Ligatures=TeX,
@@ -12,7 +12,7 @@
     ItalicFont={Carlito-Italic}
   ]{Carlito-Regular}
 }{
-  % \useWinFont = True
+  % \useWinFont = 1
   \setmainfont[
     Path=fonts/,
     Ligatures=TeX,
