@@ -4,6 +4,7 @@
 \usepackage{fontspec}
 
 \ifthenelse{\useWinFont}{
+  % \useWinFont = False
   \setmainfont[
     Path=fonts/,
     Ligatures=TeX,
@@ -11,7 +12,7 @@
     ItalicFont={Carlito-Italic}
   ]{Carlito-Regular}
 }{
-  calibri = \useWinFont
+  % \useWinFont = True
   \setmainfont[
     Path=fonts/,
     Ligatures=TeX,
