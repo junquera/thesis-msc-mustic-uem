@@ -112,25 +112,26 @@ En la tabla \ref{table:sub_ops_r2} analizamos las operaciones contenidas en cada
 
 En la tabla \ref{table:t_r2} vemos el tiempo total que han tardado en realizarse estas operaciones frente al calculado.
 
+% TODO Revisar esta tabla
 \begin{table}[]
     \centering
     \begin{tabular}{r | c c c c}
         Cálculo & Tiempo estimado (s) & Tiempo real (s) & Proporción \\
         \hline \hline
-        initVectores  & 76092 & 235885  & 3,09 \\
-        calcCuadrados & 5028  & 15687 & 3,11 \\
-        calcDuplas  & 11313 & 35608 & 3,14 \\
-        calcComplejos & 12570 & 75325 & 5,99 \\
-        CalcC & 46776 & 220161  & 4,70 \\
-        CalcB & 14208 & 264239  & 18,59 \\
-        CalcA & 14192 & 352023  & 24,80 \\
-        Total & 180179  & 1198928 & 6,65 \\
+        initVectores  & 76092 & 68940  & 0.90 \\
+        calcCuadrados & 5028  & 4555 & 0.90 \\
+        calcDuplas  & 11313 & 10431 & 0.92 \\
+        calcComplejos & 12570 & 11522 & 0.91 \\
+        CalcC & 46776 & 39818  & 0.85 \\
+        CalcB & 14208 & 12222  & 0.86 \\
+        CalcA & 14192 & 12200  & 0.86 \\
+        Total & 180179  & 159688 & 0.89 \\
     \end{tabular}
     \caption{Tiempo real de regresión}
     \label{table:t_r2}
 \end{table}
 
-Se puede apreciar que hay referencias con respecto a los datos teóricos. Pueden deberse a que no sólo se está ejecutando el programa, si no la propia lógica que ejecuta el programa, pequeñas diferencias de tiempo en la ejecución de las puertas lógicas, o incluso puertas lógicas que hayamos obviado (como las de inicialización) que acumuladas puedan ser significativas.
+Se puede apreciar que apenas hay ligeras diferencias con respecto a los datos teóricos.
 
 \subsection{Límites de cómputo}
 
@@ -293,7 +294,7 @@ Es justo decir, de todas formas, que la posibilidad de implementar los datos com
 
 Los principales problemas a la hora de trabajar con SEAL han sido los relacionados con la selección de parámetros. Aunque las guías de SEAL son impecables (de hecho son un muy buen apoyo para entender la parte teórica) hay que comprender muy bien cómo se codifican los datos y cómo funciona el esquema para que el programa funcione bien, e incluso en ese caso, la ejecución sigue teniendo determinados comportamientos erráticos que llevan a tener que desarrollar mediante ensayo y error.
 
-\section{Coste de desarrollo}
+\section{Coste del producto}
 
 A continuación desarrollaremos los costes que ha tenido el desarrollo de este trabajo.
 
@@ -316,10 +317,10 @@ Para la ejecución del servidor de TFHE hemos contratado una máquina en Digital
 \begin{itemize}
     \item Durante un día tuvimos contratada una instancia con un núcleo de CPU, con un precio de $5$ dólares al mes.
     En esta instancia instalamos las librerías necesarias, nuestro código, y lanzamos las pruebas de eficiencia de TFHE (con las que hemos generado los resultados de la figura \ref{fig:crec_func}).
-    \item Tras esta prueba reescalamos las características de la máquina para que tuviese 2 CPU y poder realizar los cálculos de las dos curvas de regresión de forma paralela. Esta máquina tiene un coste de $15$ dólares al mes, y estuvo corriendo durante otros 6 días (el tiempo que tardó en calcular las curvas, más el tiempo de repetir algunos cálculos a medida que íbamos detectando errores en nuestro código), consumiendo el $100\%$ de sus recursos casi todo el tiempo.
+    \item Tras esta prueba reescalamos las características de la máquina para que tuviese 2 CPU y poder realizar los cálculos de las dos curvas de regresión de forma paralela. Esta máquina tiene un coste de $15$ dólares al mes, y estuvo corriendo durante otros 7 días y medio (el tiempo que tardó en calcular las curvas, más el tiempo de repetir algunos cálculos a medida que íbamos depurando errores en nuestro código), consumiendo el $100\%$ de sus recursos casi todo el tiempo.
 \end{itemize}
 
-El coste final ha sido de $5,07$ dólares ($4,6$\euro). En un entorno real este coste dependería del número de máquinas que fuesen necesarias para calcular los valores de cada curva, durante unos 3 días por cada una de ellas. La parte positiva es que, con el modelo que hemos construido para el sistema, sólo sería necesario realizar estos cálculos una vez para cada curva.
+El coste final ha sido de $5,07$ dólares ($4,6$\euro). En un entorno real este coste dependería del número de máquinas que fuesen necesarias para calcular los valores de cada curva, durante unos 2 días por cada una de ellas. La parte positiva es que, con el modelo que hemos construido para el sistema, sólo sería necesario realizar estos cálculos una vez para cada curva.
 
 En el anexo \ref{appendix:server-do} pueden verse todos los detalles de facturación, y en la figura \ref{fig:stats-do} el panel de control web con las estadísticas de la máquina.
 

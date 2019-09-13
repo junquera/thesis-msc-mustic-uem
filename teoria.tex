@@ -23,7 +23,6 @@ Las generaciones publicadas por el estándar guardan una estrecha relación con 
 
 \end{itemize}
 
-
 \section{Primitivas matemáticas}
 
 La seguridad de los sistemas criptográficos se basa en problemas matemáticos que, si bien pueden ser resolubles, dicha resolución no es computacionalmente viable en un tiempo razonable: factorización de enteros, logaritmo discreto, ordenación de conjuntos...
@@ -236,7 +235,7 @@ Dentro de la categoría de esquemas previos a la criptografía homomórfica se e
 
   \item TFHE (\cite{cheon_faster_2016})
 
-  El éxito de GSW como equema FHE reside en que todos los parámetros son extremadamente pequeños comparados con $q$ (la base modular), y la implementación de mecanismos para que el error acumulado crezca muy lento. De esta forma, no es necesaria la operación de bootstrapping en la mayoría de los casos (que hasta el momento, tardaba alrededor de 6 minutos por operación (\cite{ducas_fhew:_2014})), y siempre puede aplicarse cuando el cálculo vaya a crecer mucho. El esquema FHEW logra un hito reduciendo el tiempo de bootstrapping hasta 1 segundo por operación, pero no es el último paso
+  El éxito de GSW como esquema FHE reside en que todos los parámetros son extremadamente pequeños comparados con $q$ (la base modular), y la implementación de mecanismos para que el error acumulado crezca muy lento. De esta forma, no es necesaria la operación de bootstrapping en la mayoría de los casos (que hasta el momento, tardaba alrededor de 6 minutos por operación (\cite{ducas_fhew:_2014})), y siempre puede aplicarse cuando el cálculo vaya a crecer mucho. El esquema FHEW logra un hito reduciendo el tiempo de bootstrapping hasta 1 segundo por operación, pero no es el último paso
 
   Basado en una aproximación a LWE conocida como TLWE (Thorus Learn With Errors) en la que los parámetros de LWE se definen sobre el espacio de un toro, y siguiendo la trayectoria del esquema FHEW (\cite{ducas_fhew:_2014}), TFHE puede realizar la técnica de bootstrapping en menos de $0.1$ segundos. Esto permite su aplicación sobre GSW sin perder eficiencia. Además, reduce el tamaño de las claves hasta 16MB (en lugar del GB que ocupaban hasta el momento) manteniendo el mismo nivel de seguridad.
 
