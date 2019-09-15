@@ -10,7 +10,7 @@
     Ligatures=TeX,
     BoldFont={Carlito-Bold},
     ItalicFont={Carlito-Italic}
-  ]{Carlito-Regular}
+  ]{Carlito-Regular} % Carlito is the free equivalent to calibri
 }{
   % \useWinFont = 1
   \setmainfont[
@@ -87,17 +87,18 @@
     }
 
     \large
-    \rule{0mm}{0mm} % Para que funcione la vspace
-    \vspace{5cm}
+    % \rule{0mm}{0mm} % Para que funcione la vspace
+    \vspace*{5cm}
     \begin{center}
         \fontfamily{lmr}\fontseries{b}\selectfont{
             \huge{\titulo} \\
-            \vspace{3cm}
+            \vspace{\vfill}
             \Large{\autor} \\
-            \vspace{1.95cm}
+            \vspace{1.925cm}
             \Large{\tutor} \\
-            \vspace{1.85cm}
-            \hspace{1cm}\curso
+            \vspace{1.65cm} \\
+            \hspace{1.65cm}\curso \\
+            \vspace{2.075cm}
         }
 
     \end{center}
