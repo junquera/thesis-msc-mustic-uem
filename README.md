@@ -2,6 +2,10 @@
 
 Trabajo de Fin de Máster para el Máster Universitario en Seguridad de Tecnologías de la Información y las Comunicaciones (Universidad Europea de Madrid).
 
+- Memoria: [Estudio de viabilidad del uso de librerías de criptografía homomórfica en procesos reales.pdf](Estudio\ de\ viabilidad\ del\ uso\ de\ librerías\ de\ criptografía\ homomórfica\ en\ procesos\ reales.pdf)
+
+- Presentación: []()
+
 ## Trabajo práctico
 
 - `tfhe-math` ([GitHub](https://github.com/junquera/tfhe-math), [GitLab](https://gitlab.com/junquera/tfhe-math))
