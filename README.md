@@ -2,6 +2,8 @@
 
 Trabajo de Fin de Máster para el Máster Universitario en Seguridad de Tecnologías de la Información y las Comunicaciones (Universidad Europea de Madrid).
 
+Escrito por el alumno **Javier Junquera Sánchez**, tutelado por **Alfonso Muñoz Muñoz**:
+
 - Memoria: [doc/memoria.pdf](doc/memoria.pdf)
 
 - Presentación: [doc/presentacion.pdf](doc/presentacion.pdf)
