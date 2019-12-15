@@ -18,7 +18,7 @@ pages:
 pdf:
   image: aergus/latex
   script: 
-  - latexmk -pdf main.text
+  - latexmk -pdf main.tex
   - mv main.pdf tfm.pdf
   artifacts:
     paths:
