@@ -1,7 +1,25 @@
+before_script:
+  - apt update
+
+pages:
+  script:
+  - apt install -y python3 python3-pip
+  - pip install mkdocs
+  - pip install mkdocs-matherial
+  - mkdir .docs
+  - mv * .docs
+  - mv {.,}docs
+  - mkdocs build
+  - mv site public
+  artifacts:
+    paths:
+      - public
+
 pdf:
   script: 
-  - apt install texlive-full
+  - apt install -y texlive-full
   - xelatex main.tex
+  - mv main.pdf tfm.pdf
   artifacts:
     paths:
     - tfm.pdf
