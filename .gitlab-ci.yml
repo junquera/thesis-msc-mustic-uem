@@ -1,5 +1,7 @@
 pdf:
-  script: xelatex main.tex
+  script: 
+  - apt install texlive-full
+  - xelatex main.tex
   artifacts:
     paths:
     - tfm.pdf
