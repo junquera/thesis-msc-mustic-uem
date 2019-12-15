@@ -19,7 +19,7 @@ pages:
 pdf:
   image: aergus/latex
   script: 
-  - latexmk -pdf main.tex
+  - latexmk -pvc -pdf -e "$pdflatex='xelatex %O -interaction=nonstopmode %S'" main.tex
   - mv main.pdf tfm.pdf
   artifacts:
     paths:
