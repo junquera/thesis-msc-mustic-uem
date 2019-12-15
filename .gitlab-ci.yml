@@ -1,5 +1,5 @@
-before_script:
-  - apt update
+# before_script:
+# - apt update
 
 pages:
   image: python:alpine
