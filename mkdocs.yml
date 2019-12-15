@@ -1,3 +1,5 @@
 site_name: TFM MUSTIC - Javier Junquera Sánchez
 site_url: https://junquera.gitlab.io/tfm-mustic-uem
+theme:
+  name: 'material'
 
