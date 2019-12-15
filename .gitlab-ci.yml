@@ -1,0 +1,6 @@
+pdf:
+  script: xelatex main.tex
+  artifacts:
+    paths:
+    - tfm.pdf
+
