@@ -5,7 +5,7 @@ pages:
   script:
   - apt install -y python3 python3-pip
   - pip3 install mkdocs
-  - pip3 install mkdocs-matherial
+  - pip3 install mkdocs-material
   - mkdir .docs
   - mv * .docs
   - mv {.,}docs
