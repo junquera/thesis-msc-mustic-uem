@@ -8,7 +8,7 @@ pages:
   - pip install mkdocs-material
   - mkdir .docs
   - mv * .docs
-  - mv {.,}docs
+  - mv .docs docs
   - mv docs/mkdocs.yml .
   - mkdocs build
   - mv site public
