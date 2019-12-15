@@ -4,8 +4,8 @@ before_script:
 pages:
   script:
   - apt install -y python3 python3-pip
-  - pip install mkdocs
-  - pip install mkdocs-matherial
+  - pip3 install mkdocs
+  - pip3 install mkdocs-matherial
   - mkdir .docs
   - mv * .docs
   - mv {.,}docs
@@ -16,9 +16,9 @@ pages:
       - public
 
 pdf:
+  image: aergus/latex
   script: 
-  - apt install -y texlive-full
-  - xelatex main.tex
+  - latexmk -pdf main.text
   - mv main.pdf tfm.pdf
   artifacts:
     paths:
