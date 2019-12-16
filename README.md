@@ -19,7 +19,7 @@ Escrito por el alumno **Javier Junquera Sánchez**, tutelado por **Alfonso Muño
 ## Cite
 
 ```
-@phdthesis{junquera_sanchez_javier_estudio_2019,
+@thesis{junquera_sanchez_javier_estudio_2019,
 	address = {Madrid},
 	title = {Estudio de viabilidad del uso de librerías de criptografía homomórfica en procesos reales},
 	url = {https://junquera.gitlab.io/tfm-mustic-uem/},
