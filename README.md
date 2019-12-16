@@ -15,3 +15,18 @@ Escrito por el alumno **Javier Junquera Sánchez**, tutelado por **Alfonso Muño
 - `tfhe-cs` ([GitHub](https://github.com/junquera/tfhe-cs), [GitLab](https://gitlab.com/junquera/tfhe-cs))
 
 - `seal-cs` ([GitHub](https://github.com/junquera/seal-cs), [GitLab](https://gitlab.com/junquera/seal-cs))
+
+## Cite
+
+```
+@phdthesis{junquera_sanchez_javier_estudio_2019,
+	address = {Madrid},
+	title = {Estudio de viabilidad del uso de librerías de criptografía homomórfica en procesos reales},
+	url = {https://junquera.gitlab.io/tfm-mustic-uem/},
+	language = {es-ES},
+	school = {Universidad Europea de Madrid},
+	author = {Junquera Sánchez, Javier},
+	month = sep,
+	year = {2019}
+}
+```
